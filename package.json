@@ -1,0 +1,22 @@
+{
+  "name": "threeoneohoh",
+  "version": "0.0.0",
+  "description": "A simple unused goods transfer application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "threeoneohoh"
+  },
+  "author": "Eugene Chow, Jack Kwan, Kelvin Kwok, Peter Leung, Alexander Poon",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "express": "^4.13.4",
+    "jade": "^1.11.0"
+  },
+  "devDependencies": {
+    "bower": "^1.7.7"
+  }
+}

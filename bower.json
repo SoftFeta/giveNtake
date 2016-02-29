@@ -1,0 +1,16 @@
+{
+  "name": "threeoneohoh",
+  "description": "A simple unused goods transfer application.",
+  "main": "index.js",
+  "authors": [
+    "Eugene Chow",
+    "Jack Kwan",
+    "Kelvin Kwok",
+    "Peter Leung",
+    "Alexander Poon"
+  ],
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/SoftFeta/threeoneohoh",
+  "moduleType": [],
+  "private": true
+}
