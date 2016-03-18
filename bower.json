@@ -3,14 +3,20 @@
   "description": "A simple unused goods transfer application.",
   "main": "index.js",
   "authors": [
-    "Eugene Chow",
-    "Jack Kwan",
-    "Kelvin Kwok",
-    "Peter Leung",
-    "Alexander Poon"
+    "Eugene Chow <1155009126@link.cuhk.edu.hk>",
+    "Jack Kwan <1155040912@link.cuhk.edu.hk>",
+    "Kelvin Kwok <1155040916@link.cuhk.edu.hk>",
+    "Peter Leung <1155038141@link.cuhk.edu.hk>",
+    "Alexander Poon <1155063232@link.cuhk.edu.hk>"
   ],
   "license": "GPL-3.0",
   "homepage": "https://github.com/SoftFeta/threeoneohoh",
   "moduleType": [],
-  "private": true
+  "private": true,
+  "dependencies": {
+    "angular": "^1.5.0",
+    "bootstrap": "4.0.0-alpha.2",
+    "mongoose": "^4.4.7",
+    "font-awesome": "^4.5.0"
+  }
 }

@@ -10,11 +10,18 @@
     "type": "git",
     "url": "threeoneohoh"
   },
-  "author": "Eugene Chow, Jack Kwan, Kelvin Kwok, Peter Leung, Alexander Poon",
+  "author": [
+    "Eugene Chow <1155009126@link.cuhk.edu.hk>",
+    "Jack Kwan <1155040912@link.cuhk.edu.hk>",
+    "Kelvin Kwok <1155040916@link.cuhk.edu.hk>",
+    "Peter Leung <1155038141@link.cuhk.edu.hk>",
+    "Alexander Poon <1155063232@link.cuhk.edu.hk>"
+  ],
   "license": "GPL-3.0",
   "dependencies": {
     "express": "^4.13.4",
-    "jade": "^1.11.0"
+    "jade": "^1.11.0",
+    "mongoose": "^4.4.7"
   },
   "devDependencies": {
     "bower": "^1.7.7"

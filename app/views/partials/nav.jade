@@ -1,0 +1,12 @@
+html
+    body
+        #collapsingNavbar.collapse.navbar-toggleable-xs(ng-controller='mvNavbarController')
+            ul.nav.navbar-nav.pull-right
+                li.nav-item
+                    a.nav-link(href='#')
+                        i.fa.fa-user-plus.fa-lg
+                        |  Sign Up
+                li.nav-item
+                    a.nav-link.dropdown-toggle(href='', ng-click='signIn(username, password)')
+                        i.fa.fa-sign-in.fa-lg
+                        |  Log in
