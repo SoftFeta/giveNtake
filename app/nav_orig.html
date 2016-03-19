@@ -1,10 +1,29 @@
 <div class="collapse navbar-toggleable-xs" id="collapsingNavbar" ng-controller="mvNavbarController">
     <ul class="nav navbar-nav pull-right">
         <li class="nav-item">
-        <a class="nav-link" href="#"><i class="fa fa-user-plus fa-lg"></i> Sign Up</a>
+            <a class="nav-link" href="#"><i class="fa fa-user-plus fa-lg"></i> Sign Up</a>
         </li>
-        <li class="nav-item">
-        <a class="nav-link dropdown-toggle" href="" ng-click="signIn(username, password)"><i class="fa fa-sign-in fa-lg"></i> Log in</a>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+               ng-click="signIn(username, password)"><i class="fa fa-sign-in fa-lg"></i> Log in</a>
+
+            <div id="loginFrame" class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item">
+                    <form class="form-group" id="formLogin" style="width: 100px">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                            <input class="form-control" name="username" id="username" type="text" placeholder="Username">
+                        </div>
+
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-key"></i></div>
+                            <input class="form-control" name="password" id="password" type="password" placeholder="Password">
+                        </div>
+
+                        <button type="button" id="btnLogin" class="btn btn-primary" onclick="alert('I\'m not done yet')">Login</button>
+                    </form>
+                </a>
+            </div>
         </li>
     </ul>
 </div>

@@ -6,7 +6,21 @@ html
                     a.nav-link(href='#')
                         i.fa.fa-user-plus.fa-lg
                         |  Sign Up
-                li.nav-item
-                    a.nav-link.dropdown-toggle(href='', ng-click='signIn(username, password)')
+                li.nav-item.dropdown
+                    a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button', ng-click='signIn(username, password)')
                         i.fa.fa-sign-in.fa-lg
                         |  Log in
+                    #loginFrame.dropdown-menu.dropdown-menu-right
+                        a.dropdown-item
+                            form#formLogin.form-group(style='width: 400px')
+                                .input-group
+                                    .input-group-addon
+                                        i.fa.fa-user.fa-fw
+                                    input#username.form-control(style="margin:0%", name='username', type='text', placeholder='Username')
+                                br
+                                .input-group
+                                    .input-group-addon
+                                        i.fa.fa-key.fa-fw
+                                    input#password.form-control(style="margin:0%", name='password', type='password', placeholder='Password')
+                                br
+                                button#btnLogin.btn.btn-primary(type='button', onclick="alert('I am not done yet');") Login
