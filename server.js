@@ -1,4 +1,7 @@
-var express = require('express'), mongoose = require('mongoose');
+var express = require('express'),
+    mongoose = require('mongoose'),
+    passport = require('passport'),
+    localStrategy = require('passport-local').Strategy;
 
 var app = express();
 

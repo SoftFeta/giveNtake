@@ -14,9 +14,10 @@
   "moduleType": [],
   "private": true,
   "dependencies": {
-    "angular": "^1.5.0",
+    "angular": "^1.5.2",
     "bootstrap": "4.0.0-alpha.2",
     "mongoose": "^4.4.7",
-    "font-awesome": "^4.5.0"
+    "font-awesome": "^4.5.0",
+    "angular-route": "^1.5.2"
   }
 }

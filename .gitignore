@@ -2,6 +2,7 @@
 node_modules
 app/obsolete
 public/vendor/angular/*
+/public/vendor/angular-route/*
 /public/vendor/bootstrap/LICENSE
 /public/vendor/bootstrap/Gemfile
 /public/vendor/bootstrap/sache.json
@@ -34,8 +35,9 @@ public/vendor/bootstrap/dist/js/*
 /public/vendor/mongoose/docs
 /public/vendor/mongoose/benchmarks
 !/.gitignore
-!/public/vendor/font-awesome/css/font-awesome.min.css
+!/public/vendor/angular/angular.min.js
+!/public/vendor/angular-route/angular-route.min.js
 !/public/vendor/bootstrap/dist/css/bootstrap.min.css
 !/public/vendor/bootstrap/dist/js/bootstrap.min.js
-!/public/vendor/angular/angular.min.js
+!/public/vendor/font-awesome/css/font-awesome.min.css
 !/public/vendor/jquery/dist/jquery.min.js

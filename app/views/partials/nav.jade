@@ -7,7 +7,7 @@ html
                         i.fa.fa-user-plus.fa-lg
                         |  Sign Up
                 li.nav-item.dropdown
-                    a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button', ng-click='signIn(username, password)')
+                    a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button')
                         i.fa.fa-sign-in.fa-lg
                         |  Log in
                     #loginFrame.dropdown-menu.dropdown-menu-right
@@ -16,11 +16,11 @@ html
                                 .input-group
                                     .input-group-addon
                                         i.fa.fa-user.fa-fw
-                                    input#username.form-control(style="margin:0%", name='username', type='text', placeholder='Username')
+                                    input#username.form-control(ng-model="username", style="margin:0%", name='username', type='text', placeholder='Username')
                                 br
                                 .input-group
                                     .input-group-addon
                                         i.fa.fa-key.fa-fw
-                                    input#password.form-control(style="margin:0%", name='password', type='password', placeholder='Password')
+                                    input#password.form-control(ng-model="password", style="margin:0%", name='password', type='password', placeholder='Password')
                                 br
-                                button#btnLogin.btn.btn-primary(type='button', onclick="alert('I am not done yet');") Login
+                                button#btnLogin.btn.btn-primary(ng-click='signIn(username, password)', type='button') Login

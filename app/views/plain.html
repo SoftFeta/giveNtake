@@ -37,14 +37,14 @@
                     <div class="checkbox card-text">
                         <label>
                             <input type="checkbox" value="" checked="checked">
-                            Search by keyword or <i class="fa fa-hashtag"></i> hashtag
+                            <i class="fa fa-keyboard-o fa-fw"></i> Search by keyword or #hashtag
                         </label>
                         <input type="search" class="form-control" placeholder="Insert keywords or hashtag...">
                     </div>
                     <div class="checkbox card-text">
                         <label>
                             <input type="checkbox" value="" checked="checked">
-                            Search by category
+                            <i class="fa fa-sitemap fa-fw"></i> Search by category
                         </label>
 
                         <div id="accordion" role="tablist" aria-multiselectable="true">
@@ -68,9 +68,7 @@
                                     <ul>
                                         <li>Books and Periodicals
                                             <ul>
-                                                <li ng-repeat="subsubcat in subcat_2=['Fiction','Arts','Cookbooks','Science','Computer Science','Sociology','Engineering']">
-                                                    {{ subsubcat }} 123
-                                                </li>
+                                                <li>123</li>
                                             </ul>
                                         </li>
                                     </ul>
@@ -80,7 +78,7 @@
                                     <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
                                        href="#collapseTwo"
                                        aria-expanded="false" aria-controls="collapseTwo">
-                                        <i class="fa fa-caret-right fa-lg fa-rotate-90"></i> <i class="fa fa-book"></i>
+                                        <i class="fa fa-chevron-right fa-lg fa-rotate-90"></i> <i class="fa fa-book"></i>
                                         Books and
                                         Periodicals
                                     </a>
@@ -88,17 +86,17 @@
                                 <div id="collapseTwo" class="card-block collapse" role="tabpanel"
                                      aria-labelledby="headingTwo" style="padding: 0px 0px 0px 30px">
                                     <!--margin: -7% -6% -7% 0%-->
-                                    <div ng-repeat="subsubcat in subcat_2=['Fiction','Arts','Cookbooks','Science','ComputerScience','Sociology','Engineering', 'ReligionSpirituality', 'Philosophy', 'Law', 'Metaphysics', 'Lifestyle', 'HistoryBiographiesMemoirs', 'ReferenceWorks', 'Periodicals']">
-                                        <div class="card-header" role="tab" id="headingTwoOne"
+                                    <div ng-repeat="subsubcat in subcat_2=[{tag: 'books0', title: 'Fiction'},{tag: 'books1', title: 'Arts'},{tag: 'books2', title:'Cookbooks'}, {tag: 'books3', title: 'Science'}, {tag: 'books4', title: 'Computer Science'}, {tag: 'books5', title: 'Sociology'}, {tag: 'books6', title: 'Engineering'},  {tag: 'books7', title: 'Politics'}, {tag: 'books8', title: 'Religion & Spirituality'}, {tag: 'books9', title: 'Philosophy'}, {tag: 'books10', title: 'Law'}, {tag: 'books11', title: 'Metaphysics'},{tag: 'books12', title: 'Lifestyle'}, {tag: 'books13', title: 'History, Biographies & Memoirs'}, {tag: 'books14', title: 'Reference works'}, {tag: 'books15', title: 'Periodicals'}]">
+                                        <div class="card-header" role="tab" id="heading{{subsubcat.tag}}"
                                              style="background-color:lemonchiffon;">
                                             <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
-                                               href="#{{subsubcat}}"
+                                               href="#{{subsubcat.tag}}"
                                                aria-expanded="false" aria-controls="collapseTwoOne">
-                                                <i class="fa fa-caret-right fa-lg"></i> {{subsubcat}}
+                                                <i class="fa fa-caret-right fa-lg"></i> {{subsubcat.title}}
                                             </a>
                                         </div>
-                                        <div id="{{subsubcat}}" class="card-block collapse" role="tabpanel"
-                                             aria-labelledby="headingTwoOne">
+                                        <div id="{{subsubcat.tag}}" class="card-block collapse" role="tabpanel"
+                                             aria-labelledby="heading{{subsubcat.tag}}">
                                             <p style="color: black">Placeholder</p>
                                         </div>
                                     </div>
@@ -107,7 +105,7 @@
                                      style="background-color:lemonchiffon;">
                                     <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
                                        href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        <i class="fa fa-caret-right fa-lg"></i> <i class="fa fa-ticket"></i> Coupons
+                                        <i class="fa fa-circle"></i> <i class="fa fa-ticket"></i> Coupons
                                     </a>
                                 </div>
                                 <div id="collapseThree" class="card-block collapse" role="tabpanel"
@@ -118,7 +116,7 @@
                                      style="background-color:lemonchiffon;">
                                     <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
                                        href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                        <i class="fa fa-caret-right fa-lg"></i> <i class="fa fa-puzzle-piece"></i> Toys
+                                        <i class="fa fa-circle"></i> <i class="fa fa-puzzle-piece"></i> Toys
                                     </a>
                                 </div>
                                 <div id="collapseFour" class="card-block collapse" role="tabpanel"
@@ -131,7 +129,7 @@
                     <div class="checkbox card-text">
                         <label>
                             <input type="checkbox" value="" checked="checked">
-                            Search by <i class="fa fa-map-marker"></i> location
+                            <i class="fa fa-map-marker fa-fw"></i> Search by location
                         </label>
 
                         <div id="map" style="height: 400px;"></div>
@@ -155,6 +153,122 @@
                                         ]
                                     }
                                 });
+                                var cuhkCoords = [
+                                    {lat: 22.422215, lng: 114.200100},
+                                    {lat: 22.423921, lng: 114.200636},
+                                    {lat: 22.425825, lng: 114.203340},
+                                    {lat: 22.428460, lng: 114.203255},
+                                    {lat: 22.426736, lng: 114.206203},
+                                    {lat: 22.425903, lng: 114.205795},
+                                    {lat: 22.425430, lng: 114.208416},
+                                    {lat: 22.423466, lng: 114.211495},
+                                    {lat: 22.422097, lng: 114.212579},
+                                    {lat: 22.419301, lng: 114.213231},
+                                    {lat: 22.416413, lng: 114.212327},
+                                    {lat: 22.414876, lng: 114.210879},
+                                    {lat: 22.413319, lng: 114.210600},
+                                    {lat: 22.412982, lng: 114.211887},
+                                    {lat: 22.412278, lng: 114.211780},
+                                    {lat: 22.412655, lng: 114.208143},
+                                    {lat: 22.413506, lng: 114.207086},
+                                    {lat: 22.414046, lng: 114.207614},
+                                    {lat: 22.422032, lng: 114.200031}
+                                ];
+                                var maOnShan = [
+                                    {lat: 22.405580, lng: 114.220763},
+                                    {lat: 22.407128, lng: 114.219090},
+                                    {lat: 22.409240, lng: 114.220477},
+                                    {lat: 22.410755, lng: 114.221205},
+                                    {lat: 22.412256, lng: 114.221630},
+                                    {lat: 22.415608, lng: 114.222464},
+                                    {lat: 22.419507, lng: 114.223481},
+                                    {lat: 22.421233, lng: 114.223936},
+                                    {lat: 22.422074, lng: 114.224209},
+                                    {lat: 22.422944, lng: 114.224664},
+                                    {lat: 22.424052, lng: 114.225226},
+                                    {lat: 22.425202, lng: 114.225954},
+                                    {lat: 22.426043, lng: 114.226546},
+                                    {lat: 22.427881, lng: 114.228230},
+                                    {lat: 22.428273, lng: 114.231295},
+                                    {lat: 22.427148, lng: 114.233612},
+                                    {lat: 22.427114, lng: 114.233788},
+                                    {lat: 22.426994, lng: 114.233860},
+                                    {lat: 22.427189, lng: 114.233815},
+                                    {lat: 22.427410, lng: 114.233603},
+                                    {lat: 22.427594, lng: 114.233265},
+                                    {lat: 22.427790, lng: 114.233495},
+                                    {lat: 22.427890, lng: 114.233761},
+                                    {lat: 22.427836, lng: 114.234117},
+                                    {lat: 22.428553, lng: 114.234988},
+                                    {lat: 22.428682, lng: 114.234848},
+                                    {lat: 22.428761, lng: 114.234943},
+                                    {lat: 22.428616, lng: 114.235101},
+                                    {lat: 22.430667, lng: 114.237338},
+                                    {lat: 22.431063, lng: 114.238511},
+                                    {lat: 22.432256, lng: 114.239002},
+                                    {lat: 22.433252, lng: 114.239034},
+                                    {lat: 22.434482, lng: 114.238592},
+                                    {lat: 22.434486, lng: 114.238254},
+                                    {lat: 22.435070, lng: 114.237401},
+                                    {lat: 22.435762, lng: 114.236941},
+                                    {lat: 22.436300, lng: 114.237040},
+                                    {lat: 22.436479, lng: 114.237595},
+                                    {lat: 22.436900, lng: 114.237942},
+                                    {lat: 22.437021, lng: 114.238673},
+                                    {lat: 22.437063, lng: 114.239445},
+                                    {lat: 22.436934, lng: 114.239968},
+                                    {lat: 22.437163, lng: 114.240541},
+                                    {lat: 22.437338, lng: 114.240672},
+                                    {lat: 22.437430, lng: 114.241822},
+                                    {lat: 22.436837, lng: 114.243329},
+                                    {lat: 22.435657, lng: 114.244768},
+                                    {lat: 22.433910, lng: 114.244854},
+                                    {lat: 22.433168, lng: 114.244136},
+                                    {lat: 22.432392, lng: 114.243965},
+                                    {lat: 22.431066, lng: 114.245016},
+                                    {lat: 22.430754, lng: 114.245864},
+                                    {lat: 22.432234, lng: 114.247073},
+                                    {lat: 22.432872, lng: 114.249563},
+                                    {lat: 22.432805, lng: 114.255301},
+                                    {lat: 22.429828, lng: 114.256875},
+                                    {lat: 22.427968, lng: 114.253600},
+                                    {lat: 22.427451, lng: 114.249189},
+                                    {lat: 22.429140, lng: 114.247529},
+                                    {lat: 22.428027, lng: 114.245404},
+                                    {lat: 22.424228, lng: 114.241562},
+                                    {lat: 22.422098, lng: 114.237426},
+                                    {lat: 22.417571, lng: 114.232834},
+                                    {lat: 22.415390, lng: 114.229917},
+                                    {lat: 22.414364, lng: 114.228011},
+                                    {lat: 22.413580, lng: 114.227749},
+                                    {lat: 22.412850, lng: 114.226532},
+                                    {lat: 22.407797, lng: 114.223337},
+                                    {lat: 22.407093, lng: 114.224528},
+                                    {lat: 22.405427, lng: 114.224993},
+                                    {lat: 22.402149, lng: 114.226734},
+                                    {lat: 22.403396, lng: 114.224574},
+                                    {lat: 22.403829, lng: 114.223288},
+                                    {lat: 22.404180, lng: 114.222553},
+                                    {lat: 22.404722, lng: 114.221912}
+                                ];
+                                var cuhk = new google.maps.Polygon({
+                                    paths: cuhkCoords,
+                                    strokeColor: '#69246B',
+                                    strokeOpacity: 0.8,
+                                    strokeWeight: 5,
+                                    fillColor: '#FF4500',
+                                    fillOpacity: 0.15
+                                });
+                                cuhk.setMap(map);
+                                var mos = new google.maps.Polygon({
+                                    paths: maOnShan,
+                                    strokeColor: '#962714',
+                                    strokeOpacity: 0.8,
+                                    strokeWeight: 5,
+                                    fillColor: '#962714',
+                                    fillOpacity: 0.15
+                                });
+                                mos.setMap(map);
                                 var image = "gift_marker.png"
                                 var marker = new google.maps.Marker({
                                     position: {lat: 22.419468, lng: 114.206620},
@@ -164,6 +278,13 @@
                                     icon: image
                                 });
                                 marker.addListener('dragend', function () {
+                                    if (google.maps.geometry.poly.containsLocation(marker.getPosition(), cuhk)) {
+                                        document.getElementById("area").innerHTML = "Neighbourhood: CUHK";
+                                    } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), mos)) {
+                                        document.getElementById("area").innerHTML = "Neighbourhood: Ma On Shan";
+                                    } else {
+                                        document.getElementById("area").innerHTML = "Neighbourhood: Not currently supported";
+                                    }
                                     var markLat = marker.getPosition().lat().toString();
                                     var markLng = marker.getPosition().lng().toString();
                                     document.getElementById("coords").innerHTML = "(".concat(markLat, ", ", markLng, ")");
@@ -172,8 +293,10 @@
                         </script>
                         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEPe62lfwgD8zFH2o7rzFdVmpkbiJFOwc&sensor=FALSE"
                                 async defer></script>
-                        <p id="coords" class="text-lg-center"></p>
-                        <br><a href="#" class="btn btn-outline-secondary">Search</a>
+                        <p id="coords" class="text-lg-center">Drag the marker!</p>
+                        <p id="area" class="text-lg-center"></p>
+                        <br><a href="#" class="btn btn-outline-secondary"
+                               onclick="alert('Thanks for dropping by, but I am not done yet')">Search</a>
                     </div>
                 </div>
             </div>
@@ -222,7 +345,7 @@
             </div>
             <div align="center">
                 <div id="carousel-example-generic" class="carousel slide" data-ride="carousel"
-                     style="width: 1300px; height:500px">
+                     style="width: 90%; height:500px">
                     <ol class="carousel-indicators">
                         <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
                         <li data-target="#carousel-example-generic" data-slide-to="1"></li>
@@ -230,23 +353,29 @@
                     </ol>
                     <div class="carousel-inner" role="listbox">
                         <div class="carousel-item active">
-                            <img src="the_donald.jpg" style="height: 500px" alt="First slide">
+                            <img src="the_donald.jpg" style="height: 100%" alt="First slide">
+
                             <div class="carousel-caption">
                                 <h3>We Love the Don</h3>
+
                                 <p>The Trump Train won't be stopped</p>
                             </div>
                         </div>
                         <div class="carousel-item">
-                            <img src="the_donald_1.jpg" style="height: 500px" alt="Second slide">
+                            <img src="the_donald_1.jpg" style="height: 100%" alt="Second slide">
+
                             <div class="carousel-caption">
                                 <h3>You Can't Stump the Trump</h3>
+
                                 <p>Mexico is the new China</p>
                             </div>
                         </div>
                         <div class="carousel-item">
-                            <img src="http://placehold.it/1300x500" alt="Third slide">
+                            <img src="http://placehold.it/1300x500" style="height: 100%" alt="Third slide">
+
                             <div class="carousel-caption">
                                 <h3>Header</h3>
+
                                 <p>Subheader</p>
                             </div>
                         </div>
@@ -262,11 +391,14 @@
                 </div>
             </div>
             <script type="text/javascript">
-                $('.carousel').carousel({
-                    interval: 300
+                $(document).ready(function () {
+                    $('.carousel').carousel({
+                        interval: 300
+                    });
                 });
             </script>
             <br>
+
             <div class="jumbotron">
                 <h1 class="display-3">Welcome to Project ThreeOneOhOh</h1>
 
@@ -283,7 +415,8 @@
                             </td>
                             <td rowspan="4" style="vertical-align: top; padding-left: 5%; padding-right: 2%;">
                                 <p>
-                                    <span class="tag tag-pill tag-danger">Trending</span> <span class="tag tag-pill tag-warning">New listing</span>
+                                    <span class="tag tag-pill tag-danger">Trending</span> <span
+                                        class="tag tag-pill tag-warning">New listing</span>
                                 </p>
                             </td>
                             <td>
@@ -304,7 +437,10 @@
                         </tr>
                         <tr>
                             <td colspan="2"></td>
-                            <td><hr><a href="#" class="btn pull-lg-left btn-success btn-block"><i class="fa fa-hand-lizard-o"></i> Take item</a></td>
+                            <td>
+                                <hr>
+                                <a href="#" class="btn pull-lg-left btn-success btn-block"><i
+                                        class="fa fa-hand-lizard-o"></i> Take item</a></td>
                         </tr>
                     </table>
                 </div>

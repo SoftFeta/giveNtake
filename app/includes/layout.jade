@@ -1,4 +1,4 @@
-html
+html(ng-app="app")
     head
         link(rel="shortcut icon", type="image/x-icon", href="favicon.ico")
         link(rel="stylesheet", href="vendor/bootstrap/dist/css/bootstrap.min.css")
@@ -7,6 +7,6 @@ html
         title ThreeOneOhOh Main Page
         meta(charset="utf-8")
         meta(name="description", content="The main page of our CSCI3100 project.")
-    body(ng-app="", onload="initMap()")
-        block main-content
         include scripts
+    body(onload="initMap()")
+        block main-content
