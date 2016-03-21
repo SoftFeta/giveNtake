@@ -17,12 +17,16 @@ app.get('/', function (req, res) {
     res.render('index');
 });
 
+app.get('/register', function (req, res) {
+    res.render('register');
+});
+
 app.get('/partials/:abc', function (req, res) {
     res.render('partials/'+req.params.abc);
 });
 
-app.get('/sex', function (req, res) {
-    res.send('Stress overload');
+app.get('/test', function (req, res) {
+    res.send('Loaded');
 });
 
 //Connect MongoDB Database
@@ -54,6 +58,20 @@ Users.find({}).exec(function (err, collection) {
 Users.findOne({}).exec(function(err, document) {
     var found=document.lastName;
     console.log(found);
+});
+passport.use(new localStrategy(
+    function() {
+
+    }
+));
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    User.findById(id, function(err, user) {
+        done(err, user);
+    });
 });
 
 //Open port
