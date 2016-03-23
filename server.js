@@ -60,8 +60,14 @@ Users.findOne({}).exec(function(err, document) {
     console.log(found);
 });
 passport.use(new localStrategy(
-    function() {
-
+    function(username, password, done) {
+        Users.findOne({userName:username}).exec(function(err, document) {
+            if (user) {
+                return done(null, user);
+            } else {
+                return done(null, false);
+            }
+        })
     }
 ));
 passport.serializeUser(function(user, done) {
