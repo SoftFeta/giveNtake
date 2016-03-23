@@ -1,5 +1,5 @@
-html(ng-app="app")
-    head
+html
+    head()
         link(rel="shortcut icon", type="image/x-icon", href="favicon.ico")
         link(rel="stylesheet", href="vendor/bootstrap/dist/css/bootstrap.min.css")
         link(rel="stylesheet", href="vendor/font-awesome/css/font-awesome.min.css")
@@ -9,5 +9,5 @@ html(ng-app="app")
         meta(charset="utf-8")
         meta(name="description", content="The main page of our CSCI3100 project.")
         include scripts
-    body(onload="initMap()")
+    body(ng-app="app", ng-controller="mainCtrl", onload="initMap()")
         block main-content
