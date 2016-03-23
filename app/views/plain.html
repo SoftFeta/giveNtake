@@ -52,21 +52,30 @@
                                 <div class="card-header" role="tab" id="headingOne"
                                      style="background-color:lemonchiffon;">
                                     <a data-toggle="collapse" data-parent="#accordion"
-                                       aria-expanded="true" aria-controls="collapseOne" href="#" onclick="turn('#chevron1')">
+                                       aria-expanded="true" aria-controls="collapseOne" href="#collapseOne"
+                                       onclick="turn('#chevron1')">
                                         <i id="chevron1" class="fa fa-chevron-right fa-lg"></i> <i
                                             class="fa fa-fort-awesome"></i>
                                         Back to School
                                     </a>
                                 </div>
-                                <div id="collapseOne" class="card-block collapse" role="tabpanel"
+                                <div id="collapseOne" class="card-block collapse accordion_item_correction"
+                                     role="tabpanel"
                                      aria-labelledby="headingOne">
-                                    <ul>
-                                        <li>Books and Periodicals
-                                            <ul>
-                                                <li>123</li>
-                                            </ul>
-                                        </li>
-                                    </ul>
+                                    <div ng-repeat="subsubcat_1 in subcat_1=[{tag: 'school0', title: 'Primary school textbooks'},{tag: 'school1', title: 'Primary school notes & supplementary exercises'},{tag: 'school2', title:'Secondary school textbooks'}, {tag: 'school3', title: 'Secondary school notes & supplementary exercises'}, {tag: 'school4', title: 'Stationery'}]">
+                                        <div class="card-header" role="tab" id="heading{{subsubcat_1.tag}}"
+                                             style="background-color:lemonchiffon;">
+                                            <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
+                                               href="#{{subsubcat_1.tag}}"
+                                               aria-expanded="false" aria-controls="collapseTwoOne">
+                                                <i class="fa fa-caret-right fa-lg fa-fw"></i> {{subsubcat_1.title}}
+                                            </a>
+                                        </div>
+                                        <div id="{{subsubcat_1.tag}}" class="card-block collapse" role="tabpanel"
+                                             aria-labelledby="heading{{subsubcat_1.tag}}">
+                                            <p style="color: black">Placeholder</p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-header" role="tab" id="headingTwo"
                                      style="background-color:lemonchiffon;">
@@ -74,13 +83,13 @@
                                        href="#collapseTwo"
                                        aria-expanded="false" aria-controls="collapseTwo" onclick="turn('#chevron2')">
                                         <i id="chevron2" class="fa fa-chevron-right fa-lg"></i> <i
-                                            class="fa fa-book"></i>
+                                            class="fa fa-book fa-fw"></i>
                                         Books and Periodicals
                                     </a>
                                 </div>
-                                <div id="collapseTwo" class="card-block collapse" role="tabpanel"
-                                     aria-labelledby="headingTwo" style="padding: 0px 0px 0px 30px">
-                                    <!--margin: -7% -6% -7% 0%-->
+                                <div id="collapseTwo" class="card-block collapse accordion_item_correction"
+                                     role="tabpanel"
+                                     aria-labelledby="headingTwo">
                                     <div ng-repeat="subsubcat in subcat_2=[{tag: 'books0', title: 'Fiction'},{tag: 'books1', title: 'Arts'},{tag: 'books2', title:'Cookbooks'}, {tag: 'books3', title: 'Science'}, {tag: 'books4', title: 'Computer Science'}, {tag: 'books5', title: 'Sociology'}, {tag: 'books6', title: 'Engineering'},  {tag: 'books7', title: 'Politics'}, {tag: 'books8', title: 'Religion & Spirituality'}, {tag: 'books9', title: 'Philosophy'}, {tag: 'books10', title: 'Law'}, {tag: 'books11', title: 'Metaphysics'},{tag: 'books12', title: 'Lifestyle'}, {tag: 'books13', title: 'History, Biographies & Memoirs'}, {tag: 'books14', title: 'Reference works'}, {tag: 'books15', title: 'Periodicals'}]">
                                         <div class="card-header" role="tab" id="heading{{subsubcat.tag}}"
                                              style="background-color:lemonchiffon;">
@@ -96,32 +105,59 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-header" role="tab" id="headingThree"
-                                     style="background-color:lemonchiffon;">
-                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
-                                       href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        <i class="fa fa-circle"></i> <i class="fa fa-ticket"></i> Coupons
+                                <div class="card-header others" role="tab" id="headingThree">
+                                    <a class="collapsed accordion_standalone" data-toggle="collapse"
+                                       data-parent="#accordion"
+                                       href="#collapseThree" aria-expanded="false" aria-controls="collapseThree"
+                                       onclick="highlight('#headingThree')">
+                                        <i class="fa fa-ticket fa-fw"></i> Coupons
                                     </a>
                                 </div>
                                 <div id="collapseThree" class="card-block collapse" role="tabpanel"
                                      aria-labelledby="headingThree">
                                     <p style="color: black">Placeholder</p>
                                 </div>
-                                <div class="card-header" role="tab" id="headingFour"
-                                     style="background-color:lemonchiffon;">
-                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
-                                       href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                        <i class="fa fa-circle"></i> <i class="fa fa-puzzle-piece"></i> Toys
+                                <div class="card-header others" role="tab" id="headingFour">
+                                    <a class="collapsed accordion_standalone" data-toggle="collapse"
+                                       data-parent="#accordion"
+                                       href="#collapseFour" aria-expanded="false" aria-controls="collapseFour"
+                                       onclick="highlight('#headingFour')">
+                                        <i class="fa fa-puzzle-piece fa-fw"></i> Toys
                                     </a>
                                 </div>
                                 <div id="collapseFour" class="card-block collapse" role="tabpanel"
                                      aria-labelledby="headingFour">
                                     <p style="color: black">Placeholder</p>
                                 </div>
+                                <div class="card-header others" role="tab" id="headingFive">
+                                    <a class="collapsed accordion_standalone" data-toggle="collapse"
+                                       data-parent="#accordion"
+                                       href="#collapseFive" aria-expanded="false" aria-controls="collapseFive"
+                                       onclick="highlight('#headingFive')">
+                                        <i class="fa fa-music fa-fw"></i> Music
+                                    </a>
+                                </div>
+                                <div id="collapseFive" class="card-block collapse" role="tabpanel"
+                                     aria-labelledby="headingFive">
+                                    <p style="color: black">Placeholder</p>
+                                </div>
+                                <div class="card-header others" role="tab" id="headingSix">
+                                    <a class="collapsed accordion_standalone" data-toggle="collapse"
+                                       data-parent="#accordion"
+                                       href="#collapseSix" aria-expanded="false" aria-controls="collapseSix"
+                                       onclick="highlight('#headingSix')">
+                                        <i class="fa fa-mobile fa-fw"></i> Electronics & Accessories
+                                    </a>
+                                </div>
+                                <div id="collapseSix" class="card-block collapse" role="tabpanel"
+                                     aria-labelledby="headingSix">
+                                    <p style="color: black">Placeholder</p>
+                                </div>
                             </div>
                             <script type="text/javascript">
+                                var leaves = ['#headingThree', '#headingFour', '#headingFive', '#headingSix'];
                                 function turn(str) {
-                                    var chevron=$(str);
+                                    var chevron = $(str);
                                     if (chevron.hasClass('spin')) {
                                         chevron.removeClass('spin');
                                         chevron.addClass('spinBackwards');
@@ -130,6 +166,20 @@
                                         if (chevron.hasClass('spinBackwards')) chevron.removeClass('spinBackwards');
                                         chevron.addClass('spin');
                                     }
+                                }
+                                function highlight(str) {
+                                    var standalone = $(str);
+                                    if (standalone.hasClass('others')) {
+                                        standalone.removeClass('others');
+                                        console.log(leaves.length);
+                                        for (foo = 0; foo < leaves.length; foo++) {
+                                            console.log(leaves[foo]);
+                                            console.log(str);
+                                            $(leaves[foo]).removeClass('highlight');
+                                            $(leaves[foo]).addClass('others');
+                                        }
+                                    }
+                                    standalone.addClass('highlight');
                                 }
                             </script>
                         </div>

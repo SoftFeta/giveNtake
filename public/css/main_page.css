@@ -87,6 +87,18 @@ body {
     -webkit-animation-fill-mode: forwards;
 }
 
+.others {
+    background-color:lemonchiffon;
+}
 .highlight {
     background-color: darkorange;
+}
+
+.accordion_item_correction {
+    padding: 0 0 0 30px;
+}
+/* margin: -7% -6% -7% 0%*/
+
+.accordion_standalone {
+    padding-left: 1.2em;
 }
