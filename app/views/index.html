@@ -1,4 +1,4 @@
-<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="The main page of our CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><script>toastr.options.closeButton = true;
+<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="The main page of our CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
 toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controller="mainCtrl" onload="initMap()"><nav class="navbar navbar-fixed-top navbar-dark">
     <button class="navbar-toggler hidden-sm-up pull-lg-right" type="button" data-toggle="collapse"
             data-target="#collapsingNavbar">
@@ -54,7 +54,7 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                      style="background-color:lemonchiffon;">
                                     <a data-toggle="collapse" data-parent="#accordion"
                                        aria-expanded="true" aria-controls="collapseOne" href="#collapseOne"
-                                       onclick="turn('#chevron1')">
+                                       ng-click="turn('#chevron1')">
                                         <i id="chevron1" class="fa fa-chevron-right fa-lg"></i> <i
                                             class="fa fa-fort-awesome"></i>
                                         Back to School
@@ -63,7 +63,7 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                 <div id="collapseOne" class="card-block collapse accordion_item_correction"
                                      role="tabpanel"
                                      aria-labelledby="headingOne">
-                                    <div ng-controller="mainCtrl" ng-repeat="subsubcat_1 in subcat_1">
+                                    <div ng-repeat="subsubcat_1 in subcat_1">
                                         <div class="card-header" role="tab" id="heading{{subsubcat_1.tag}}"
                                              style="background-color:lemonchiffon;">
                                             <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
@@ -82,7 +82,7 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                      style="background-color:lemonchiffon;">
                                     <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
                                        href="#collapseTwo"
-                                       aria-expanded="false" aria-controls="collapseTwo" onclick="turn('#chevron2')">
+                                       aria-expanded="false" aria-controls="collapseTwo" ng-click="turn('#chevron2')">
                                         <i id="chevron2" class="fa fa-chevron-right fa-lg"></i> <i
                                             class="fa fa-book fa-fw"></i>
                                         Books and Periodicals
@@ -91,9 +91,9 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                 <div id="collapseTwo" class="card-block collapse accordion_item_correction"
                                      role="tabpanel"
                                      aria-labelledby="headingTwo">
-                                    <div ng-repeat="subsubcat in subcat_2=[{tag: 'books0', title: 'Fiction'},{tag: 'books1', title: 'Arts'},{tag: 'books2', title:'Cookbooks'}, {tag: 'books3', title: 'Science'}, {tag: 'books4', title: 'Computer Science'}, {tag: 'books5', title: 'Sociology'}, {tag: 'books6', title: 'Engineering'},  {tag: 'books7', title: 'Politics'}, {tag: 'books8', title: 'Religion & Spirituality'}, {tag: 'books9', title: 'Philosophy'}, {tag: 'books10', title: 'Law'}, {tag: 'books11', title: 'Metaphysics'},{tag: 'books12', title: 'Lifestyle'}, {tag: 'books13', title: 'History, Biographies & Memoirs'}, {tag: 'books14', title: 'Reference works'}, {tag: 'books15', title: 'Periodicals'}]">
+                                    <div ng-repeat="subsubcat in subcat_2">
                                         <div class="card-header others" role="tab" id="{{subsubcat.tag}}">
-                                            <a href="#" ng-click="highlight('#'+subsubcat.tag)">{{subsubcat.title}}</a>
+                                            <a href="#" ng-click="highlightString('#'+subsubcat.tag)">{{subsubcat.title}}</a>
                                         </div>
                                     </div>
                                 </div>
@@ -101,7 +101,7 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                     <a class="collapsed accordion_standalone" data-toggle="collapse"
                                        data-parent="#accordion"
                                        href="#"
-                                       onclick="highlight('#headingThree')">
+                                       ng-click="highlightString('#headingThree')">
                                         <i class="fa fa-ticket fa-fw"></i> Coupons
                                     </a>
                                 </div>
@@ -109,7 +109,7 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                     <a class="collapsed accordion_standalone" data-toggle="collapse"
                                        data-parent="#accordion"
                                        href="#"
-                                       onclick="highlight('#headingFour')">
+                                       ng-click="highlightString('#headingFour')">
                                         <i class="fa fa-puzzle-piece fa-fw"></i> Toys
                                     </a>
                                 </div>
@@ -117,7 +117,7 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                     <a class="collapsed accordion_standalone" data-toggle="collapse"
                                        data-parent="#accordion"
                                        href="#collapseFive" aria-expanded="false" aria-controls="collapseFive"
-                                       onclick="highlight('#headingFive')">
+                                       ng-click="highlightString('#headingFive')">
                                         <i class="fa fa-music fa-fw"></i> Music
                                     </a>
                                 </div>
@@ -129,7 +129,7 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                     <a class="collapsed accordion_standalone" data-toggle="collapse"
                                        data-parent="#accordion"
                                        href="#collapseSix" aria-expanded="false" aria-controls="collapseSix"
-                                       onclick="highlight('#headingSix')">
+                                       ng-click="highlightString('#headingSix')">
                                         <i class="fa fa-mobile fa-fw"></i> Electronics & Accessories
                                     </a>
                                 </div>
@@ -138,34 +138,6 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                     <p style="color: black">Placeholder</p>
                                 </div>
                             </div>
-                            <script type="text/javascript">
-                                function turn(str) {
-                                    var chevron = $(str);
-                                    if (chevron.hasClass('spin')) {
-                                        chevron.removeClass('spin');
-                                        chevron.addClass('spinBackwards');
-                                    }
-                                    else {
-                                        if (chevron.hasClass('spinBackwards')) chevron.removeClass('spinBackwards');
-                                        chevron.addClass('spin');
-                                    }
-                                }
-                                var leaves = ['#headingThree', '#headingFour', '#headingFive', '#headingSix'];
-                                for (book = 0; book < 15; book++) {
-                                    leaves.push("#books"+book.toString());
-                                }
-//                                function highlight(str) {
-//                                    var standalone = $(str);
-//                                    if (standalone.hasClass('others')) {
-//                                        standalone.removeClass('others');
-//                                        for (foo = 0; foo < leaves.length; foo++) {
-//                                            $(leaves[foo]).removeClass('highlight');
-//                                            $(leaves[foo]).addClass('others');
-//                                        }
-//                                    }
-//                                    standalone.addClass('highlight');
-//                                }
-                            </script>
                         </div>
                     </div>
                     <div class="checkbox card-text">
@@ -540,15 +512,17 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
             <div class="card card-inverse" style="background-color: firebrick; border-color: firebrick;">
                 <div class="card-block">
                     <h3 class="card-title"><i class="fa fa-heart"></i> Charity of the day</h3>
+                    <h5 class="card-title">Yard of Environmental Sustainability</h5>
+                    <img src="https://www.cpr.cuhk.edu.hk/resources/press/photo/4ec63900474ef.jpg" width="100%">
 
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor
-                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation
-                        ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                        reprehenderit
-                        in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p class="card-text">The Yard for Environmental Sustainability (YES) is located next to Y. C. Liang
+                        Hall, CUHK. It was opened to promote the re-use or recycling of electrical appliances, fabrics,
+                        banners, toys, books, glass and plastic goods.</p>
+
+                    <p class="card-text">It consists of seven huts designed by EMO and built with dead wood and waste
+                        materials. Interested staff and students can visit the huts to drop off or pick up items that
+                        can still be reused. Items collected will also be given to NGOs or recycling companies for reuse
+                        or recycling. Materials will be recycled only when reuse is not ideal or feasible.</p>
                     <a href="#" class="btn btn-outline-secondary">Learn more</a>
                 </div>
             </div>
@@ -685,10 +659,6 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
         </div>
     </div>
 </div>
-<footer class="card-footer">
-    <p class="text-lg-center"><i class="fa fa-copyright fa-rotate-180"></i> Copyleft Alexander Poon, 2016. | <a
-            href="#">Terms & conditions</a> | <a href="#">Privacy Policy</a></p>
-</footer>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -718,4 +688,34 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
             </div>
         </div>
     </div>
-</div></body></html>
+</div><footer class="card-footer"><p class="text-lg-center"><i class="fa fa-copyright fa-rotate-180"></i> Copyleft Alexander Poon, 2016.
+ |<a href="#" data-target="#termsModal" data-toggle="modal"> Terms & conditions</a> |<a href="#" data-target="#privacyModal" data-toggle="modal"> Privacy Policy</a></p></footer><div id="termsModal" tabindex="-1" role="dialog" class="modal fade"><div role="document" class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><h4 id="myModalLabel" class="modal-title">Terms & conditions</h4></div><div class="modal-body"><h5 align="center">TERMS OF SERVICE</h5><p align="left">This application is designed for Sha Tin brethrens who gives away and accepts unused
+goods for free. Monetary transaction is strictly prohibited. Advertising, abusive language, fraud,
+turning out late, and posting ambiguous item description and image are not welcomed as well.
+Offending the rules may result in an account block.</p><p align="left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In in aliquam risus. In et nisi
+convallis, lacinia risus ut, mollis urna. Curabitur congue quis metus pellentesque aliquam.
+Pellentesque vitae hendrerit justo. Sed convallis, eros nec ullamcorper iaculis, turpis eros
+scelerisque neque, vehicula finibus sem odio et nisi. Nulla elementum sed orci et scelerisque. Nunc
+interdum rutrum purus. Maecenas nunc sem, blandit ut hendrerit quis, bibendum pretium augue.
+Pellentesque a nunc eu magna malesuada viverra. Aenean eget hendrerit leo. Nulla mollis velit leo,
+nec hendrerit elit ullamcorper quis. Nunc vitae purus ac risus congue congue id sit amet purus.</p><p align="left">Praesent tempus, neque eget pellentesque venenatis, lacus augue posuere tortor, quis
+tincidunt mauris velit eget erat. Aliquam mauris felis, fringilla at felis at, feugiat vestibulum
+dolor. Sed pretium ultricies tincidunt. Donec lacinia blandit erat id malesuada. Mauris eu erat ut
+augue aliquet laoreet non eu quam. Etiam nulla nisi, tincidunt nec sagittis eu, varius et dui. Proin
+velit nulla, feugiat non posuere vitae, convallis ut dui. Nam rutrum finibus quam eget imperdiet.
+Cras rutrum ex a vestibulum fermentum. Ut venenatis, odio eleifend fringilla consequat, eros mauris
+interdum purus, a luctus quam nibh sit amet lorem. Duis vitae felis ac ligula posuere facilisis id
+at sem.</p></div><div class="modal-footer"><button type="button" data-dismiss="modal" class="btn btn-primary-outline">OK</button></div></div></div></div><div id="privacyModal" tabindex="-1" role="dialog" class="modal fade"><div role="document" class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><h4 id="myModalLabel" class="modal-title">Privacy Policy</h4></div><div class="modal-body"><h5 align="center">PRIVACY POLICY</h5><p align="left">This website is 100% non-profit. We WILL NOT use your personal information in any
+commercial activities. We will ask for your consent before collecting your personal information.</p><p align="left">Phasellus dapibus dui ac risus vestibulum, eu hendrerit sem ultricies. Donec dignissim
+tempus massa vel tincidunt. Aliquam maximus eget erat et venenatis. Quisque ullamcorper euismod diam
+vel iaculis. Ut suscipit, lectus a rutrum mollis, enim turpis posuere nibh, eget pretium nunc ipsum
+sed arcu. Sed volutpat convallis luctus. Quisque ante velit, convallis non risus finibus, rhoncus
+ornare erat. Nam aliquet nibh arcu, et mattis libero pharetra ac. Pellentesque venenatis purus sit
+amet congue ullamcorper. Aliquam euismod pulvinar metus, porttitor tempor massa efficitur eget. Cras
+hendrerit in felis a bibendum. Praesent non lacinia ex, a tincidunt lectus. Proin convallis volutpat
+lorem, ut ultricies enim vulputate in. Curabitur lacinia, metus a placerat fringilla, urna arcu
+dignissim tellus, vel aliquam tortor orci in dui.</p><p align="left">Etiam et ornare turpis. Ut egestas erat orci, in elementum neque tempus eu. Vivamus
+pretium in urna eget posuere. Pellentesque laoreet sapien at mauris accumsan cursus. Suspendisse
+malesuada cursus augue vel posuere. Nam sollicitudin finibus nunc, nec pellentesque diam consectetur
+non. Proin ac erat mi. Sed ullamcorper mauris nec nulla fringilla, et accumsan nisi dignissim. Sed
+at consequat orci. Nunc id eros mi.</p></div><div class="modal-footer"><button type="button" data-dismiss="modal" class="btn btn-primary-outline">OK</button></div></div></div></div></body></html>

@@ -3,39 +3,19 @@ var express = require('express'),
     passport = require('passport'),
     localStrategy = require('passport-local').Strategy;
 
+//Express configuration
 var app = express();
-
-var env = process.env.NODE_ENV || 'development';
-if ('development' == env) {
-    app.set('views', 'app/views');
-    app.set('view engine', 'jade')
-}
-
-app.use(express.static('public'));
-
-app.get('/', function (req, res) {
-    res.render('index');
-});
-
-app.get('/register', function (req, res) {
-    res.render('register');
-});
-
-app.get('/partials/:abc', function (req, res) {
-    res.render('partials/'+req.params.abc);
-});
-
-app.get('/test', function (req, res) {
-    res.send('Loaded');
-});
+require('./app/config/express_conf.js')(app);
 
 //Connect MongoDB Database
+require('./app/config/mongoose_conf.js');
 mongoose.connect('dord.mynetgear.com:27017');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, "Connection error!"));
 db.once('open', function callback() {
     console.log("Connected successfully!");
 });
+
 var usersSchema = mongoose.Schema({
     userName: String,
     firstName: String,
@@ -59,6 +39,21 @@ Users.findOne({}).exec(function(err, document) {
     var found=document.lastName;
     console.log(found);
 });
+
+var Items = mongoose.model('Items', usersSchema);
+
+Users.find({}).exec(function (err, collection) {
+    if (collection.length === 0) {
+        Users.create({
+            userName: 'joeBloggs',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
+            privilege: 0,
+            status: 0
+        })
+    }
+});
+
 passport.use(new localStrategy(
     function(username, password, done) {
         Users.findOne({userName:username}).exec(function(err, document) {

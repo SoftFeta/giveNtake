@@ -1,4 +1,4 @@
-angular.module("app",[]).controller('mvNavbarController', function($scope) {
+angular.module('app',[]).controller('mvNavbarController', function($scope) {
    $scope.signIn=function(username, password){
        toastr.clear();
        if (typeof username === 'undefined' || username == '') {

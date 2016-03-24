@@ -1,4 +1,4 @@
-<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="The main page of our CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><script>toastr.options.closeButton = true;
+<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="The main page of our CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
 toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controller="mainCtrl" onload="initMap()"><nav class="navbar navbar-fixed-top navbar-dark">
     <button class="navbar-toggler hidden-sm-up pull-lg-right" type="button" data-toggle="collapse"
             data-target="#collapsingNavbar">
@@ -31,39 +31,87 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
 <div class="container-fluid" id="main">
     <div class="col-md-12 col-lg-12">
         <div class="card card-block">
-            <div class="bs-callout bs-callout-warning hidden">
+            <div id="failed" class="bs-callout bs-callout-danger hidden">
                 <h4>Oh snap!</h4>
 
                 <p>This form seems to be invalid :(</p>
             </div>
-            <div class="bs-callout bs-callout-info hidden">
+            <div id="done" class="bs-callout bs-callout-success hidden">
                 <h4>Yay!</h4>
 
                 <p>Everything seems to be ok :)</p>
             </div>
             <h4 class="card-title">Sign up</h4>
 
-            <p class="card-text">Sign up is open to recognized personnel only.</p>
+            <p class="card-text">Read the terms of service.</p>
 
             <div align="center">
-                <div style="height: 200px;width: 80%;overflow-y: scroll;border: 2px solid #666;background-color: #ccc;padding: 8px;">
-                    <h1 align="center">TERMS OF USAGE</h1>
-                    <p align="left">This application is designed for Sha Tin brethrens who gives away and accepts unused goods for free. Monetary transaction is strictly prohibited. Advertising, abusive language, fraud, turning out late, and posting ambiguous item description and image are not welcomed as well. Offending the rules may result in an account block.</p>
-                    <p align="left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In in aliquam risus. In et nisi convallis, lacinia risus ut, mollis urna. Curabitur congue quis metus pellentesque aliquam. Pellentesque vitae hendrerit justo. Sed convallis, eros nec ullamcorper iaculis, turpis eros scelerisque neque, vehicula finibus sem odio et nisi. Nulla elementum sed orci et scelerisque. Nunc interdum rutrum purus. Maecenas nunc sem, blandit ut hendrerit quis, bibendum pretium augue. Pellentesque a nunc eu magna malesuada viverra. Aenean eget hendrerit leo. Nulla mollis velit leo, nec hendrerit elit ullamcorper quis. Nunc vitae purus ac risus congue congue id sit amet purus.</p>
-                    <p align="left">Praesent tempus, neque eget pellentesque venenatis, lacus augue posuere tortor, quis tincidunt mauris velit eget erat. Aliquam mauris felis, fringilla at felis at, feugiat vestibulum dolor. Sed pretium ultricies tincidunt. Donec lacinia blandit erat id malesuada. Mauris eu erat ut augue aliquet laoreet non eu quam. Etiam nulla nisi, tincidunt nec sagittis eu, varius et dui. Proin velit nulla, feugiat non posuere vitae, convallis ut dui. Nam rutrum finibus quam eget imperdiet. Cras rutrum ex a vestibulum fermentum. Ut venenatis, odio eleifend fringilla consequat, eros mauris interdum purus, a luctus quam nibh sit amet lorem. Duis vitae felis ac ligula posuere facilisis id at sem.</p>
+                <div id="terms"
+                     style="height: 300px;width: 80%;overflow-y: scroll;border: 2px solid #666;background-color: #ccc;padding: 8px;">
+                    <h1 align="center">TERMS OF SERVICE</h1>
+
+                    <p align="left">This application is designed for Sha Tin brethrens who gives away and accepts unused
+                        goods for free. Monetary transaction is strictly prohibited. Advertising, abusive language,
+                        fraud, turning out late, and posting ambiguous item description and image are not welcomed as
+                        well. Offending the rules may result in an account block.</p>
+
+                    <p align="left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In in aliquam risus. In et
+                        nisi convallis, lacinia risus ut, mollis urna. Curabitur congue quis metus pellentesque aliquam.
+                        Pellentesque vitae hendrerit justo. Sed convallis, eros nec ullamcorper iaculis, turpis eros
+                        scelerisque neque, vehicula finibus sem odio et nisi. Nulla elementum sed orci et scelerisque.
+                        Nunc interdum rutrum purus. Maecenas nunc sem, blandit ut hendrerit quis, bibendum pretium
+                        augue. Pellentesque a nunc eu magna malesuada viverra. Aenean eget hendrerit leo. Nulla mollis
+                        velit leo, nec hendrerit elit ullamcorper quis. Nunc vitae purus ac risus congue congue id sit
+                        amet purus.</p>
+
+                    <p align="left">Praesent tempus, neque eget pellentesque venenatis, lacus augue posuere tortor, quis
+                        tincidunt mauris velit eget erat. Aliquam mauris felis, fringilla at felis at, feugiat
+                        vestibulum dolor. Sed pretium ultricies tincidunt. Donec lacinia blandit erat id malesuada.
+                        Mauris eu erat ut augue aliquet laoreet non eu quam. Etiam nulla nisi, tincidunt nec sagittis
+                        eu, varius et dui. Proin velit nulla, feugiat non posuere vitae, convallis ut dui. Nam rutrum
+                        finibus quam eget imperdiet. Cras rutrum ex a vestibulum fermentum. Ut venenatis, odio eleifend
+                        fringilla consequat, eros mauris interdum purus, a luctus quam nibh sit amet lorem. Duis vitae
+                        felis ac ligula posuere facilisis id at sem.</p>
+
                     <h1 align="center">PRIVACY POLICY</h1>
-                    <p align="left">This website is 100% non-profit. We WILL NOT use your personal information in any commercial activities. We will ask for your consent before collecting your personal information.</p>
-                    <p align="left">Phasellus dapibus dui ac risus vestibulum, eu hendrerit sem ultricies. Donec dignissim tempus massa vel tincidunt. Aliquam maximus eget erat et venenatis. Quisque ullamcorper euismod diam vel iaculis. Ut suscipit, lectus a rutrum mollis, enim turpis posuere nibh, eget pretium nunc ipsum sed arcu. Sed volutpat convallis luctus. Quisque ante velit, convallis non risus finibus, rhoncus ornare erat. Nam aliquet nibh arcu, et mattis libero pharetra ac. Pellentesque venenatis purus sit amet congue ullamcorper. Aliquam euismod pulvinar metus, porttitor tempor massa efficitur eget. Cras hendrerit in felis a bibendum. Praesent non lacinia ex, a tincidunt lectus. Proin convallis volutpat lorem, ut ultricies enim vulputate in. Curabitur lacinia, metus a placerat fringilla, urna arcu dignissim tellus, vel aliquam tortor orci in dui.</p>
-                    <p align="left">Etiam et ornare turpis. Ut egestas erat orci, in elementum neque tempus eu. Vivamus pretium in urna eget posuere. Pellentesque laoreet sapien at mauris accumsan cursus. Suspendisse malesuada cursus augue vel posuere. Nam sollicitudin finibus nunc, nec pellentesque diam consectetur non. Proin ac erat mi. Sed ullamcorper mauris nec nulla fringilla, et accumsan nisi dignissim. Sed at consequat orci. Nunc id eros mi.</p>
+
+                    <p align="left">This website is 100% non-profit. We WILL NOT use your personal information in any
+                        commercial activities. We will ask for your consent before collecting your personal
+                        information.</p>
+
+                    <p align="left">Phasellus dapibus dui ac risus vestibulum, eu hendrerit sem ultricies. Donec
+                        dignissim tempus massa vel tincidunt. Aliquam maximus eget erat et venenatis. Quisque
+                        ullamcorper euismod diam vel iaculis. Ut suscipit, lectus a rutrum mollis, enim turpis posuere
+                        nibh, eget pretium nunc ipsum sed arcu. Sed volutpat convallis luctus. Quisque ante velit,
+                        convallis non risus finibus, rhoncus ornare erat. Nam aliquet nibh arcu, et mattis libero
+                        pharetra ac. Pellentesque venenatis purus sit amet congue ullamcorper. Aliquam euismod pulvinar
+                        metus, porttitor tempor massa efficitur eget. Cras hendrerit in felis a bibendum. Praesent non
+                        lacinia ex, a tincidunt lectus. Proin convallis volutpat lorem, ut ultricies enim vulputate in.
+                        Curabitur lacinia, metus a placerat fringilla, urna arcu dignissim tellus, vel aliquam tortor
+                        orci in dui.</p>
+
+                    <p align="left">Etiam et ornare turpis. Ut egestas erat orci, in elementum neque tempus eu. Vivamus
+                        pretium in urna eget posuere. Pellentesque laoreet sapien at mauris accumsan cursus. Suspendisse
+                        malesuada cursus augue vel posuere. Nam sollicitudin finibus nunc, nec pellentesque diam
+                        consectetur non. Proin ac erat mi. Sed ullamcorper mauris nec nulla fringilla, et accumsan nisi
+                        dignissim. Sed at consequat orci. Nunc id eros mi.</p>
+                </div>
+                <script>
+                    $('#terms').on('scroll', function () {
+                        if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                            var a=$('#continue');
+                            if (a.hasClass('hidden')) a.removeClass('hidden');
+                        }
+                    })
+                </script>
+                <div id="continue" class="hidden">
+                    <hr>
+                    <button type="button" class="btn btn-primary" onclick="$('#failed').show()">Submit</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<footer class="card-footer">
-    <p class="text-lg-center"><i class="fa fa-copyright fa-rotate-180"></i> Copyleft Alexander Poon, 2016. | <a
-            href="#">Terms & conditions</a> | <a href="#">Privacy Policy</a></p>
-</footer>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -93,4 +141,34 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
             </div>
         </div>
     </div>
-</div></body></html>
+</div><footer class="card-footer"><p class="text-lg-center"><i class="fa fa-copyright fa-rotate-180"></i> Copyleft Alexander Poon, 2016.
+ |<a href="#" data-target="#termsModal" data-toggle="modal"> Terms & conditions</a> |<a href="#" data-target="#privacyModal" data-toggle="modal"> Privacy Policy</a></p></footer><div id="termsModal" tabindex="-1" role="dialog" class="modal fade"><div role="document" class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><h4 id="myModalLabel" class="modal-title">Terms & conditions</h4></div><div class="modal-body"><h5 align="center">TERMS OF SERVICE</h5><p align="left">This application is designed for Sha Tin brethrens who gives away and accepts unused
+goods for free. Monetary transaction is strictly prohibited. Advertising, abusive language, fraud,
+turning out late, and posting ambiguous item description and image are not welcomed as well.
+Offending the rules may result in an account block.</p><p align="left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In in aliquam risus. In et nisi
+convallis, lacinia risus ut, mollis urna. Curabitur congue quis metus pellentesque aliquam.
+Pellentesque vitae hendrerit justo. Sed convallis, eros nec ullamcorper iaculis, turpis eros
+scelerisque neque, vehicula finibus sem odio et nisi. Nulla elementum sed orci et scelerisque. Nunc
+interdum rutrum purus. Maecenas nunc sem, blandit ut hendrerit quis, bibendum pretium augue.
+Pellentesque a nunc eu magna malesuada viverra. Aenean eget hendrerit leo. Nulla mollis velit leo,
+nec hendrerit elit ullamcorper quis. Nunc vitae purus ac risus congue congue id sit amet purus.</p><p align="left">Praesent tempus, neque eget pellentesque venenatis, lacus augue posuere tortor, quis
+tincidunt mauris velit eget erat. Aliquam mauris felis, fringilla at felis at, feugiat vestibulum
+dolor. Sed pretium ultricies tincidunt. Donec lacinia blandit erat id malesuada. Mauris eu erat ut
+augue aliquet laoreet non eu quam. Etiam nulla nisi, tincidunt nec sagittis eu, varius et dui. Proin
+velit nulla, feugiat non posuere vitae, convallis ut dui. Nam rutrum finibus quam eget imperdiet.
+Cras rutrum ex a vestibulum fermentum. Ut venenatis, odio eleifend fringilla consequat, eros mauris
+interdum purus, a luctus quam nibh sit amet lorem. Duis vitae felis ac ligula posuere facilisis id
+at sem.</p></div><div class="modal-footer"><button type="button" data-dismiss="modal" class="btn btn-primary-outline">OK</button></div></div></div></div><div id="privacyModal" tabindex="-1" role="dialog" class="modal fade"><div role="document" class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><h4 id="myModalLabel" class="modal-title">Privacy Policy</h4></div><div class="modal-body"><h5 align="center">PRIVACY POLICY</h5><p align="left">This website is 100% non-profit. We WILL NOT use your personal information in any
+commercial activities. We will ask for your consent before collecting your personal information.</p><p align="left">Phasellus dapibus dui ac risus vestibulum, eu hendrerit sem ultricies. Donec dignissim
+tempus massa vel tincidunt. Aliquam maximus eget erat et venenatis. Quisque ullamcorper euismod diam
+vel iaculis. Ut suscipit, lectus a rutrum mollis, enim turpis posuere nibh, eget pretium nunc ipsum
+sed arcu. Sed volutpat convallis luctus. Quisque ante velit, convallis non risus finibus, rhoncus
+ornare erat. Nam aliquet nibh arcu, et mattis libero pharetra ac. Pellentesque venenatis purus sit
+amet congue ullamcorper. Aliquam euismod pulvinar metus, porttitor tempor massa efficitur eget. Cras
+hendrerit in felis a bibendum. Praesent non lacinia ex, a tincidunt lectus. Proin convallis volutpat
+lorem, ut ultricies enim vulputate in. Curabitur lacinia, metus a placerat fringilla, urna arcu
+dignissim tellus, vel aliquam tortor orci in dui.</p><p align="left">Etiam et ornare turpis. Ut egestas erat orci, in elementum neque tempus eu. Vivamus
+pretium in urna eget posuere. Pellentesque laoreet sapien at mauris accumsan cursus. Suspendisse
+malesuada cursus augue vel posuere. Nam sollicitudin finibus nunc, nec pellentesque diam consectetur
+non. Proin ac erat mi. Sed ullamcorper mauris nec nulla fringilla, et accumsan nisi dignissim. Sed
+at consequat orci. Nunc id eros mi.</p></div><div class="modal-footer"><button type="button" data-dismiss="modal" class="btn btn-primary-outline">OK</button></div></div></div></div></body></html>
