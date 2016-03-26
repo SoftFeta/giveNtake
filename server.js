@@ -33,11 +33,11 @@ passport.use(new localStrategy(
     }
 ));
 passport.serializeUser(function (user, done) {
-    done(null, user.id);
+    if (user) done(null, user.id);
 });
 
 passport.deserializeUser(function (id, done) {
-    User.findById(id, function (err, user) {
+    Users.findById({'_id':id}, function (err, user) {
         if (user) return done(err, user);
         else return done(null, false);
     });

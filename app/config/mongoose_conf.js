@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-module.exports = function() {
+module.exports = function () {
     mongoose.connect('dord.mynetgear.com:27017');
     var db = mongoose.connection;
     db.on('error', console.error.bind(console, "Connection error!"));
@@ -24,7 +24,7 @@ module.exports = function() {
                 lastName: 'Bloggs',
                 privilege: 0,
                 status: 0
-            })
+            });
         }
     });
     Users.findOne({}).exec(function (err, document) {
