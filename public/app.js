@@ -1,8 +1,21 @@
 var app=angular.module('app', []);
 app.controller('mainCtrl', function($scope) {
     var leaves = ['#headingThree', '#headingFour', '#headingFive', '#headingSix'];
-    for (book = 0; book < 16; book++) {
-        leaves.push("#books"+book.toString());
+    $scope.subcat_1=[{tag: 'school0', title: 'Primary school textbooks'},{tag: 'school1', title: 'Primary school notes & supplementary exercises'},{tag: 'school2', title:'Secondary school textbooks'}, {tag: 'school3', title: 'Secondary school notes & supplementary exercises'}, {tag: 'school4', title: 'Stationery'}];
+    $scope.subcat_2=[{tag: 'books0', title: 'Fiction'},{tag: 'books1', title: 'Arts'},{tag: 'books2', title:'Cookbooks'}, {tag: 'books3', title: 'Science'}, {tag: 'books4', title: 'Computer Science'}, {tag: 'books5', title: 'Sociology'}, {tag: 'books6', title: 'Engineering'},  {tag: 'books7', title: 'Politics'}, {tag: 'books8', title: 'Religion & Spirituality'}, {tag: 'books9', title: 'Philosophy'}, {tag: 'books10', title: 'Law'}, {tag: 'books11', title: 'Metaphysics'},{tag: 'books12', title: 'Lifestyle'}, {tag: 'books13', title: 'History, Biographies & Memoirs'}, {tag: 'books14', title: 'Reference works'}, {tag: 'books15', title: 'Periodicals'}];
+    $scope.subcat_5=[{tag: 'music0', title: 'Musical Instruments (full/components)'}, {tag: 'music1', title: 'Musical instruments accesories (e.g. woodwind reeds, guitar picks, instrument stands)'}, {tag: 'music2', title: 'Manuscripts'}];
+    $scope.subcat_6=[{tag: 'books0', title: 'Fiction'},{tag: 'books1', title: 'Arts'},{tag: 'books2', title:'Cookbooks'}, {tag: 'books3', title: 'Science'}, {tag: 'books4', title: 'Computer Science'}, {tag: 'books5', title: 'Sociology'}, {tag: 'books6', title: 'Engineering'},  {tag: 'books7', title: 'Politics'}, {tag: 'books8', title: 'Religion & Spirituality'}, {tag: 'books9', title: 'Philosophy'}, {tag: 'books10', title: 'Law'}, {tag: 'books11', title: 'Metaphysics'},{tag: 'books12', title: 'Lifestyle'}, {tag: 'books13', title: 'History, Biographies & Memoirs'}, {tag: 'books14', title: 'Reference works'}, {tag: 'books15', title: 'Periodicals'}];
+    var subcats = [];
+    subcats.push($scope.subcat_1);
+    subcats.push($scope.subcat_2);
+    subcats.push($scope.subcat_5);
+    subcats.push($scope.subcat_6);
+    console.log(subcats[1][1].tag);
+    var foo;
+    for (foo = 0; foo < subcats.length; foo++) {
+        for (bar=0; bar < subcats[foo].length; bar++) {
+            leaves.push("#" + subcats[foo][bar].tag);
+        }
     }
     $scope.highlightString = function(str) {
         var standalone = $(str);
@@ -27,8 +40,6 @@ app.controller('mainCtrl', function($scope) {
             chevron.addClass('spin');
         }
     };
-    $scope.subcat_1=[{tag: 'school0', title: 'Primary school textbooks'},{tag: 'school1', title: 'Primary school notes & supplementary exercises'},{tag: 'school2', title:'Secondary school textbooks'}, {tag: 'school3', title: 'Secondary school notes & supplementary exercises'}, {tag: 'school4', title: 'Stationery'}];
-    $scope.subcat_2=[{tag: 'books0', title: 'Fiction'},{tag: 'books1', title: 'Arts'},{tag: 'books2', title:'Cookbooks'}, {tag: 'books3', title: 'Science'}, {tag: 'books4', title: 'Computer Science'}, {tag: 'books5', title: 'Sociology'}, {tag: 'books6', title: 'Engineering'},  {tag: 'books7', title: 'Politics'}, {tag: 'books8', title: 'Religion & Spirituality'}, {tag: 'books9', title: 'Philosophy'}, {tag: 'books10', title: 'Law'}, {tag: 'books11', title: 'Metaphysics'},{tag: 'books12', title: 'Lifestyle'}, {tag: 'books13', title: 'History, Biographies & Memoirs'}, {tag: 'books14', title: 'Reference works'}, {tag: 'books15', title: 'Periodicals'}];
 });
 app.controller('mvNavbarController', function($scope) {
     $scope.signIn=function(username, password){
@@ -43,6 +54,7 @@ app.controller('mvNavbarController', function($scope) {
         //Hello from ng-controller, "+username+". Thanks for dropping by, but I am not done yet.
     }
 });
+
 //angular.module('app').config(function($routeProvider, $locationProvider) {
 //   $locationProvider.html5Mode(true).when('/', {controller:'mainCtrl'});
 //});

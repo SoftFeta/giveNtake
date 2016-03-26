@@ -63,17 +63,8 @@
                                      role="tabpanel"
                                      aria-labelledby="headingOne">
                                     <div ng-repeat="subsubcat_1 in subcat_1">
-                                        <div class="card-header" role="tab" id="heading{{subsubcat_1.tag}}"
-                                             style="background-color:lemonchiffon;">
-                                            <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
-                                               href="#{{subsubcat_1.tag}}"
-                                               aria-expanded="false" aria-controls="collapseTwoOne">
-                                                <i class="fa fa-caret-right fa-lg fa-fw"></i> {{subsubcat_1.title}}
-                                            </a>
-                                        </div>
-                                        <div id="{{subsubcat_1.tag}}" class="card-block collapse" role="tabpanel"
-                                             aria-labelledby="heading{{subsubcat_1.tag}}">
-                                            <p style="color: black">Placeholder</p>
+                                        <div class="card-header others" role="tab" id="{{subsubcat_1.tag}}">
+                                            <a href="#" ng-click="highlightString('#'+subsubcat_1.tag)">{{subsubcat_1.title}}</a>
                                         </div>
                                     </div>
                                 </div>
@@ -113,16 +104,20 @@
                                     </a>
                                 </div>
                                 <div class="card-header others" role="tab" id="headingFive">
-                                    <a class="collapsed accordion_standalone" data-toggle="collapse"
+                                    <a class="collapsed" data-toggle="collapse"
                                        data-parent="#accordion"
-                                       href="#collapseFive" aria-expanded="false" aria-controls="collapseFive"
-                                       ng-click="highlightString('#headingFive')">
-                                        <i class="fa fa-music fa-fw"></i> Music
+                                       href="#collapseFive" aria-expanded="false" aria-controls="collapseFive" ng-click="turn('#chevron5')">
+                                        <i id="chevron5" class="fa fa-chevron-right fa-lg"></i>  <i class="fa fa-music fa-fw"></i> Music
                                     </a>
                                 </div>
-                                <div id="collapseFive" class="card-block collapse" role="tabpanel"
+                                <div id="collapseFive" class="card-block collapse accordion_item_correction"
+                                     role="tabpanel"
                                      aria-labelledby="headingFive">
-                                    <p style="color: black">Placeholder</p>
+                                    <div ng-repeat="cat in subcat_5">
+                                        <div class="card-header others" role="tab" id="{{cat.tag}}">
+                                            <a href="#" ng-click="highlightString('#'+cat.tag)">{{cat.title}}</a>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-header others" role="tab" id="headingSix">
                                     <a class="collapsed accordion_standalone" data-toggle="collapse"
@@ -153,7 +148,7 @@
 //                                    center: {lat: 22.408994, lng: 114.215203},
                                 map = new google.maps.Map(mapDiv, {
                                     center: {lat: 22.419468, lng: 114.206620},
-                                    zoom: 14,
+                                    zoom: 13,
                                     maxZoom: 15,
                                     minZoom: 11,
                                     mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -621,9 +616,9 @@
                 <div class="row">
                     <table>
                         <tr>
-                            <td rowspan="4"><img src="http://placehold.it/198x145" class="img-responsive img-rounded">
+                            <td rowspan="5"><img src="http://placehold.it/198x145" class="img-responsive img-rounded">
                             </td>
-                            <td rowspan="4" style="vertical-align: top; padding-left: 5%; padding-right: 2%;">
+                            <td rowspan="5" style="vertical-align: top; padding-left: 5%; padding-right: 2%;">
                                 <p>
                                     <span class="tag tag-pill tag-danger">Trending</span> <span
                                         class="tag tag-pill tag-warning">New listing</span>
@@ -632,6 +627,9 @@
                             <td>
                                 <h4>Item #{{dex}}</h4>
                             </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="small"><a href="#">Books and periodicals</a> > <a href="#">Computer Science</a></td>
                         </tr>
                         <tr>
                             <td><h5>Donor:　</h5></td>
