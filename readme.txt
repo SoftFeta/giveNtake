@@ -1,1 +1,1 @@
-The website is live on [dord.mynetgear.com:6894](http://dord.mynetgear.com:6894/).
+The website is live on http://dord.mynetgear.com:6894/
