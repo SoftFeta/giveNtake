@@ -24,4 +24,7 @@ module.exports = function(app) {
         });
         auth(req, res, next);
     });
+    app.post('/register_submit', function (req, res, next) {
+        //reserved
+    });
 };
