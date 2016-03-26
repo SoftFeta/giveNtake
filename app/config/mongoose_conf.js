@@ -1,6 +1,4 @@
-var mongoose = require('mongoose'),
-    passport = require('passport'),
-    localStrategy = require('passport-local').Strategy;
+var mongoose = require('mongoose');
 
 module.exports = function() {
     mongoose.connect('dord.mynetgear.com:27017');
@@ -47,25 +45,4 @@ module.exports = function() {
             })
         }
     });
-
-    passport.use(new localStrategy(
-        function (username, password, done) {
-            Users.findOne({userName: username}).exec(function (err, document) {
-                if (user) {
-                    return done(null, user);
-                } else {
-                    return done(null, false);
-                }
-            })
-        }
-    ));
-    passport.serializeUser(function (user, done) {
-        done(null, user.id);
-    });
-
-    passport.deserializeUser(function (id, done) {
-        User.findById(id, function (err, user) {
-            done(err, user);
-        });
-    });
-}
+};
