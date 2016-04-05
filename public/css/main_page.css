@@ -103,6 +103,10 @@ body {
     padding-left: 1.2em;
 }
 
+.toast-top-right {
+    top: 160px;
+}
+
 /* register */
 .scroll {
     height: 200px;

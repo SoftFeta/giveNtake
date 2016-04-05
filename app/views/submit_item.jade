@@ -1,233 +1,190 @@
-doctype html
-html(lang='en')
-    head
-        meta(charset='UTF-8')
-        title Submit Item Page
-        meta(name='description', content='Page for submitting item of our CSCI3100 project.')
-        link(href='../public/favicon.ico', rel='shortcut icon', type='image/x-icon')
-        link(href='../public/vendor/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet')
-        link(href='../public/vendor/font-awesome/css/font-awesome.min.css', rel='stylesheet')
-        link(href='../public/css/main_page.css', rel='stylesheet')
-        script(src='../public/vendor/angular/angular.min.js')
-        script(src='../public/vendor/jquery/dist/jquery.min.js')
-        script(src='../public/vendor/bootstrap/dist/js/bootstrap.min.js')
-    body(onload='initMap()', ng-app='')
-        nav.navbar.navbar-fixed-top.navbar-dark
-            button.navbar-toggler.hidden-sm-up.pull-lg-right(type='button', data-toggle='collapse', data-target='#collapsingNavbar')
-                | ☰
-            a.navbar-brand(href='#') Project ThreeOneOhOh
-            ul.nav.navbar-nav
-                li.nav-item.active
-                    a.nav-link(href='#') Home
-                li.nav-item.dropdown
-                    a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button') Button
-                    .dropdown-menu
-                        a.dropdown-item(href='#') Dropdown Link 1
-                        a.dropdown-item(href='#') Dropdown Link 2
-                        a.dropdown-item(href='#') Dropdown Link 3
-                li.nav-item
-                    a.nav-link(data-target='#myModal', data-toggle='modal') Button
-            div(ng-include="'nav.html'")
-            form.form-inline(role='search')
-                input.form-control(type='search', placeholder='Insert keywords or hashtag...', style='width: 20%')
-                button.btn.btn-primary(type='submit') Search
-        #main.container-fluid
-            .row.row-offcanvas.row-offcanvas-left
-                .col-md-8.col-lg-9.main
-                    div(align='center')
-                    script(type='text/javascript').
-                        $('.carousel').carousel({
-                            interval: 300
-                        });
-                    br
-                    .jumbotron
-                        h1.display-3 Post your item here!
-                        p.lead You can post your item here by simply fill in and submit the form below.
-                    .card.card-default.card-block(ng-repeat='dex in [1]', style="background-image: url('../public/damasks_in_ivory.png')")
-                        .row
-                            form.form-inline(role='form')
-                                table(style='>\
-                <tr>\
-                <td rowspan=')
-                                    img.img-responsive.img-rounded(src='http://placehold.it/198x145')
-                                    p
-                                        button.btn.btn-primary(type='button') Upload
-                                    td(style='vertical-align: top; padding-left: 5%; padding-right: 2%;')
-                                    tr
-                                        td(colspan='2')
-                                            h5 Donor Name:
-                                        td(colspan='2', align='right')
-                                            input#Dname(type='text', name='name')
-                                    tr
-                                        td(colspan='2')
-                                            h5 Item quantity:
-                                        td(colspan='2', align='right')
-                                            input(pattern='[0-1000]', name='product', type='text')
-                                    tr
-                                        td(colspan='2')
-                                            h5 Item description:
-                                        td(colspan='2', align='right')
-                                            textarea#myTextArea(rows='3', cols='20')
-                                    tr
-                                        td(colspan='2')
-                                            h5 Category:　
-                                        script.
-                                            $(function (){
-                                                var catNum = $("#categories option:selected").val();
-                                                var subCat = $("#"+"subcat"+catNum);
-                                                var subCat1 = $('#subcat1');
-                                                var subCat2 = $('#subcat2');
-                                                var subCat7 = $('#subcat7');
-                                                var subCat8 = $('#subcat8');
-                                                var subCat9 = $('#subcat9');
-                                                var subCat10 = $('#subcat10');
-                                                var subCat13 = $('#subcat13');
-                                                $("#categories").change(function(){
-                                                    catNum = $("#categories option:selected").val();
-                                                    subCat = $("#"+"subcat"+catNum);
-                                                    subCat1.hide();
-                                                    subCat2.hide();
-                                                    subCat7.hide();
-                                                    subCat8.hide();
-                                                    subCat9.hide();
-                                                    subCat10.hide();
-                                                    subCat13.hide();
-                                                    subCat.show();
-                                                    //
-                                                });
-                                            }) ;
-                                        td(colspan='2', align='right')
-                                            select#categories
-                                                option(value='1')
-                                                    | Books and Periodicals
-                                                option(value='2')
-                                                    | School and Textbooks (excluding tertiary education)
-                                                option(value='3')
-                                                    | Tertiary education textbooks, notes & supplementary exercises
-                                                option(value='4')
-                                                    | Cosmetics
-                                                option(value='5')
-                                                    | Coupons
-                                                option(value='6')
-                                                    | Tickets (e.g. movie tickets, funfair tickets, concert tickets)
-                                                option(value='7')
-                                                    | Toys
-                                                option(value='8')
-                                                    | Music
-                                                option(value='9')
-                                                    | Multimedia
-                                                option(value='10')
-                                                    | Electronics and Accessories
-                                                option(value='11')
-                                                    | Food and Beverages
-                                                option(value='12')
-                                                    | Sports
-                                                option(value='13')
-                                                    | Garments
-                                                option(value='14')
-                                                    | Others
-                                    tr
-                                        td(colspan='2')
-                                            h5 Sub-category:　
-                                        td(colspan='2', align='right')
-                                            select#subcat1(style='display: inline')
-                                                option(value='1')
-                                                    | Fiction
-                                                option(value='2')
-                                                    | Arts
-                                                option(value='3')
-                                                    | Cookbooks
-                                                option(value='4')
-                                                    | Science
-                                                option(value='5')
-                                                    | Computer Science
-                                                option(value='6')
-                                                    | Sociology
-                                                option(value='7')
-                                                    | Engineering
-                                                option(value='8')
-                                                    | Politics
-                                                option(value='9')
-                                                    | Religion & Spirituality
-                                                option(value='10')
-                                                    | Philosophy
-                                                option(value='11')
-                                                    | Law
-                                                option(value='12')
-                                                    | Metaphysics
-                                                option(value='13')
-                                                    | Lifestyle
-                                                option(value='14')
-                                                    | History, Biographies & Memoirs
-                                                option(value='15')
-                                                    | Reference works (e.g. dictionaries, encyclopedias)
-                                                option(value='16')
-                                                    | Periodicals
-                                                option(value='17')
-                                                    | Others
-                                            select#subcat2(style='display: none')
-                                                option(value='1')
-                                                    | Primary school textbooks
-                                                option(value='2')
-                                                    | Primary school notes & supplementary exercises
-                                                option(value='3')
-                                                    | Secondary school textbooks
-                                                option(value='4')
-                                                    | Secondary school notes & supplementary exercises
-                                                option(value='5')
-                                                    | Stationeries
-                                            select#subcat7(style='display: none')
-                                                option(value='1')
-                                                    | Plushies
-                                                option(value='2')
-                                                    | Figures, figurines & Legos
-                                                option(value='3')
-                                                    | Puzzles
-                                                option(value='4')
-                                                    | Board games & card games
-                                                option(value='5')
-                                                    | Others
-                                            select#subcat8(style='display: none')
-                                                option(value='1')
-                                                    | Musical instruments (assembled/components)
-                                                option(value='2')
-                                                    | Accessories (e.g. guitar picks, clarinet stands)
-                                                option(value='3')
-                                                    | Manuscripts
-                                            select#subcat9(style='display: none')
-                                                option(value='1')
-                                                    | PC components
-                                                option(value='2')
-                                                    | PC peripherals
-                                                option(value='3')
-                                                    | Kitchen
-                                                option(value='4')
-                                                    | Gadgets
-                                                option(value='5')
-                                                    | Others
-                                            select#subcat13(style='display: none')
-                                                option(value='1')
-                                                    | Men’s clothing
-                                                option(value='2')
-                                                    | Women’s clothing
-                                                option(value='3')
-                                                    | Uniforms
-                                                option(value='4')
-                                                    | Backpacks
-                                                option(value='5')
-                                                    | Handbags
-                                    tr
-                                        td(colspan='2')
-                                            h5 Item Hashtag:　
-                                        td(colspan='2', align='right')
-                                            textarea#hashtag(rows='3', cols='20')
-                                    tr
-                                        td(colspan='2')
-                                            h5 Item location:　
-                                        td(colspan='2', align='right')
-                                            input#name(type='text', name='name')
-                                    tr
-                                        td(colspan='2')
-                                        td
-                                            hr
-                                            button.btn.btn-primary(type='submit') Submit
+.jumbotron
+    h1.display-3 Post your item here!
+    p.lead You can post your item here by simply fill in and submit the form below.
+.card.card-default.card-block
+    table
+        tr
+        td
+        img.img-responsive.img-rounded(src='http://placehold.it/198x145')
+        p
+           button.btn.btn ign: top; padding-left: 5%; padding-right: 2%;')
+        tr
+            td(colspan='2')
+                h5 Donor Name:
+            td(colspan='2', align='right')
+                input#Dname(type='text', name='name')
+        tr
+            td(colspan='2')
+                h5 Item quantity:
+            td(colspan='2', align='right')
+                input(pattern='[0-1000]', name='product', type='text')
+        tr
+            td(colspan='2')
+                h5 Item description:
+            td(colspan='2', align='right')
+                textarea#myTextArea(rows='3', cols='20')
+        tr
+            td(colspan='2')
+                h5 Category:　
+            script.
+                $(function () {
+                    var catNum = $("#categories option:selected").val();
+                    var subCat = $("#" + "subcat" + catNum);
+                    var subCat1 = $('#subcat1');
+                    var subCat2 = $('#subcat2');
+                    var subCat7 = $('#subcat7');
+                    var subCat8 = $('#subcat8');
+                    var subCat9 = $('#subcat9');
+                    var subCat10 = $('#subcat10');
+                    var subCat13 = $('#subcat13');
+                    $("#categories").change(function () {
+                        catNum = $("#categories option:selected").val();
+                        subCat = $("#" + "subcat" + catNum);
+                        subCat1.hide();
+                        subCat2.hide();
+                        subCat7.hide();
+                        subCat8.hide();
+                        subCat9.hide();
+                        subCat10.hide();
+                        subCat13.hide();
+                        subCat.show();
+                        //
+                    });
+                });
+            td(colspan='2', align='right')
+                select#categories
+                    option(value='1')
+                        | Books and Periodicals
+                    option(value='2')
+                        | School and Textbooks (excluding tertiary education)
+                    option(value='3')
+                        | Tertiary education textbooks, notes & supplementary exercises
+                    option(value='4')
+                        | Cosmetics
+                    option(value='5')
+                        | Coupons
+                    option(value='6')
+                        | Tickets (e.g. movie tickets, funfair tickets, concert tickets)
+                    option(value='7')
+                        | Toys
+                    option(value='8')
+                        | Music
+                    option(value='9')
+                        | Multimedia
+                    option(value='10')
+                        | Electronics and Accessories
+                    option(value='11')
+                        | Food and Beverages
+                    option(value='12')
+                        | Sports
+                    option(value='13')
+                        | Garments
+                    option(value='14')
+                        | Others
+        tr
+            td(colspan='2')
+                h5 Sub-category:　
+            td(colspan='2', align='right')
+                select#subcat1(style='display: inline')
+                    option(value='1')
+                        | Fiction
+                    option(value='2')
+                        | Arts
+                    option(value='3')
+                        | Cookbooks
+                    option(value='4')
+                        | Science
+                    option(value='5')
+                        | Computer Science
+                    option(value='6')
+                        | Sociology
+                    option(value='7')
+                        | Engineering
+                    option(value='8')
+                        | Politics
+                    option(value='9')
+                        | Religion & Spirituality
+                    option(value='10')
+                        | Philosophy
+                    option(value='11')
+                        | Law
+                    option(value='12')
+                        | Metaphysics
+                    option(value='13')
+                        | Lifestyle
+                    option(value='14')
+                        | History, Biographies & Memoirs
+                    option(value='15')
+                        | Reference works (e.g. dictionaries, encyclopedias)
+                    option(value='16')
+                        | Periodicals
+                    option(value='17')
+                        | Others
+                select#subcat2(style='display: none')
+                    option(value='1')
+                        | Primary school textbooks
+                    option(value='2')
+                        | Primary school notes & supplementary exercises
+                    option(value='3')
+                        | Secondary school textbooks
+                    option(value='4')
+                        | Secondary school notes & supplementary exercises
+                    option(value='5')
+                        | Stationeries
+                select#subcat7(style='display: none')
+                    option(value='1')
+                        | Plushies
+                    option(value='2')
+                        | Figures, figurines & Legos
+                    option(value='3')
+                        | Puzzles
+                    option(value='4')
+                        | Board games & card games
+                    option(value='5')
+                        | Others
+                select#subcat8(style='display: none')
+                    option(value='1')
+                        | Musical instruments (assembled/components)
+                    option(value='2')
+                        | Accessories (e.g. guitar picks, clarinet stands)
+                    option(value='3')
+                        | Manuscripts
+                select#subcat9(style='display: none')
+                    option(value='1')
+                        | PC components
+                    option(value='2')
+                        | PC peripherals
+                    option(value='3')
+                        | Kitchen
+                    option(value='4')
+                        | Gadgets
+                    option(value='5')
+                        | Others
+                select#subcat13(style='display: none')
+                    option(value='1')
+                        | Men’s clothing
+                    option(value='2')
+                        | Women’s clothing
+                    option(value='3')
+                        | Uniforms
+                    option(value='4')
+                        | Backpacks
+                    option(value='5')
+                        | Handbags
+        tr
+            td(colspan='2')
+                h5 Item Hashtag:　
+            td(colspan='2', align='right')
+                textarea#hashtag(rows='3', cols='20')
+        tr
+            td(colspan='2')
+                h5 Item location:　
+            td(colspan='2', align='right')
+                input#name(type='text', name='name')
+        tr
+            td(colspan='2')
+            td
+                hr
+                button.btn.btn-primary(type='submit') Submit
+.row
+        form.form-inline(role='form')

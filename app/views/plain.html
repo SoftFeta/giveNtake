@@ -106,8 +106,10 @@
                                 <div class="card-header others" role="tab" id="headingFive">
                                     <a class="collapsed" data-toggle="collapse"
                                        data-parent="#accordion"
-                                       href="#collapseFive" aria-expanded="false" aria-controls="collapseFive" ng-click="turn('#chevron5')">
-                                        <i id="chevron5" class="fa fa-chevron-right fa-lg"></i>  <i class="fa fa-music fa-fw"></i> Music
+                                       href="#collapseFive" aria-expanded="false" aria-controls="collapseFive"
+                                       ng-click="turn('#chevron5')">
+                                        <i id="chevron5" class="fa fa-chevron-right fa-lg"></i> <i
+                                            class="fa fa-music fa-fw"></i> Music
                                     </a>
                                 </div>
                                 <div id="collapseFive" class="card-block collapse accordion_item_correction"
@@ -477,13 +479,13 @@
                                 });
                                 marker.addListener('dragend', function () {
                                     if (google.maps.geometry.poly.containsLocation(marker.getPosition(), cuhk)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: CUHK";
+                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>CUHK</strong>";
                                     } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), mos)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: Ma On Shan";
+                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>Ma On Shan</strong>";
                                     } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), stn)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: Sha Tin Metro";
+                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>Sha Tin Metro</strong>";
                                     } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), psk)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: Pak Shek Kok";
+                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>Pak Shek Kok</strong>";
                                     } else {
                                         document.getElementById("area").innerHTML = "Neighbourhood: Not currently supported";
                                     }
@@ -495,9 +497,9 @@
                         </script>
                         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEPe62lfwgD8zFH2o7rzFdVmpkbiJFOwc&callback=initMap&sensor=FALSE"
                                 async defer></script>
-                        <p id="coords" class="text-lg-center">Drag the marker!</p>
+                        <p id="coords" style="color:#333; font-size: x-small;" class="text-lg-center">　</p>
 
-                        <p id="area" class="text-lg-center"></p>
+                        <p id="area" class="text-lg-center">Drag the marker!</p>
                         <br><a href="#" class="btn btn-outline-secondary"
                                onclick="toastr.info('Thanks for dropping by, but I am not done yet');">Search</a>
                     </div>
@@ -522,7 +524,7 @@
             </div>
         </div>
         <div class="col-md-8 col-lg-9 main">
-            <div class="row">
+            <div class="row" ng-hide="identity.isAuthenticated()">
                 <div class="col-md-6">
                     <div class="card card-inverse card-success">
                         <div class="card-block bg-success">
@@ -603,14 +605,14 @@
                 });
             </script>
             <br>
-
-            <div class="jumbotron">
+            <div class="jumbotron" ng-hide="identity.isAuthenticated()">
                 <h1 class="display-3">Welcome to Bountiful</h1>
 
                 <p class="lead">The software application is designed to facilitate the matching of individuals that
                     gives away and
                     accepts certain unused/second-hand goods in the Sha Tin District of Hong Kong.</p>
             </div>
+            <div ng-show="identity.isAuthenticated()" ng-include="'partials/buttons'"></div>
             <div ng-repeat="dex in [1,2,3,4,5,6,7,8,9,10]"
                  class="card card-default card-block" style="background-image: url('damasks_in_ivory.png')">
                 <div class="row">
@@ -629,7 +631,8 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2" class="small"><a href="#">Books and periodicals</a> > <a href="#">Computer Science</a></td>
+                            <td colspan="2" class="small"><a href="#">Books and periodicals</a> > <a href="#">Computer
+                                Science</a></td>
                         </tr>
                         <tr>
                             <td><h5>Donor:　</h5></td>

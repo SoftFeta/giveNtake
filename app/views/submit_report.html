@@ -1,0 +1,139 @@
+<body>
+
+<div id="report_abuse_button" class="btn-group">
+    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Report Abuse
+    </button>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" href="#" data-target="#report_user_form" data-toggle="modal">Report the User</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#" data-target="#report_item_form" data-toggle="modal">Report the Item</a>
+    </div>
+</div>
+
+<div ng-app="report_user_app" ng-controller="report_user_ctrl" class="modal fade" id="report_user_form" tabindex="-1" role="dialog" aria-labelledby="report_user_modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="report_user_form_label"> Report user {{subject_name}} </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <fieldset class="form-group">
+                        <label for="report_user_form_datetime">Time of report</label>
+                        <input class="form-control" id="report_user_form_datetime" type="text" placeholder="{{datetime | date:'yyyy-MM-dd hh:mm:ss a'}}" readonly>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="report_user_form_reporter_name">Reporter user name</label>
+                        <input class="form-control" id="report_user_form_reporter_name" type="text" placeholder="{{reporter_name}}" readonly>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="report_user_form_subject_name">Subject user name</label>
+                        <input class="form-control" id="report_user_form_subject_name" type="text" placeholder="{{subject_name}}" readonly>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="report_user_form_abuse_type">Type of Abuse</label>
+                        <select class="form-control" id="report_user_form_abuse_type">
+                            <option>(Choose one)</option>
+                            <option>Did not turn up in the end</option>
+                            <option>Attempting monetary transaction</option>
+                            <option>Do not support Donald Trump</option>
+                            <option>Others</option>
+                        </select>
+                    </fieldset>
+                    <fieldset class="form-group" ng-class="{ 'has-error': userForm.email.$invalid && userForm.email.$dirty }">
+                        <label for="report_user_form_abuse_content">Content of Abuse</label>
+                        <textarea class="form-control" id="report_user_form_abuse_content" rows="5"></textarea>
+                    </fieldset>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"> I understand and undertake consequences of abusing the report abuse function.
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Submit Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div ng-app="report_item_app" ng-controller="report_item_ctrl" class="modal fade" id="report_item_form" tabindex="-1" role="dialog" aria-labelledby="report_item_modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="report_item_form_label">Report item {{item_name}} </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <fieldset class="form-group">
+                        <label for="report_item_form_datetime">Time of report</label>
+                        <input class="form-control" id="report_item_form_datetime" type="text" placeholder="{{datetime | date:'yyyy-MM-dd hh:mm:ss a'}}" readonly>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="report_item_form_reporter_name">Reporter user name</label>
+                        <input class="form-control" id="report_item_form_reporter_name" type="text" placeholder="{{reporter_name}}" readonly>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="report_item_form_item_name">Subject user name</label>
+                        <input class="form-control" id="report_item_form_item_name" type="text" placeholder="{{item_name}}" readonly>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="report_item_form_abuse_type">Type of Abuse</label>
+                        <select class="form-control" id="report_item_form_abuse_type">
+                            <option>(Choose one)</option>
+                            <option>Unclear description</option>
+                            <option>Inappropriate item</option>
+                            <option>Item being political-sensitive</option>
+                            <option>Others</option>
+                        </select>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="report_item_form_abuse_content">Content of Abuse</label>
+                        <textarea class="form-control" id="report_item_form_abuse_content" rows="5"></textarea>
+                    </fieldset>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"> I understand and undertake consequences of abusing the report abuse function.
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary"  data-dismiss="modal">Submit Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var reportUserModule = angular.module('report_user_app', []);
+    reportUserModule.controller('report_user_ctrl', function($scope) {
+        $scope.reporter_name= "threeOneOhOh Admin";
+        $scope.subject_name="bill_liu";
+        $scope.datetime=new Date();
+    });
+    angular.bootstrap(document.getElementById('report_user_form'),['report_user_app']);
+    var reportItemModule = angular.module('report_item_app', []);
+    reportItemModule.controller('report_item_ctrl', function($scope) {
+        $scope.reporter_name= "threeOneOhOh Admin";
+        $scope.item_name="nice model boat";
+        $scope.datetime=new Date();
+    });
+    angular.bootstrap(document.getElementById('report_item_form'),['report_item_app']);
+</script>
+
+
+
+</body>
+</html>

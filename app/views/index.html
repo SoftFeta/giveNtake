@@ -1,4 +1,4 @@
-<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="The main page of our CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
+<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
 toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controller="mainCtrl"><nav class="navbar navbar-fixed-top navbar-dark">
     <button class="navbar-toggler hidden-sm-up pull-lg-right" type="button" data-toggle="collapse"
             data-target="#collapsingNavbar">
@@ -107,8 +107,10 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                 <div class="card-header others" role="tab" id="headingFive">
                                     <a class="collapsed" data-toggle="collapse"
                                        data-parent="#accordion"
-                                       href="#collapseFive" aria-expanded="false" aria-controls="collapseFive" ng-click="turn('#chevron5')">
-                                        <i id="chevron5" class="fa fa-chevron-right fa-lg"></i>  <i class="fa fa-music fa-fw"></i> Music
+                                       href="#collapseFive" aria-expanded="false" aria-controls="collapseFive"
+                                       ng-click="turn('#chevron5')">
+                                        <i id="chevron5" class="fa fa-chevron-right fa-lg"></i> <i
+                                            class="fa fa-music fa-fw"></i> Music
                                     </a>
                                 </div>
                                 <div id="collapseFive" class="card-block collapse accordion_item_correction"
@@ -478,13 +480,13 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                 });
                                 marker.addListener('dragend', function () {
                                     if (google.maps.geometry.poly.containsLocation(marker.getPosition(), cuhk)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: CUHK";
+                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>CUHK</strong>";
                                     } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), mos)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: Ma On Shan";
+                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>Ma On Shan</strong>";
                                     } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), stn)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: Sha Tin Metro";
+                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>Sha Tin Metro</strong>";
                                     } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), psk)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: Pak Shek Kok";
+                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>Pak Shek Kok</strong>";
                                     } else {
                                         document.getElementById("area").innerHTML = "Neighbourhood: Not currently supported";
                                     }
@@ -494,11 +496,11 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                                 });
                             }
                         </script>
-                        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEPe62lfwgD8zFH2o7rzFdVmpkbiJFOwc&sensor=FALSE"
+                        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEPe62lfwgD8zFH2o7rzFdVmpkbiJFOwc&callback=initMap&sensor=FALSE"
                                 async defer></script>
-                        <p id="coords" class="text-lg-center">Drag the marker!</p>
+                        <p id="coords" style="color:#333; font-size: x-small;" class="text-lg-center">　</p>
 
-                        <p id="area" class="text-lg-center"></p>
+                        <p id="area" class="text-lg-center">Drag the marker!</p>
                         <br><a href="#" class="btn btn-outline-secondary"
                                onclick="toastr.info('Thanks for dropping by, but I am not done yet');">Search</a>
                     </div>
@@ -523,7 +525,7 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
             </div>
         </div>
         <div class="col-md-8 col-lg-9 main">
-            <div class="row">
+            <div class="row" ng-hide="identity.isAuthenticated()">
                 <div class="col-md-6">
                     <div class="card card-inverse card-success">
                         <div class="card-block bg-success">
@@ -604,14 +606,14 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                 });
             </script>
             <br>
-
-            <div class="jumbotron">
+            <div class="jumbotron" ng-hide="identity.isAuthenticated()">
                 <h1 class="display-3">Welcome to Bountiful</h1>
 
                 <p class="lead">The software application is designed to facilitate the matching of individuals that
                     gives away and
                     accepts certain unused/second-hand goods in the Sha Tin District of Hong Kong.</p>
             </div>
+            <div ng-show="identity.isAuthenticated()" ng-include="'partials/buttons'"></div>
             <div ng-repeat="dex in [1,2,3,4,5,6,7,8,9,10]"
                  class="card card-default card-block" style="background-image: url('damasks_in_ivory.png')">
                 <div class="row">
@@ -630,7 +632,8 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2" class="small"><a href="#">Books and periodicals</a> > <a href="#">Computer Science</a></td>
+                            <td colspan="2" class="small"><a href="#">Books and periodicals</a> > <a href="#">Computer
+                                Science</a></td>
                         </tr>
                         <tr>
                             <td><h5>Donor:　</h5></td>
@@ -687,7 +690,7 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
         </div>
     </div>
 </div><footer class="card-footer"><p class="text-lg-center"><i class="fa fa-copyright fa-rotate-180"></i> Copyleft Alexander Poon, 2016.
- |<a href="#" data-target="#termsModal" data-toggle="modal"> Terms & conditions</a> |<a href="#" data-target="#privacyModal" data-toggle="modal"> Privacy Policy</a><br/>Powered by the MEAN stack, Jade, and<strong> Bootstrap 4 alpha</strong></p></footer><div id="termsModal" tabindex="-1" role="dialog" class="modal fade"><div role="document" class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><h4 id="myModalLabel" class="modal-title">Terms & conditions</h4></div><div class="modal-body"><h5 align="center">TERMS OF SERVICE</h5><p align="left">This application is designed for Sha Tin brethrens who gives away and accepts unused
+ |<a href="#" data-target="#termsModal" data-toggle="modal"> Terms & conditions</a> |<a href="#" data-target="#privacyModal" data-toggle="modal"> Privacy Policy</a><br/>Powered by the MEAN stack, Jade, and<strong> Bootstrap 4 alpha</strong></p></footer><div id="termsModal" tabindex="-1" role="dialog" class="modal fade"><div role="document" class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><h4 id="myModalLabel" class="modal-title"><i class="fa fa-exclamation-circle"></i> Terms & conditions</h4></div><div class="modal-body"><h5 align="center">TERMS OF SERVICE (last modified: 21<sup>st</sup> March, 2016)</h5><p align="left">This application is designed for Sha Tin brethrens who gives away and accepts unused
 goods for free. Monetary transaction is strictly prohibited. Advertising, abusive language, fraud,
 turning out late, and posting ambiguous item description and image are not welcomed as well.
 Offending the rules may result in an account block.</p><p align="left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In in aliquam risus. In et nisi
@@ -703,7 +706,7 @@ augue aliquet laoreet non eu quam. Etiam nulla nisi, tincidunt nec sagittis eu, 
 velit nulla, feugiat non posuere vitae, convallis ut dui. Nam rutrum finibus quam eget imperdiet.
 Cras rutrum ex a vestibulum fermentum. Ut venenatis, odio eleifend fringilla consequat, eros mauris
 interdum purus, a luctus quam nibh sit amet lorem. Duis vitae felis ac ligula posuere facilisis id
-at sem.</p></div><div class="modal-footer"><button type="button" data-dismiss="modal" class="btn btn-primary-outline">OK</button></div></div></div></div><div id="privacyModal" tabindex="-1" role="dialog" class="modal fade"><div role="document" class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><h4 id="myModalLabel" class="modal-title">Privacy Policy</h4></div><div class="modal-body"><h5 align="center">PRIVACY POLICY</h5><p align="left">This website is 100% non-profit. We WILL NOT use your personal information in any
+at sem.</p></div><div class="modal-footer"><button type="button" data-dismiss="modal" class="btn btn-primary-outline">OK</button></div></div></div></div><div id="privacyModal" tabindex="-1" role="dialog" class="modal fade"><div role="document" class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><h4 id="myModalLabel" class="modal-title"><i class="fa fa-shield"></i> Privacy Policy</h4></div><div class="modal-body"><h5 align="center">PRIVACY POLICY</h5><p align="left">This website is 100% non-profit. We WILL NOT use your personal information in any
 commercial activities. We will ask for your consent before collecting your personal information.</p><p align="left">Phasellus dapibus dui ac risus vestibulum, eu hendrerit sem ultricies. Donec dignissim
 tempus massa vel tincidunt. Aliquam maximus eget erat et venenatis. Quisque ullamcorper euismod diam
 vel iaculis. Ut suscipit, lectus a rutrum mollis, enim turpis posuere nibh, eget pretium nunc ipsum

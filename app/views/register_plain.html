@@ -157,16 +157,32 @@
                         <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
                             <input id="inputPassword" type="password" class="form-control" placeholder="Password">
                             <small class="text-muted">
-                                8 characters or above, with at least 1 digit included
+                                8 to 20 characters with at least one upper case letter, one lower case letter, and one digit
                             </small>
                         </div>
                     </div>
                     <script>
                         var username=$('#inputUser');
+                        var password=$('#inputPassword');
+                        var regex=/^((?=.*d)(?=.*[a-z])(?=.*[A-Z]).{8,20})$/;
                         username.focusout(function() {
                             if (username.val().length>0 && !username.hasClass('form-control-danger')) {
                                 $('#userContainer').addClass('has-success');
                                 username.addClass('form-control-success');
+                            }
+                        });
+                        password.focusout(function() {
+                            var pwContainer=$('#passwordContainer');
+                            if (password.val().match(regex) != null) {
+                                pwContainer.removeClass('has-danger');
+                                password.removeClass('form-control-danger');
+                                pwContainer.addClass('has-success');
+                                password.addClass('form-control-success');
+                            } else {
+                                pwContainer.removeClass('has-success');
+                                password.removeClass('form-control-success');
+                                pwContainer.addClass('has-danger');
+                                password.addClass('form-control-danger');
                             }
                         });
                     </script>
