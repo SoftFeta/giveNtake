@@ -1,6 +1,9 @@
 var app = angular.module('app', []);
 
 app.controller('mainCtrl', function ($scope, mvIdentity) {
+    $scope.search_keyword=null;
+    $scope.search_cat=null;
+    $scope.search_neighbourhood=null;
     $scope.identity = mvIdentity;
     var leaves = ['#headingThree', '#headingFour', '#headingFive', '#headingSix'];
     $scope.subcat_1 = [{tag: 'school0', title: 'Primary school textbooks'}, {
