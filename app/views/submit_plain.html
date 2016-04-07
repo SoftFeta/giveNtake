@@ -31,18 +31,20 @@
     <div class="col-md-12 col-lg-12">
         <div class="card card-block">
             <h4 class="card-title">Submit new item</h4>
+
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label for="itemName">Item name:</label>
+                    <label class="required" for="itemName">Item name:</label>
                 </div>
                 <div class="col-md-9">
                     <input id="itemName" type="text" class="form-control">
                 </div>
             </div>
             <br>
+
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label for="demo_vertical2">Item quantity:</label>
+                    <label class="required" for="demo_vertical2">Item quantity (max: 10):</label>
                 </div>
                 <div class="col-md-9">
                     <input id="demo_vertical2" type="text" value="1" name="demo_vertical2">
@@ -55,21 +57,22 @@
                 </div>
             </div>
             <br>
+
             <div class="row">
                 <div class="col-md-3" align="right">
-                    Item image:
+                    <label class="required" for="exampleInputFile">Item image:</label>
                 </div>
                 <div class="col-md-9">
                     <fieldset class="form-group">
-                        <label for="exampleInputFile">File input</label>
                         <input type="file" class="form-control-file" id="exampleInputFile">
-                        <small class="text-muted">This is some placeholder block-level help text for the above input. It's a bit lighter and easily wraps to a new line.</small>
+                        <small class="text-muted">Supported file types: *.jpg, *.jpeg, *.png, *.tif, *.tiff
+                        </small>
                     </fieldset>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-3" align="right">
-                    Item name
+                    <label class="required">Item description:</label>
                 </div>
                 <div class="col-md-9">
                     Control
@@ -77,11 +80,25 @@
             </div>
             <div class="row">
                 <div class="col-md-3" align="right">
-                    Item name
+                    <label class="required">Neighbourhood:</label>
+                </div>
+                <div class="col-md-9">
+                    <div ng-include="'partials/gmap'"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3" align="right">
+                    Hashtags:
                 </div>
                 <div class="col-md-9">
                     Control
                 </div>
+            </div>
+            <hr>
+            <div align="center">
+                <button type="submit" class="btn btn-primary" href="#">
+                    Submit
+                </button>
             </div>
         </div>
     </div>

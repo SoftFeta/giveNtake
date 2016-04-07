@@ -176,3 +176,10 @@ body {
 .hidden {
     display: none;
 }
+
+.required:before {
+    content: "*";
+    color: red;
+    font-weight: bold;
+    padding-left:1%;
+}
