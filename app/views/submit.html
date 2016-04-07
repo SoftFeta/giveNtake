@@ -31,6 +31,7 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
 <div class="container-fluid" id="main">
     <div class="col-md-12 col-lg-12">
         <div class="card card-block">
+            <h4 class="card-title">Submit new item</h4>
             <div class="row">
                 <div class="col-md-3" align="right">
                     <label for="itemName">Item name:</label>
@@ -39,25 +40,32 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
                     <input id="itemName" type="text" class="form-control">
                 </div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label for="demo_vertical">Item name:</label>
+                    <label for="demo_vertical2">Item quantity:</label>
                 </div>
                 <div class="col-md-9">
-                    <input id="demo_vertical" type="text" value="" name="demo_vertical">
+                    <input id="demo_vertical2" type="text" value="1" name="demo_vertical2">
                     <script>
-                        $("input[name='demo_vertical']").TouchSpin({
-                            verticalbuttons: true
+                        $("input[name='demo_vertical2']").TouchSpin({
+                            min: 1,
+                            max: 10
                         });
                     </script>
                 </div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-md-3" align="right">
-                    Item name:
+                    Item image:
                 </div>
                 <div class="col-md-9">
-                    Control
+                    <fieldset class="form-group">
+                        <label for="exampleInputFile">File input</label>
+                        <input type="file" class="form-control-file" id="exampleInputFile">
+                        <small class="text-muted">This is some placeholder block-level help text for the above input. It's a bit lighter and easily wraps to a new line.</small>
+                    </fieldset>
                 </div>
             </div>
             <div class="row">
@@ -78,7 +86,6 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
             </div>
         </div>
     </div>
-</div>
 </div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">

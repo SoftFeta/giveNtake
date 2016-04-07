@@ -2,7 +2,9 @@ var auth = require('./auth');
 
 module.exports = function(app) {
     app.get('/', function (req, res) {
-        res.render('index');
+        res.render('index', {
+            bootstrappedUser: req.user
+        });
     });
     app.get('/register', function (req, res) {
         res.render('register');
@@ -17,6 +19,10 @@ module.exports = function(app) {
         res.send('Loaded');
     });
     app.post('/login', auth.authenticate);
+    app.post('/logout', function (req, res) {
+        req.logout();
+        res.end();
+    });
     app.post('/register_submit', function (req, res, next) {
         //reserved
     });

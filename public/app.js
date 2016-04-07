@@ -83,7 +83,7 @@ app.controller('mainCtrl', function ($scope, mvIdentity) {
     };
 });
 
-app.controller('mvNavbarController', function ($scope, $http, mvIdentity) {
+app.controller('mvNavbarController', function ($scope, $http, mvIdentity, mvAuth, $location) {
         $scope.greet = function () {
             var currentDate = new Date();
             var hour = currentDate.getHours();
@@ -109,34 +109,63 @@ app.controller('mvNavbarController', function ($scope, $http, mvIdentity) {
             } else {
                 if (typeof password === 'undefined' || password == '') toastr.error("You did not enter your password!");
                 else {
-                    $http.post('login', {username: username, password: password}).then(function (response) {
-                        if (response.data.success) {
-                            mvIdentity.currentUser = response.data.user;
+                    mvAuth.authenticateUser(username, password).then(function(success) {
+                        if (success) {
                             toastr.success("Logged in");
                         } else {
                             toastr.error("Invalid username or password!");
                         }
-                        //Hello from ng-controller, "+username+". Thanks for dropping by, but I am not done yet.
                     });
                 }
             }
         };
         $scope.signOut = function () {
-
+            mvAuth.logoutUser().then(function() {
+                $scope.username="";
+                $scope.password="";
+                toastr.success("Logged out");
+                $location.path('/');
+            })
         }
     }
 );
 
-app.factory('mvIdentity', function () {
+app.factory('mvIdentity', function ($window) {
+    var currentUser;
+    if (!!$window.bootstrappedUserObject) {
+        currentUser = $window.bootstrappedUserObject;
+    }
     return {
-        currentUser: undefined,
+        currentUser: currentUser,
         isAuthenticated: function () {
             return !!this.currentUser;
         }
     }
 });
 
-app.factory('mvAuth', function () {
+app.factory('mvAuth', function ($http, mvIdentity, $q) {
+    return {
+        authenticateUser: function(username, password) {
+            var dfd=$q.defer();
+            $http.post('/login', {username: username, password: password}).then(function (response) {
+                if (response.data.success) {
+                    mvIdentity.currentUser = response.data.user;
+                    dfd.resolve(true);
+                } else {
+                    dfd.resolve(false);
+                }
+            });
+            return dfd.promise;
+        },
+        logoutUser: function() {
+            var dfd=$q.defer();
+            $http.post('/logout', {logout:true}).then(function() {
+                mvIdentity.currentUser = undefined;
+                dfd.resolve();
+            });
+            return dfd.promise;
+        }
+    }
 });
 
 //angular.module('app').config(function($routeProvider, $locationProvider) {
