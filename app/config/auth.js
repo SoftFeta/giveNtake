@@ -11,3 +11,20 @@ exports.authenticate = function (req, res, next) {
     });
     auth(req, res, next);
 };
+
+exports.requiresRole = function(role) {
+    return function (req, res, next) {
+        if (!req.isAuthenticated() || req.user.roles.indexOf(role) === -1) {
+            //Use res.writeHead instead of res.status
+            //res.writeHead(403, {
+            //    'Location': 'https://en.wikipedia.org/wiki/Andrzej_Duda'
+            //});
+            //res.end();
+            res.writeHead(403, {'Content-Type': 'text/plain'});
+            res.write("Meh!\n");
+            res.end();
+        } else {
+            next();
+        }
+    }
+};

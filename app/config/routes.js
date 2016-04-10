@@ -24,6 +24,6 @@ module.exports = function(app) {
         req.logout();
         res.end();
     });
-    app.get('/api/users', users.getUsers);
+    app.get('/api/users', auth.requiresRole('admin'), users.getUsers);
     app.post('/api/users', users.createUser);
 };

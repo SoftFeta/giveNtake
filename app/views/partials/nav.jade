@@ -31,7 +31,7 @@
                 strong  {{identity.currentUser.firstName + " " + identity.currentUser.lastName}}
                 | .
         li.nav-item
-            a.tag.tag-danger(ng-show="identity.currentUser.isAdmin()")
+            a.tag.tag-danger(ng-show="identity.currentUser.isAdmin()" href="/api/users")
                 | Admin
         //li.nav-item
         //    .nav-link
