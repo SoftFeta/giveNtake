@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'),
-    crypto = require('crypto');
+    encrypt = require('./encryption');
 
 module.exports = function () {
     mongoose.connect('dord.mynetgear.com:27017');
@@ -20,15 +20,15 @@ module.exports = function () {
     });
     usersSchema.methods = {
         authenticate: function(pwToMatch) {
-            return hashPassword(this.salt, pwToMatch) === this.hashed_pwd;
+            return encrypt.hashPassword(this.salt, pwToMatch) === this.hashed_pwd;
         }
     };
     var Users = mongoose.model('Users', usersSchema);
     Users.find({}).exec(function (err, collection) {
         if (collection.length === 0) {
             var salt, hash;
-            salt=createSalt();
-            hash=hashPassword(salt, 'weAreNotFoieGras123');
+            salt=encrypt.createSalt();
+            hash=encrypt.hashPassword(salt, 'weAreNotFoieGras123');
             Users.create({
                 userName: 'joeBloggs',
                 firstName: 'Joe',
@@ -46,7 +46,7 @@ module.exports = function () {
     });
 
     var itemsSchema = new mongoose.Schema({
-            pic: Buffer,
+            pic: {data: Buffer, contentType: String},
             giver: String,
             taker: String,
             clickTime: Date,
@@ -67,15 +67,13 @@ module.exports = function () {
 
     var Items = mongoose.model('Items', itemsSchema);
 
-    var dummyClickTime=new Date("2016-03-28T01:00:00+01:00");
-    var dummyGetTime=new Date("2016-03-28T01:00:00+01:00");
     Items.find({}).exec(function (err, collection) {
         if (collection.length === 0) {
             Items.create({
-                pic: '',
+                pic: {data: '', contentType: 'image/png'},
                 giver: 'joeBloggs',
                 taker: 'billLiu',
-                clickTime: dummyClickTime,
+                clickTime: new Date(),
                 trending: true,
                 newListing: true,
                 name: 'A lump of metal',
@@ -83,18 +81,9 @@ module.exports = function () {
                 neighbourhood: 'psk',
                 quantity: 15,
                 desc: 'no description',
-                getTime: dummyGetTime,
+                getTime: new Date(),
                 status: 0
             });
         }
     });
 };
-function createSalt() {
-    return crypto.randomBytes(128).toString('base64');
-}
-
-function hashPassword(salt, pwd) {
-    var hmac = crypto.createHmac('sha1', salt);
-    return hmac.update(pwd).digest('hex');
-}
-

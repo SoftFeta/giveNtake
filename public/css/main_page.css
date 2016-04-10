@@ -181,5 +181,11 @@ body {
     content: "*";
     color: red;
     font-weight: bold;
-    padding-left:1%;
+    /*padding-left:1%;*/
+    /*overflow: hidden;*/
+    /*white-space: nowrap;*/
+}
+
+.submit-label {
+    font-size: large;
 }

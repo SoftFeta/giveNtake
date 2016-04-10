@@ -1,9 +1,10 @@
-var app = angular.module('app', []);
+var app = angular.module('app', ['ngRoute']);
 
-app.controller('mainCtrl', function ($scope, mvIdentity) {
-    $scope.search_keyword=null;
-    $scope.search_cat=null;
-    $scope.search_neighbourhood=null;
+app.config(function($locationProvider, $routeProvider) {
+   //$locationProvider.html5Mode(true);
+});
+
+app.controller('mainCtrl', function ($scope, $http, $sce, mvIdentity) {
     $scope.identity = mvIdentity;
     var leaves = ['#headingThree', '#headingFour', '#headingFive', '#headingSix'];
     $scope.subcat_1 = [{tag: 'school0', title: 'Primary school textbooks'}, {
@@ -84,6 +85,90 @@ app.controller('mainCtrl', function ($scope, mvIdentity) {
             chevron.addClass('spin');
         }
     };
+    //Search
+    $scope.search_keyword = null;
+    $scope.search_cat = null;
+    $scope.search_neighbourhood = null;
+
+    $http.get('bric_a_brac.json').then(function(response) {
+        var dummyItem_0 = {
+            id: 3,
+            pic: {data: response.data.image[0], contentType: 'image/png'},
+            giver: 'joeBloggs',
+            taker: 'billLiu',
+            clickTime: new Date(),
+            trending: true,
+            newListing: true,
+            name: 'A Lump of Coal',
+            cat: 'book1',
+            neighbourhood: 'psk',
+            quantity: 1,
+            desc: $sce.trustAsHtml("Uh-oh."),
+            getTime: new Date(),
+            status: 0
+        };
+        var dummyItem_1 = {
+            id: 9,
+            pic: {data: response.data.image[1], contentType: 'image/png'},
+            giver: 'billLiu',
+            taker: 'joeBloggs',
+            clickTime: new Date(),
+            trending: true,
+            newListing: false,
+            name: 'Some Pieces of Wool',
+            cat: 'book1',
+            neighbourhood: 'cuhk',
+            quantity: 3,
+            desc: $sce.trustAsHtml("no description"),
+            getTime: new Date(),
+            status: 0
+        };
+        var dummyItem_2 = {
+            id: 81,
+            pic: {data: response.data.image[1], contentType: 'image/png'},
+            giver: 'billLiu',
+            taker: 'joeBloggs',
+            clickTime: new Date(),
+            trending: false,
+            newListing: true,
+            name: 'Some Pieces of Wool',
+            cat: 'book1',
+            neighbourhood: 'cuhk',
+            quantity: 2,
+            desc: $sce.trustAsHtml('<div style="font-family: '+"'times new roman'; color: firebrick; font-size: 48px; font-weight: bold; font-style: italic; text-decoration: underline;"+'">Description with formatting!</style>'),
+            getTime: new Date(),
+            status: 0
+        };
+        var dummyItem_3 = {
+            id: 6561,
+            pic: {data: response.data.image[1], contentType: 'image/png'},
+            giver: 'billLiu',
+            taker: 'joeBloggs',
+            clickTime: new Date(),
+            trending: false,
+            newListing: false,
+            name: 'Some Pieces of Wool',
+            cat: 'book1',
+            neighbourhood: 'cuhk',
+            quantity: 4,
+            desc: $sce.trustAsHtml("The <kbd>ng-repeat</kbd> directive of AngularJS is used to show items."),
+            getTime: new Date(),
+            status: 0
+        };
+        $scope.nextTen = [dummyItem_0, dummyItem_1, dummyItem_2, dummyItem_3];
+    });
+
+    $scope.search = function (keyword, cat, neighbourhood) {
+        console.log(keyword);
+        console.log(cat);
+        console.log(neighbourhood);
+        toastr.clear();
+        toastr.info("Server maintenence");
+    };
+    $scope.submitItem = function () {
+        toastr.clear();
+        toastr.info("Server maintenence");
+    };
 });
 
 app.controller('mvNavbarController', function ($scope, $http, mvIdentity, mvAuth, $location) {
@@ -112,7 +197,7 @@ app.controller('mvNavbarController', function ($scope, $http, mvIdentity, mvAuth
             } else {
                 if (typeof password === 'undefined' || password == '') toastr.error("You did not enter your password!");
                 else {
-                    mvAuth.authenticateUser(username, password).then(function(success) {
+                    mvAuth.authenticateUser(username, password).then(function (success) {
                         if (success) {
                             toastr.success("Logged in");
                         } else {
@@ -123,15 +208,25 @@ app.controller('mvNavbarController', function ($scope, $http, mvIdentity, mvAuth
             }
         };
         $scope.signOut = function () {
-            mvAuth.logoutUser().then(function() {
-                $scope.username="";
-                $scope.password="";
+            mvAuth.logoutUser().then(function () {
+                $scope.username = "";
+                $scope.password = "";
                 toastr.success("Logged out");
                 $location.path('/');
             })
         }
     }
 );
+
+app.controller('mvSignUpController', function($scope, mvAuth, $location) {
+    var newUserData = {
+        username: $scope.reg_username,
+        password: $scope.reg_password
+    };
+    mvAuth.createUser(newUserData).then(function() {
+        $location.path('');
+    });
+});
 
 app.factory('mvIdentity', function ($window) {
     var currentUser;
@@ -148,8 +243,8 @@ app.factory('mvIdentity', function ($window) {
 
 app.factory('mvAuth', function ($http, mvIdentity, $q) {
     return {
-        authenticateUser: function(username, password) {
-            var dfd=$q.defer();
+        authenticateUser: function (username, password) {
+            var dfd = $q.defer();
             $http.post('/login', {username: username, password: password}).then(function (response) {
                 if (response.data.success) {
                     mvIdentity.currentUser = response.data.user;
@@ -160,17 +255,16 @@ app.factory('mvAuth', function ($http, mvIdentity, $q) {
             });
             return dfd.promise;
         },
-        logoutUser: function() {
-            var dfd=$q.defer();
-            $http.post('/logout', {logout:true}).then(function() {
+        logoutUser: function () {
+            var dfd = $q.defer();
+            $http.post('/logout', {logout: true}).then(function () {
                 mvIdentity.currentUser = undefined;
                 dfd.resolve();
             });
             return dfd.promise;
+        },
+        createUser: function(newUserData) {
+
         }
     }
 });
-
-//angular.module('app').config(function($routeProvider, $locationProvider) {
-//   $locationProvider.html5Mode(true).when('/', {controller:'mainCtrl'});
-//});

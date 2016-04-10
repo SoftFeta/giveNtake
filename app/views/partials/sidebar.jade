@@ -11,7 +11,7 @@ html
                             input(type='checkbox', value='', checked='checked')
                             i.fa.fa-keyboard-o.fa-fw
                             |  Search by keyword or #hashtag
-                        input.form-control(type='search', placeholder='Insert keywords or hashtag...')
+                        input.form-control(type='search', placeholder='Insert keywords or hashtag...', id="userInput")
                     .checkbox.card-text
                         label
                             input(type='checkbox', value='', checked='checked')
@@ -27,18 +27,18 @@ html
                                 #collapseOne.card-block.collapse.accordion_item_correction(role='tabpanel', aria-labelledby='headingOne')
                                     div(ng-repeat='subsubcat_1 in subcat_1')
                                         .card-header.others(role='tab', id='{{subsubcat_1.tag}}')
-                                            a(href='#', ng-click="highlightString('#'+subsubcat_1.tag)") {{subsubcat_1.title}}
+                                            a(href='#', ng-click="highlightString('#'+subsubcat_1.tag); search_cat=subsubcat_1.tag") {{subsubcat_1.title}}
                                 #headingTwo.card-header(role='tab', style='background-color:lemonchiffon;')
                                     a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='false', aria-controls='collapseTwo', ng-click="turn('#chevron2')")
                                         i#chevron2.fa.fa-chevron-right.fa-lg
                                         i.fa.fa-book.fa-fw
                                         |                                 Books and Periodicals
                                 #collapseTwo.card-block.collapse.accordion_item_correction(role='tabpanel', aria-labelledby='headingTwo')
-                                    div(ng-repeat='subsubcat in subcat_2')
-                                        .card-header.others(role='tab', id='{{subsubcat.tag}}')
-                                            a(href='#', ng-click="highlightString('#'+subsubcat.tag)") {{subsubcat.title}}
+                                    div(ng-repeat='subsubcat_2 in subcat_2')
+                                        .card-header.others(role='tab', id='{{subsubcat_2.tag}}')
+                                            a(href='#', ng-click="highlightString('#'+subsubcat_2.tag); search_cat=subsubcat_2.tag") {{subsubcat_2.title}}
                                 #headingThree.card-header.others(role='tab')
-                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='#', ng-click="highlightString('#headingThree')")
+                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='#', ng-click="highlightString('#headingThree'); search_cat='Coupons'")
                                         i.fa.fa-ticket.fa-fw
                                         |  Coupons
                                 #headingFour.card-header.others(role='tab')
@@ -46,7 +46,7 @@ html
                                         i.fa.fa-puzzle-piece.fa-fw
                                         |  Toys
                                 #headingFive.card-header.others(role='tab')
-                                    a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapseFive', aria-expanded='false', aria-controls='collapseFive', ng-click="turn('#chevron5')")
+                                    a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapseFive', aria-expanded='false', aria-controls='collapseFive', ng-click="turn('#chevron5'); search_cat='Music'")
                                         i#chevron5.fa.fa-chevron-right.fa-lg
                                         i.fa.fa-music.fa-fw
                                         |  Music
@@ -55,7 +55,7 @@ html
                                         .card-header.others(role='tab', id='{{cat.tag}}')
                                             a(href='#', ng-click="highlightString('#'+cat.tag)") {{cat.title}}
                                 #headingSix.card-header.others(role='tab')
-                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='#collapseSix', aria-expanded='false', aria-controls='collapseSix', ng-click="highlightString('#headingSix')")
+                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='#collapseSix', aria-expanded='false', aria-controls='collapseSix', ng-click="highlightString('#headingSix'); search_cat='Electronics & Accessories'")
                                         i.fa.fa-mobile.fa-fw
                                         |  Electronics & Accessories
                                 #collapseSix.card-block.collapse(role='tabpanel', aria-labelledby='headingSix')
@@ -67,7 +67,7 @@ html
                             |  Search by location
                         div(ng-include="'partials/gmap'")
                         br
-                        a.btn.btn-outline-secondary(href='#', onclick="toastr.info('Thanks for dropping by, but I am not done yet');") Search
+                        a.btn.btn-outline-secondary(href='#', ng-click="search($('#userInput').val(), 0, 0);") Search
             .card.card-inverse(style='background-color: firebrick; border-color: firebrick;')
                 .card-block
                     h3.card-title

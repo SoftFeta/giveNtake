@@ -6,7 +6,7 @@
 
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label class="required" for="itemName">Item name:</label>
+                    <label class="required submit-label" for="itemName">Item name:</label>
                 </div>
                 <div class="col-md-9">
                     <input id="itemName" type="text" class="form-control">
@@ -16,7 +16,7 @@
 
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label class="required" for="demo_vertical2">Item quantity (max: 10):</label>
+                    <label class="required submit-label" for="demo_vertical2">Item quantity (max: 10):</label>
                 </div>
                 <div class="col-md-9">
                     <input id="demo_vertical2" type="text" value="1" name="demo_vertical2">
@@ -32,7 +32,7 @@
 
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label class="required" for="exampleInputFile">Item image:</label>
+                    <label class="required submit-label" for="exampleInputFile">Item image:</label>
                 </div>
                 <div class="col-md-9">
                     <fieldset class="form-group">
@@ -44,15 +44,19 @@
             </div>
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label class="required">Item description:</label>
+                    <label class="required submit-label">Item description:</label>
                 </div>
                 <div class="col-md-9">
-                    Control
+                    <strong>HTML is allowed</strong>
+                    <textarea class="form-control" rows="5"
+                              placeholder="Please describe your item accurately avoid ambiguous terms. Dimensions, material, brand, date of manufacture, and colour are often included."></textarea>
                 </div>
             </div>
+            <br>
+
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label class="required">Neighbourhood:</label>
+                    <label class="required submit-label">Neighbourhood:</label>
                 </div>
                 <div class="col-md-9">
                     <div ng-include="'partials/gmap'"></div>
@@ -60,15 +64,39 @@
             </div>
             <div class="row">
                 <div class="col-md-3" align="right">
-                    Hashtags:
+                    <label class="submit-label" for="hashtags">Tags:</label>
                 </div>
                 <div class="col-md-9">
-                    Control
+                    <fieldset class="form-group">
+                        <input id="hashtags" class="form-control form-control-lg" type="text" value="" data-role="tagsinput">
+                        <!--<script>-->
+                            <!--var elt = $('input');-->
+                            <!--elt.tagsinput({-->
+                                <!--tagClass: function (item) {-->
+                                    <!--switch (item.priority % 5) {-->
+                                        <!--case 0   :-->
+                                            <!--return 'tag tag-danger';-->
+                                        <!--case 1  :-->
+                                            <!--return 'tag tag-danger';-->
+                                        <!--case 2:-->
+                                            <!--return 'tag tag-success';-->
+                                        <!--case 3   :-->
+                                            <!--return 'tag tag-default';-->
+                                        <!--case 4     :-->
+                                            <!--return 'tag tag-warning';-->
+                                    <!--}-->
+                                <!--}-->
+                            <!--});-->
+                        <!--</script>-->
+                        <br>
+                        <small class="text-muted">Type tag and insert it by pressing <kbd>Enter ↵</kbd>
+                        </small>
+                    </fieldset>
                 </div>
             </div>
             <hr>
             <div align="center">
-                <button type="submit" class="btn btn-primary" href="#">
+                <button type="submit" ng-click="submitItem();" class="btn btn-primary" href="#">
                     Submit
                 </button>
             </div>

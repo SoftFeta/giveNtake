@@ -1,4 +1,5 @@
-var auth = require('./auth');
+var auth = require('./auth'),
+    users = require('./users');
 
 module.exports = function(app) {
     app.get('/', function (req, res) {
@@ -23,7 +24,6 @@ module.exports = function(app) {
         req.logout();
         res.end();
     });
-    app.post('/register_submit', function (req, res, next) {
-        //reserved
-    });
+    app.get('/api/users', users.getUsers);
+    app.post('/api/users', users.createUser);
 };

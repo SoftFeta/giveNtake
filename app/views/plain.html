@@ -93,44 +93,44 @@
                     accepts certain unused/second-hand goods in the Sha Tin District of Hong Kong.</p>
             </div>
             <div ng-show="identity.isAuthenticated()" ng-include="'partials/buttons'"></div>
-            <div ng-repeat="dex in [1,2,3,4,5,6,7,8,9,10]"
+            <div ng-repeat="dex in nextTen"
                  class="card card-default card-block" style="background-image: url('damasks_in_ivory.png')">
                 <div class="row">
-                    <table>
+                    <table width="100%">
                         <tr>
-                            <td rowspan="5"><img src="http://placehold.it/198x145" class="img-responsive img-rounded">
+                            <td rowspan="6" width="150px" style="vertical-align: top;"><img ng-src="data:{{dex.pic.contentType}};{{dex.pic.data}}" class="img-rounded" height="100px">
+                                <!--img-fluid (?)-->
                             </td>
-                            <td rowspan="5" style="vertical-align: top; padding-left: 5%; padding-right: 2%;">
+                            <td rowspan="6" width="250px" style="vertical-align: top; padding-left: 5%;">
                                 <p>
-                                    <span class="tag tag-pill tag-danger">Trending</span> <span
-                                        class="tag tag-pill tag-warning">New listing</span>
+                                    <span class="tag tag-pill tag-danger" ng-show="{{dex.trending}}">Trending</span> <span
+                                        class="tag tag-pill tag-warning" ng-show="{{dex.newListing}}">New listing</span>
                                 </p>
                             </td>
-                            <td>
-                                <h4>Item #{{dex}}</h4>
+                            <td colspan="2">
+                                <h4>{{dex.name}}</h4>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="small"><a href="#">Books and periodicals</a> > <a href="#">Computer
-                                Science</a></td>
+                                Science</a><br><br></td>
                         </tr>
                         <tr>
-                            <td><h5>Donor:　</h5></td>
-                            <td><h5><a href="#">bill_liu</a></h5></td>
+                            <td width="200px"><h5>Donor:　</h5></td>
+                            <td><h5><a ng-href="#users/{{dex.giver}}">{{dex.giver}}</a></h5></td>
                         </tr>
                         <tr>
                             <td><h5>Item quantity:　</h5></td>
-                            <td><h5>{{(dex+3)*2}}</h5></td>
+                            <td><h5>{{dex.quantity}}</h5></td>
                         </tr>
                         <tr>
                             <td><h5>Item description:　</h5></td>
-                            <td>The <kbd>ng-repeat</kbd> directive of AngularJS is used to show items.</td>
+                            <td><p ng-bind-html="dex.desc"></p></td>
                         </tr>
                         <tr>
-                            <td colspan="2"></td>
-                            <td>
+                            <td colspan="2">
                                 <hr>
-                                <a href="#" class="btn pull-lg-left btn-success btn-block"><i
+                                <a ng-href="#?take={{dex.id}}" class="btn pull-lg-left btn-success" style="width: 200px"><i
                                         class="fa fa-hand-lizard-o"></i> Take item</a></td>
                         </tr>
                     </table>
