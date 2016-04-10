@@ -1527,10 +1527,12 @@ function prepareDiscriminatorCriteria(query) {
  *
  * - `new`: bool - if true, return the modified document rather than the original. defaults to false (changed in 4.0)
  * - `upsert`: bool - creates the object if it doesn't exist. defaults to false.
+ * - `fields`: {Object|String} - Field selection. Equivalent to `.select(fields).findOneAndUpdate()`
  * - `sort`: if multiple docs are found by the conditions, sets the sort order to choose which doc to update
  * - `runValidators`: if true, runs [update validators](/docs/validation.html#update-validators) on this command. Update validators validate the update operation against the model's schema.
  * - `setDefaultsOnInsert`: if this and `upsert` are true, mongoose will apply the [defaults](http://mongoosejs.com/docs/defaults.html) specified in the model's schema if a new document is created. This option only works on MongoDB >= 2.4 because it relies on [MongoDB's `$setOnInsert` operator](https://docs.mongodb.org/v2.4/reference/operator/update/setOnInsert/).
  * - `passRawResult`: if true, passes the [raw result from the MongoDB driver as the third callback parameter](http://mongodb.github.io/node-mongodb-native/2.0/api/Collection.html#findAndModify)
+ * - `context` (string) if set to 'query' and `runValidators` is on, `this` will refer to the query in custom validator functions that update validation runs. Does nothing if `runValidators` is false.
  *
  * ####Callback Signature
  *     function(error, doc) {
@@ -1791,6 +1793,9 @@ Query.prototype._findAndModify = function(type, callback) {
     }
 
     if (!doc || (utils.isObject(doc) && Object.keys(doc).length === 0)) {
+      if (opts.passRawResult) {
+        return callback(null, null, res);
+      }
       return callback(null, null);
     }
 
@@ -1951,6 +1956,7 @@ Query.prototype._execUpdate = function(callback) {
  *  - `setDefaultsOnInsert`: if this and `upsert` are true, mongoose will apply the [defaults](http://mongoosejs.com/docs/defaults.html) specified in the model's schema if a new document is created. This option only works on MongoDB >= 2.4 because it relies on [MongoDB's `$setOnInsert` operator](https://docs.mongodb.org/v2.4/reference/operator/update/setOnInsert/).
  *  - `strict` (boolean) overrides the `strict` option for this update
  *  - `overwrite` (boolean) disables update-only mode, allowing you to overwrite the doc (false)
+ *  - `context` (string) if set to 'query' and `runValidators` is on, `this` will refer to the query in custom validator functions that update validation runs. Does nothing if `runValidators` is false.
  *
  * ####Note
  *
@@ -2406,7 +2412,7 @@ Query.prototype._walkUpdatePath = function _walkUpdatePath(obj, op, pref) {
         // improving this.
         if (op === '$rename') {
           hasKeys = true;
-          return;
+          continue;
         }
 
         hasKeys = true;
@@ -2537,8 +2543,14 @@ Query.prototype.populate = function() {
     opts.populate = {};
   }
 
+  var pop = opts.populate;
+
   for (var i = 0; i < res.length; ++i) {
-    opts.populate[res[i].path] = res[i];
+    var path = res[i].path;
+    if (pop[path] && pop[path].populate && res[i].populate) {
+      res[i].populate = pop[path].populate.concat(res[i].populate);
+    }
+    pop[res[i].path] = res[i];
   }
 
   return this;
@@ -2781,6 +2793,9 @@ Query.prototype.maxscan = Query.base.maxScan;
  * Cannot be used with `distinct()`
  *
  * @param {Boolean} bool defaults to true
+ * @param {Object} [opts] options to set
+ * @param {Number} [opts.numberOfRetries] if cursor is exhausted, retry this many times before giving up
+ * @param {Number} [opts.tailableRetryInterval] if cursor is exhausted, wait this many milliseconds before retrying
  * @see tailable http://docs.mongodb.org/manual/tutorial/create-tailable-cursor/
  * @api public
  */
@@ -3071,7 +3086,7 @@ Query.prototype.box = function(ll, ur) {
  * @return {Query} this
  * @see $center http://docs.mongodb.org/manual/reference/operator/center/
  * @see $centerSphere http://docs.mongodb.org/manual/reference/operator/centerSphere/
- * @see $geoWithin http://docs.mongodb.org/manual/reference/operator/within/
+ * @see $geoWithin http://docs.mongodb.org/manual/reference/operator/geoWithin/
  * @see http://www.mongodb.org/display/DOCS/Geospatial+Indexing
  * @api public
  */

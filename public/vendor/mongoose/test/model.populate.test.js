@@ -1555,7 +1555,7 @@ describe('model: populate:', function() {
           var opts = {
             path: 'author.friends',
             select: 'name',
-            options: {limit: 1}
+            options: { limit: 1 }
           };
 
           BlogPost.populate(docs, opts, function(err, docs) {
@@ -1563,6 +1563,7 @@ describe('model: populate:', function() {
             assert.equal(2, docs.length);
             assert.equal(1, docs[0].author.friends.length);
             assert.equal(1, docs[1].author.friends.length);
+            assert.equal(opts.options.limit, 1);
             db.close(done);
           });
         });
@@ -2900,47 +2901,6 @@ describe('model: populate:', function() {
     });
   });
 
-  it('maps results back to correct document (gh-1444)', function(done) {
-    var db = start();
-
-    var articleSchema = new Schema({
-      body: String,
-      mediaAttach: {type: Schema.ObjectId, ref: '1444-Media'},
-      author: String
-    });
-    var Article = db.model('1444-Article', articleSchema);
-
-    var mediaSchema = new Schema({
-      filename: String
-    });
-    var Media = db.model('1444-Media', mediaSchema);
-
-    Media.create({filename: 'one'}, function(err, media) {
-      assert.ifError(err);
-
-      Article.create(
-          {body: 'body1', author: 'a'}
-          , {body: 'body2', author: 'a', mediaAttach: media._id}
-          , {body: 'body3', author: 'a'}, function(err) {
-            if (err) {
-              return done(err);
-            }
-
-            Article.find().populate('mediaAttach').exec(function(err, docs) {
-              db.close();
-              assert.ifError(err);
-
-              var a2 = docs.filter(function(d) {
-                return d.body === 'body2';
-              })[0];
-              assert.equal(a2.mediaAttach.id, media.id);
-
-              done();
-            });
-          });
-    });
-  });
-
   describe('DynRef', function() {
     var db;
     var Review;
@@ -2962,15 +2922,15 @@ describe('model: populate:', function() {
           }
         },
         items: [
-            {
-              id: {
-                type: Number,
-                refPath: 'items.type'
-              },
-              type: {
-                type: String
-              }
+          {
+            id: {
+              type: Number,
+              refPath: 'items.type'
+            },
+            type: {
+              type: String
             }
+          }
         ]
       });
 
@@ -3115,6 +3075,44 @@ describe('model: populate:', function() {
 
     after(function(done) {
       db.close(done);
+    });
+
+    it('maps results back to correct document (gh-1444)', function(done) {
+      var articleSchema = new Schema({
+        body: String,
+        mediaAttach: {type: Schema.ObjectId, ref: '1444-Media'},
+        author: String
+      });
+      var Article = db.model('1444-Article', articleSchema);
+
+      var mediaSchema = new Schema({
+        filename: String
+      });
+      var Media = db.model('1444-Media', mediaSchema);
+
+      Media.create({filename: 'one'}, function(err, media) {
+        assert.ifError(err);
+
+        Article.create(
+            {body: 'body1', author: 'a'}
+            , {body: 'body2', author: 'a', mediaAttach: media._id}
+            , {body: 'body3', author: 'a'}, function(err) {
+              if (err) {
+                return done(err);
+              }
+
+              Article.find().populate('mediaAttach').exec(function(err, docs) {
+                assert.ifError(err);
+
+                var a2 = docs.filter(function(d) {
+                  return d.body === 'body2';
+                })[0];
+                assert.equal(a2.mediaAttach.id, media.id);
+
+                done();
+              });
+            });
+      });
     });
 
     it('handles skip', function(done) {
@@ -3282,6 +3280,33 @@ describe('model: populate:', function() {
       }
     });
 
+    it('set to obj w/ same id doesnt mark modified (gh-3992)', function(done) {
+      var personSchema = new Schema({
+        name: { type: String }
+      });
+      var jobSchema = new Schema({
+        title: String,
+        person: { type: Schema.Types.ObjectId, ref: 'gh3992' }
+      });
+
+      var Person = db.model('gh3992', personSchema);
+      var Job = db.model('gh3992_0', jobSchema);
+
+      Person.create({ name: 'Val' }, function(error, person) {
+        assert.ifError(error);
+        var job = { title: 'Engineer', person: person._id };
+        Job.create(job, function(error, job) {
+          assert.ifError(error);
+          Job.findById(job._id, function(error, job) {
+            assert.ifError(error);
+            job.person = person;
+            assert.ok(!job.isModified('person'));
+            done();
+          });
+        });
+      });
+    });
+
     it('deep populate single -> array (gh-3904)', function(done) {
       var personSchema = new Schema({
         name: { type: String }
@@ -3416,6 +3441,122 @@ describe('model: populate:', function() {
           done();
         });
       }
+    });
+
+    it('4 level population (gh-3973)', function(done) {
+      var level4Schema = new Schema({
+        name: { type: String }
+      });
+
+      var level3Schema = new Schema({
+        name: { type: String },
+        level4: [{ type: Schema.Types.ObjectId, ref: 'level_4' }]
+      });
+
+      var level2Schema = new Schema({
+        name: { type: String },
+        level3: [{ type: Schema.Types.ObjectId, ref: 'level_3' }]
+      });
+
+      var level1Schema = new Schema({
+        name: { type: String },
+        level2: [{ type: Schema.Types.ObjectId, ref: 'level_2' }]
+      });
+
+      var level4 = db.model('level_4', level4Schema);
+      var level3 = db.model('level_3', level3Schema);
+      var level2 = db.model('level_2', level2Schema);
+      var level1 = db.model('level_1', level1Schema);
+
+      var l4docs = [{ name: 'level 4' }];
+
+      level4.create(l4docs, function(error, l4) {
+        assert.ifError(error);
+        var l3docs = [{ name: 'level 3', level4: l4[0]._id }];
+        level3.create(l3docs, function(error, l3) {
+          assert.ifError(error);
+          var l2docs = [{ name: 'level 2', level3: l3[0]._id }];
+          level2.create(l2docs, function(error, l2) {
+            assert.ifError(error);
+            var l1docs = [{ name: 'level 1', level2: l2[0]._id }];
+            level1.create(l1docs, function(error, l1) {
+              assert.ifError(error);
+              var opts = {
+                path: 'level2',
+                populate: {
+                  path: 'level3',
+                  populate: {
+                    path: 'level4'
+                  }
+                }
+              };
+              level1.findById(l1[0]._id).populate(opts).exec(function(error, obj) {
+                assert.ifError(error);
+                assert.equal(obj.level2[0].level3[0].level4[0].name, 'level 4');
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+
+    it('deep populate two paths (gh-3974)', function(done) {
+      var level3Schema = new Schema({
+        name: { type: String }
+      });
+
+      var level2Schema = new Schema({
+        name: { type: String },
+        level31: [{ type: Schema.Types.ObjectId, ref: 'gh3974' }],
+        level32: [{ type: Schema.Types.ObjectId, ref: 'gh3974' }]
+      });
+
+      var level1Schema = new Schema({
+        name: { type: String },
+        level2: [{ type: Schema.Types.ObjectId, ref: 'gh3974_0' }]
+      });
+
+      var level3 = db.model('gh3974', level3Schema);
+      var level2 = db.model('gh3974_0', level2Schema);
+      var level1 = db.model('gh3974_1', level1Schema);
+
+      var l3 = [
+        { name: 'level 3/1' },
+        { name: 'level 3/2' }
+      ];
+      level3.create(l3, function(error, l3) {
+        assert.ifError(error);
+        var l2 = [
+          { name: 'level 2', level31: l3[0]._id, level32: l3[1]._id }
+        ];
+        level2.create(l2, function(error, l2) {
+          assert.ifError(error);
+          var l1 = [{ name: 'level 1', level2: l2[0]._id }];
+          level1.create(l1, function(error, l1) {
+            assert.ifError(error);
+            level1.findById(l1[0]._id).
+              populate({
+                path: 'level2',
+                populate: [{
+                  path: 'level31'
+                }]
+              }).
+              populate({
+                path: 'level2',
+                populate: [{
+                  path: 'level32'
+                }]
+              }).
+              exec(function(error, obj) {
+                assert.ifError(error);
+                assert.equal(obj.level2[0].level31[0].name, 'level 3/1');
+                assert.equal(obj.level2[0].level32[0].name, 'level 3/2');
+                done();
+              });
+          });
+        });
+      });
     });
   });
 });

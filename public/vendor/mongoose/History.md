@@ -1,3 +1,48 @@
+4.4.11 / 2016-04-03
+===================
+ * fix: upgrade to mongodb driver 2.1.14 #4036 #4030 #3945
+ * fix(connection): allow connecting with { mongos: true } to handle query params #4032 [burtonjc](https://github.com/burtonjc)
+ * docs(connection): add autoIndex example #4026 [tilleps](https://github.com/tilleps)
+ * fix(query): handle passRawResult option when zero results #4023
+ * fix(populate): clone options before modifying #4022
+ * docs: add missing whitespace #4019 [chenxsan](https://github.com/chenxsan)
+ * chore: upgrade to ESLint 2.4.0 #4015 [ChristianMurphy](https://github.com/ChristianMurphy)
+ * fix(types): single nested subdocs get ids by default #4008
+ * chore(project): add dependency status badge #4007 [Maheshkumar-Kakade](http://github.com/Maheshkumar-Kakade)
+ * fix: make sure timestamps don't trigger unnecessary updates #4005 #3991 [tommarien](https://github.com/tommarien)
+ * fix(document): inspect inherits schema options #4001
+ * fix(populate): don't mark populated path as modified if setting to object w/ same id #3992
+ * fix(document): support kind argument to invalidate #3965
+
+4.4.10 / 2016-03-24
+===================
+ * fix(document): copy isNew when copying a document #3982
+ * fix(document): don't override defaults with undefined keys #3981
+ * fix(populate): merge multiple deep populate options for the same path #3974
+
+4.4.9 / 2016-03-22
+==================
+ * fix: upgrade mongodb -> 2.1.10 re https://jira.mongodb.org/browse/NODE-679 #4010
+ * docs: add syntax highlighting for acquit examples #3975
+
+4.4.8 / 2016-03-18
+==================
+ * docs(aggregate): clarify promises #3990 [megagon](https://github.com/megagon)
+ * fix: upgrade mquery -> 1.10 #3988 [matskiv](https://github.com/matskiv)
+ * feat(connection): 'all' event for repl sets #3986 [xizhibei](https://github.com/xizhibei)
+ * docs(types): clarify Array.pull #3985 [seriousManual](https://github.com/seriousManual)
+ * feat(query): support array syntax for .sort() via mquery 1.9 #3980
+ * fix(populate): support > 3 level nested populate #3973
+ * fix: MongooseThenable exposes connection correctly #3972
+ * docs(connection): add note about reconnectTries and reconnectInterval #3969
+ * feat(document): invalidate returns the new validationError #3964
+ * fix(query): .eq() as shorthand for .equals #3953 [Fonger](https://github.com/Fonger)
+ * docs(connection): clarify connection string vs passed options #3941
+ * docs(query): select option for findOneAndUpdate #3933
+ * fix(error): ValidationError.properties no longer enumerable #3925
+ * docs(validation): clarify how required validators work with nested schemas #3915
+ * fix: upgrade mongodb driver -> 2.1.8 to make partial index errors more sane #3864
+
 4.4.7 / 2016-03-11
 ==================
  * fix(query): stop infinite recursion caused by merging a mongoose buffer #3961

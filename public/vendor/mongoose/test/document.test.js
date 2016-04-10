@@ -1314,15 +1314,18 @@ describe('document', function() {
     Post = db.model('InvalidateSchema');
     post = new Post();
     post.set({baz: 'val'});
-    post.invalidate('baz', 'validation failed for path {PATH}');
+    var _err = post.invalidate('baz', 'validation failed for path {PATH}',
+      'val', 'custom error');
+    assert.ok(_err instanceof ValidationError);
 
     post.save(function(err) {
       assert.ok(err instanceof MongooseError);
       assert.ok(err instanceof ValidationError);
       assert.ok(err.errors.baz instanceof ValidatorError);
       assert.equal(err.errors.baz.message, 'validation failed for path baz');
-      assert.equal(err.errors.baz.kind, 'user defined');
       assert.equal(err.errors.baz.path, 'baz');
+      assert.equal(err.errors.baz.value, 'val');
+      assert.equal(err.errors.baz.kind, 'custom error');
 
       post.save(function(err) {
         db.close();
@@ -2496,6 +2499,99 @@ describe('document', function() {
         assert.deepEqual(_.omit(doc.toObject(), '_id'),
           { pre: 'test', post: 'test' });
         done();
+      });
+    });
+
+    it('manual population and isNew (gh-3982)', function(done) {
+      var NestedModelSchema = new mongoose.Schema({
+        field: String
+      });
+
+      var NestedModel = db.model('gh3982', NestedModelSchema);
+
+      var ModelSchema = new mongoose.Schema({
+        field: String,
+        array: [{
+          type: mongoose.Schema.ObjectId,
+          ref: 'gh3982',
+          required: true
+        }]
+      });
+
+      var Model = db.model('gh3982_0', ModelSchema);
+
+      var nestedModel = new NestedModel({
+        'field': 'nestedModel'
+      });
+
+      nestedModel.save(function(error, nestedModel) {
+        assert.ifError(error);
+        Model.create({ array: [nestedModel._id] }, function(error, doc) {
+          assert.ifError(error);
+          Model.findById(doc._id).populate('array').exec(function(error, doc) {
+            assert.ifError(error);
+            doc.array.push(nestedModel);
+            assert.strictEqual(doc.isNew, false);
+            assert.strictEqual(doc.array[0].isNew, false);
+            assert.strictEqual(doc.array[1].isNew, false);
+            assert.strictEqual(nestedModel.isNew, false);
+            done();
+          });
+        });
+      });
+    });
+
+    it('inspect inherits schema options (gh-4001)', function(done) {
+      var opts = {
+        toObject: { virtuals: true },
+        toJSON: { virtuals: true }
+      };
+      var taskSchema = mongoose.Schema({
+        name: {
+          type: String,
+          required: true
+        }
+      }, opts);
+
+      taskSchema.virtual('title').
+        get(function() {
+          return this.name;
+        }).
+        set(function(title) {
+          this.name = title;
+        });
+
+      var Task = db.model('gh4001', taskSchema);
+
+      var doc = { name: 'task1', title: 'task999' };
+      Task.collection.insert(doc, function(error) {
+        assert.ifError(error);
+        Task.findById(doc._id, function(error, doc) {
+          assert.ifError(error);
+          assert.equal(doc.inspect().title, 'task1');
+          done();
+        });
+      });
+    });
+
+    it('doesnt skipId for single nested subdocs (gh-4008)', function(done) {
+      var childSchema = new Schema({
+        name: String
+      });
+
+      var parentSchema = new Schema({
+        child: childSchema
+      });
+
+      var Parent = db.model('gh4008', parentSchema);
+
+      Parent.create({ child: { name: 'My child' } }, function(error, doc) {
+        assert.ifError(error);
+        Parent.collection.findOne({ _id: doc._id }, function(error, doc) {
+          assert.ifError(error);
+          assert.ok(doc.child._id);
+          done();
+        });
       });
     });
   });

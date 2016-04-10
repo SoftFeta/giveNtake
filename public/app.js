@@ -1,7 +1,7 @@
-var app = angular.module('app', ['ngRoute']);
+var app = angular.module('app', ['ngRoute', 'ngResource']);
 
-app.config(function($locationProvider, $routeProvider) {
-   //$locationProvider.html5Mode(true);
+app.config(function ($locationProvider, $routeProvider) {
+    //$locationProvider.html5Mode(true);
 });
 
 app.controller('mainCtrl', function ($scope, $http, $sce, mvIdentity) {
@@ -90,7 +90,7 @@ app.controller('mainCtrl', function ($scope, $http, $sce, mvIdentity) {
     $scope.search_cat = null;
     $scope.search_neighbourhood = null;
 
-    $http.get('bric_a_brac.json').then(function(response) {
+    $http.get('bric_a_brac.json').then(function (response) {
         var dummyItem_0 = {
             id: 3,
             pic: {data: response.data.image[0], contentType: 'image/png'},
@@ -135,7 +135,7 @@ app.controller('mainCtrl', function ($scope, $http, $sce, mvIdentity) {
             cat: 'book1',
             neighbourhood: 'cuhk',
             quantity: 2,
-            desc: $sce.trustAsHtml('<div style="font-family: '+"'times new roman'; color: firebrick; font-size: 48px; font-weight: bold; font-style: italic; text-decoration: underline;"+'">Description with formatting!</style>'),
+            desc: $sce.trustAsHtml('<div style="font-family: ' + "'times new roman'; color: firebrick; font-size: 48px; font-weight: bold; font-style: italic; text-decoration: underline;" + '">Description with formatting!</style>'),
             getTime: new Date(),
             status: 0
         };
@@ -218,20 +218,30 @@ app.controller('mvNavbarController', function ($scope, $http, mvIdentity, mvAuth
     }
 );
 
-app.controller('mvSignUpController', function($scope, mvAuth, $location) {
+app.controller('mvSignUpController', function ($scope, mvAuth, $location) {
     var newUserData = {
         username: $scope.reg_username,
         password: $scope.reg_password
     };
-    mvAuth.createUser(newUserData).then(function() {
+    mvAuth.createUser(newUserData).then(function () {
         $location.path('');
     });
 });
 
-app.factory('mvIdentity', function ($window) {
+app.factory('mvUser', function ($resource) {
+    var userResource = $resource('/api/users/:id', {_id: "@id"});
+
+    userResource.prototype.isAdmin = function () {
+        return this.roles && this.roles.indexOf('admin') > -1;
+    };
+    return userResource;
+});
+
+app.factory('mvIdentity', function ($window, mvUser) {
     var currentUser;
     if (!!$window.bootstrappedUserObject) {
-        currentUser = $window.bootstrappedUserObject;
+        currentUser = new mvUser();
+        angular.extend(currentUser, $window.bootstrappedUserObject);
     }
     return {
         currentUser: currentUser,
@@ -241,13 +251,15 @@ app.factory('mvIdentity', function ($window) {
     }
 });
 
-app.factory('mvAuth', function ($http, mvIdentity, $q) {
+app.factory('mvAuth', function ($http, mvIdentity, mvUser, $q) {
     return {
         authenticateUser: function (username, password) {
             var dfd = $q.defer();
             $http.post('/login', {username: username, password: password}).then(function (response) {
                 if (response.data.success) {
-                    mvIdentity.currentUser = response.data.user;
+                    var user = new mvUser();
+                    angular.extend(user, response.data.user);
+                    mvIdentity.currentUser = user;
                     dfd.resolve(true);
                 } else {
                     dfd.resolve(false);
@@ -263,7 +275,7 @@ app.factory('mvAuth', function ($http, mvIdentity, $q) {
             });
             return dfd.promise;
         },
-        createUser: function(newUserData) {
+        createUser: function (newUserData) {
 
         }
     }

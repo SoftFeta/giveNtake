@@ -14,11 +14,12 @@
   "moduleType": [],
   "private": true,
   "dependencies": {
-    "angular": "^1.5.2",
+    "angular": "^1.5.3",
     "bootstrap": "4.0.0-alpha.2",
     "mongoose": "^4.4.7",
     "font-awesome": "^4.5.0",
-    "angular-route": "^1.5.2",
-    "toastr": "^2.1.2"
+    "angular-route": "^1.5.3",
+    "toastr": "^2.1.2",
+    "angular-resource": "^1.5.3"
   }
 }

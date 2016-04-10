@@ -1,4 +1,4 @@
-<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
+<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/angular-resource/angular-resource.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
 toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap-touchspin.min.js"></script><script src="tags/bootstrap-tagsinput.js"></script><script src="preview/js/fileinput.min.js"></script><link rel="stylesheet" href="spinbox/jquery.bootstrap-touchspin.min.css"/><link rel="stylesheet" href="tags/bootstrap-tagsinput.css"/><link rel="stylesheet" href="preview/css/fileinput.min.css"/></head><body ng-app="app" ng-controller="mainCtrl"><div ng-include="'partials/nav_container'"></div>
 <div class="container-fluid" id="main">
     <div class="col-md-12 col-lg-12">
@@ -7,7 +7,7 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
 
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label class="required" for="itemName">Item name:</label>
+                    <label class="required submit-label" for="itemName">Item name:</label>
                 </div>
                 <div class="col-md-9">
                     <input id="itemName" type="text" class="form-control">
@@ -17,7 +17,7 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
 
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label class="required" for="demo_vertical2">Item quantity (max: 10):</label>
+                    <label class="required submit-label" for="demo_vertical2">Item quantity (max: 10):</label>
                 </div>
                 <div class="col-md-9">
                     <input id="demo_vertical2" type="text" value="1" name="demo_vertical2">
@@ -33,7 +33,7 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
 
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label class="required" for="exampleInputFile">Item image:</label>
+                    <label class="required submit-label" for="exampleInputFile">Item image:</label>
                 </div>
                 <div class="col-md-9">
                     <fieldset class="form-group">
@@ -45,9 +45,10 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
             </div>
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label class="required">Item description:</label>
+                    <label class="required submit-label">Item description:</label>
                 </div>
                 <div class="col-md-9">
+                    <strong>HTML is allowed</strong>
                     <textarea class="form-control" rows="5"
                               placeholder="Please describe your item accurately avoid ambiguous terms. Dimensions, material, brand, date of manufacture, and colour are often included."></textarea>
                 </div>
@@ -56,7 +57,7 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
 
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label class="required">Neighbourhood:</label>
+                    <label class="required submit-label">Neighbourhood:</label>
                 </div>
                 <div class="col-md-9">
                     <div ng-include="'partials/gmap'"></div>
@@ -64,7 +65,7 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
             </div>
             <div class="row">
                 <div class="col-md-3" align="right">
-                    <label for="hashtags">Tags:</label>
+                    <label class="submit-label" for="hashtags">Tags:</label>
                 </div>
                 <div class="col-md-9">
                     <fieldset class="form-group">
@@ -96,7 +97,7 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
             </div>
             <hr>
             <div align="center">
-                <button type="submit" class="btn btn-primary" href="#">
+                <button type="submit" ng-click="submitItem();" class="btn btn-primary" href="#">
                     Submit
                 </button>
             </div>

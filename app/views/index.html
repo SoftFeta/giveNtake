@@ -1,529 +1,8 @@
-<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
-toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controller="mainCtrl"><nav class="navbar navbar-fixed-top navbar-dark">
-    <button class="navbar-toggler hidden-sm-up pull-lg-right" type="button" data-toggle="collapse"
-            data-target="#collapsingNavbar">
-        ☰
-    </button>
-    <a class="navbar-brand" href="#">Bountiful</a>
-    <ul class="nav navbar-nav">
-        <li class="nav-item active">
-            <a class="nav-link" href="#">Home</a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">Button</a>
-
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Dropdown Link 1</a>
-                <a class="dropdown-item" href="#">Dropdown Link 2</a>
-                <a class="dropdown-item" href="#">Dropdown Link 3</a>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-target="#myModal" data-toggle="modal">Button</a>
-        </li>
-    </ul>
-    <div ng-include="'partials/nav'"></div>
-    <form class="form-inline" role="search">
-        <input type="search" class="form-control" placeholder="Insert keywords or hashtag..." style="width: 20%">
-        <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-</nav>
+<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/angular-resource/angular-resource.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
+toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controller="mainCtrl"><div ng-include="'partials/nav_container'"></div>
 <div class="container-fluid" id="main">
     <div class="row row-offcanvas row-offcanvas-left">
-        <div class="col-md-4 col-lg-3 sidebar-offcanvas" id="sidebar" role="navigation">
-            <div class="card card-inverse" style="background-color: #333; border-color: #333;">
-                <div class="card-block">
-                    <h3 class="card-title"><i class="fa fa-search"></i> Advanced search</h3>
-
-                    <div class="checkbox card-text">
-                        <label>
-                            <input type="checkbox" value="" checked="checked">
-                            <i class="fa fa-keyboard-o fa-fw"></i> Search by keyword or #hashtag
-                        </label>
-                        <input type="search" class="form-control" placeholder="Insert keywords or hashtag...">
-                    </div>
-                    <div class="checkbox card-text">
-                        <label>
-                            <input type="checkbox" value="" checked="checked">
-                            <i class="fa fa-sitemap fa-fw"></i> Search by category
-                        </label>
-
-                        <div id="accordion" role="tablist" aria-multiselectable="true">
-                            <div class="card">
-                                <div class="card-header" role="tab" id="headingOne"
-                                     style="background-color:lemonchiffon;">
-                                    <a data-toggle="collapse" data-parent="#accordion"
-                                       aria-expanded="true" aria-controls="collapseOne" href="#collapseOne"
-                                       ng-click="turn('#chevron1')">
-                                        <i id="chevron1" class="fa fa-chevron-right fa-lg"></i> <i
-                                            class="fa fa-fort-awesome"></i>
-                                        Back to School
-                                    </a>
-                                </div>
-                                <div id="collapseOne" class="card-block collapse accordion_item_correction"
-                                     role="tabpanel"
-                                     aria-labelledby="headingOne">
-                                    <div ng-repeat="subsubcat_1 in subcat_1">
-                                        <div class="card-header others" role="tab" id="{{subsubcat_1.tag}}">
-                                            <a href="#" ng-click="highlightString('#'+subsubcat_1.tag)">{{subsubcat_1.title}}</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-header" role="tab" id="headingTwo"
-                                     style="background-color:lemonchiffon;">
-                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
-                                       href="#collapseTwo"
-                                       aria-expanded="false" aria-controls="collapseTwo" ng-click="turn('#chevron2')">
-                                        <i id="chevron2" class="fa fa-chevron-right fa-lg"></i> <i
-                                            class="fa fa-book fa-fw"></i>
-                                        Books and Periodicals
-                                    </a>
-                                </div>
-                                <div id="collapseTwo" class="card-block collapse accordion_item_correction"
-                                     role="tabpanel"
-                                     aria-labelledby="headingTwo">
-                                    <div ng-repeat="subsubcat in subcat_2">
-                                        <div class="card-header others" role="tab" id="{{subsubcat.tag}}">
-                                            <a href="#" ng-click="highlightString('#'+subsubcat.tag)">{{subsubcat.title}}</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-header others" role="tab" id="headingThree">
-                                    <a class="collapsed accordion_standalone" data-toggle="collapse"
-                                       data-parent="#accordion"
-                                       href="#"
-                                       ng-click="highlightString('#headingThree')">
-                                        <i class="fa fa-ticket fa-fw"></i> Coupons
-                                    </a>
-                                </div>
-                                <div class="card-header others" role="tab" id="headingFour">
-                                    <a class="collapsed accordion_standalone" data-toggle="collapse"
-                                       data-parent="#accordion"
-                                       href="#"
-                                       ng-click="highlightString('#headingFour')">
-                                        <i class="fa fa-puzzle-piece fa-fw"></i> Toys
-                                    </a>
-                                </div>
-                                <div class="card-header others" role="tab" id="headingFive">
-                                    <a class="collapsed" data-toggle="collapse"
-                                       data-parent="#accordion"
-                                       href="#collapseFive" aria-expanded="false" aria-controls="collapseFive"
-                                       ng-click="turn('#chevron5')">
-                                        <i id="chevron5" class="fa fa-chevron-right fa-lg"></i> <i
-                                            class="fa fa-music fa-fw"></i> Music
-                                    </a>
-                                </div>
-                                <div id="collapseFive" class="card-block collapse accordion_item_correction"
-                                     role="tabpanel"
-                                     aria-labelledby="headingFive">
-                                    <div ng-repeat="cat in subcat_5">
-                                        <div class="card-header others" role="tab" id="{{cat.tag}}">
-                                            <a href="#" ng-click="highlightString('#'+cat.tag)">{{cat.title}}</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-header others" role="tab" id="headingSix">
-                                    <a class="collapsed accordion_standalone" data-toggle="collapse"
-                                       data-parent="#accordion"
-                                       href="#collapseSix" aria-expanded="false" aria-controls="collapseSix"
-                                       ng-click="highlightString('#headingSix')">
-                                        <i class="fa fa-mobile fa-fw"></i> Electronics & Accessories
-                                    </a>
-                                </div>
-                                <div id="collapseSix" class="card-block collapse" role="tabpanel"
-                                     aria-labelledby="headingSix">
-                                    <p style="color: black">Placeholder</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="checkbox card-text">
-                        <label>
-                            <input type="checkbox" value="" checked="checked">
-                            <i class="fa fa-map-marker fa-fw"></i> Search by location
-                        </label>
-
-                        <div id="map" style="height: 400px;"></div>
-                        <script type="text/javascript">
-                            var map;
-                            function initMap() {
-                                var mapDiv = document.getElementById('map');
-//                                    center: {lat: 22.408994, lng: 114.215203},
-                                map = new google.maps.Map(mapDiv, {
-                                    center: {lat: 22.419468, lng: 114.206620},
-                                    zoom: 13,
-                                    maxZoom: 15,
-                                    minZoom: 11,
-                                    mapTypeId: google.maps.MapTypeId.ROADMAP,
-                                    streetViewControl: false,
-                                    mapTypeControl: true,
-                                    mapTypeControlOptions: {
-                                        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-                                        mapTypeIds: [
-                                            google.maps.MapTypeId.ROADMAP,
-                                            google.maps.MapTypeId.HYBRID
-                                        ]
-                                    }
-                                });
-                                var cuhkCoords = [
-                                    {lat: 22.422215, lng: 114.200100},
-                                    {lat: 22.423921, lng: 114.200636},
-                                    {lat: 22.425825, lng: 114.203340},
-                                    {lat: 22.428460, lng: 114.203255},
-                                    {lat: 22.426736, lng: 114.206203},
-                                    {lat: 22.425903, lng: 114.205795},
-                                    {lat: 22.425430, lng: 114.208416},
-                                    {lat: 22.423466, lng: 114.211495},
-                                    {lat: 22.422097, lng: 114.212579},
-                                    {lat: 22.419301, lng: 114.213231},
-                                    {lat: 22.416413, lng: 114.212327},
-                                    {lat: 22.414876, lng: 114.210879},
-                                    {lat: 22.413319, lng: 114.210600},
-                                    {lat: 22.412982, lng: 114.211887},
-                                    {lat: 22.412278, lng: 114.211780},
-                                    {lat: 22.412655, lng: 114.208143},
-                                    {lat: 22.413506, lng: 114.207086},
-                                    {lat: 22.414046, lng: 114.207614},
-                                    {lat: 22.422032, lng: 114.200031}
-                                ];
-                                var maOnShan = [
-                                    {lat: 22.405580, lng: 114.220763},
-                                    {lat: 22.407128, lng: 114.219090},
-                                    {lat: 22.409240, lng: 114.220477},
-                                    {lat: 22.410755, lng: 114.221205},
-                                    {lat: 22.412256, lng: 114.221630},
-                                    {lat: 22.415608, lng: 114.222464},
-                                    {lat: 22.419507, lng: 114.223481},
-                                    {lat: 22.421233, lng: 114.223936},
-                                    {lat: 22.422074, lng: 114.224209},
-                                    {lat: 22.422944, lng: 114.224664},
-                                    {lat: 22.424052, lng: 114.225226},
-                                    {lat: 22.425202, lng: 114.225954},
-                                    {lat: 22.426043, lng: 114.226546},
-                                    {lat: 22.427881, lng: 114.228230},
-                                    {lat: 22.428273, lng: 114.231295},
-                                    {lat: 22.427148, lng: 114.233612},
-                                    {lat: 22.427114, lng: 114.233788},
-                                    {lat: 22.426994, lng: 114.233860},
-                                    {lat: 22.427189, lng: 114.233815},
-                                    {lat: 22.427410, lng: 114.233603},
-                                    {lat: 22.427594, lng: 114.233265},
-                                    {lat: 22.427790, lng: 114.233495},
-                                    {lat: 22.427890, lng: 114.233761},
-                                    {lat: 22.427836, lng: 114.234117},
-                                    {lat: 22.428553, lng: 114.234988},
-                                    {lat: 22.428682, lng: 114.234848},
-                                    {lat: 22.428761, lng: 114.234943},
-                                    {lat: 22.428616, lng: 114.235101},
-                                    {lat: 22.430667, lng: 114.237338},
-                                    {lat: 22.431063, lng: 114.238511},
-                                    {lat: 22.432256, lng: 114.239002},
-                                    {lat: 22.433252, lng: 114.239034},
-                                    {lat: 22.434482, lng: 114.238592},
-                                    {lat: 22.434486, lng: 114.238254},
-                                    {lat: 22.435070, lng: 114.237401},
-                                    {lat: 22.435762, lng: 114.236941},
-                                    {lat: 22.436300, lng: 114.237040},
-                                    {lat: 22.436479, lng: 114.237595},
-                                    {lat: 22.436900, lng: 114.237942},
-                                    {lat: 22.437021, lng: 114.238673},
-                                    {lat: 22.437063, lng: 114.239445},
-                                    {lat: 22.436934, lng: 114.239968},
-                                    {lat: 22.437163, lng: 114.240541},
-                                    {lat: 22.437338, lng: 114.240672},
-                                    {lat: 22.437430, lng: 114.241822},
-                                    {lat: 22.436837, lng: 114.243329},
-                                    {lat: 22.435657, lng: 114.244768},
-                                    {lat: 22.433910, lng: 114.244854},
-                                    {lat: 22.433168, lng: 114.244136},
-                                    {lat: 22.432392, lng: 114.243965},
-                                    {lat: 22.431066, lng: 114.245016},
-                                    {lat: 22.430754, lng: 114.245864},
-                                    {lat: 22.432234, lng: 114.247073},
-                                    {lat: 22.432872, lng: 114.249563},
-                                    {lat: 22.432805, lng: 114.255301},
-                                    {lat: 22.429828, lng: 114.256875},
-                                    {lat: 22.427968, lng: 114.253600},
-                                    {lat: 22.427451, lng: 114.249189},
-                                    {lat: 22.429140, lng: 114.247529},
-                                    {lat: 22.428027, lng: 114.245404},
-                                    {lat: 22.424228, lng: 114.241562},
-                                    {lat: 22.422098, lng: 114.237426},
-                                    {lat: 22.417571, lng: 114.232834},
-                                    {lat: 22.415390, lng: 114.229917},
-                                    {lat: 22.414364, lng: 114.228011},
-                                    {lat: 22.413580, lng: 114.227749},
-                                    {lat: 22.412850, lng: 114.226532},
-                                    {lat: 22.407797, lng: 114.223337},
-                                    {lat: 22.407093, lng: 114.224528},
-                                    {lat: 22.405427, lng: 114.224993},
-                                    {lat: 22.402149, lng: 114.226734},
-                                    {lat: 22.403396, lng: 114.224574},
-                                    {lat: 22.403829, lng: 114.223288},
-                                    {lat: 22.404180, lng: 114.222553},
-                                    {lat: 22.404722, lng: 114.221912}
-                                ];
-                                var cuhk = new google.maps.Polygon({
-                                    paths: cuhkCoords,
-                                    strokeColor: '#69246B',
-                                    strokeOpacity: 0.8,
-                                    strokeWeight: 5,
-                                    fillColor: '#FF4500',
-                                    fillOpacity: 0.15
-                                });
-                                cuhk.setMap(map);
-                                var mos = new google.maps.Polygon({
-                                    paths: maOnShan,
-                                    strokeColor: '#962714',
-                                    strokeOpacity: 0.8,
-                                    strokeWeight: 5,
-                                    fillColor: '#962714',
-                                    fillOpacity: 0.15
-                                });
-                                mos.setMap(map);
-                                var shaTin = [
-                                    {lat: 22.396923, lng: 114.209160},
-                                    {lat: 22.396268, lng: 114.209895},
-                                    {lat: 22.395678, lng: 114.209675},
-                                    {lat: 22.395286, lng: 114.209514},
-                                    {lat: 22.395023, lng: 114.209358},
-                                    {lat: 22.394716, lng: 114.209203},
-                                    {lat: 22.394493, lng: 114.209101},
-                                    {lat: 22.394279, lng: 114.209026},
-                                    {lat: 22.394046, lng: 114.209020},
-                                    {lat: 22.393233, lng: 114.209031},
-                                    {lat: 22.392935, lng: 114.209026},
-                                    {lat: 22.392583, lng: 114.209042},
-                                    {lat: 22.392157, lng: 114.209101},
-                                    {lat: 22.391799, lng: 114.209197},
-                                    {lat: 22.390961, lng: 114.209498},
-                                    {lat: 22.389176, lng: 114.210485},
-                                    {lat: 22.388476, lng: 114.210748},
-                                    {lat: 22.388159, lng: 114.210823},
-                                    {lat: 22.387668, lng: 114.210866},
-                                    {lat: 22.387053, lng: 114.210828},
-                                    {lat: 22.386537, lng: 114.210737},
-                                    {lat: 22.385823, lng: 114.210603},
-                                    {lat: 22.384905, lng: 114.209498},
-                                    {lat: 22.383551, lng: 114.210930},
-                                    {lat: 22.384146, lng: 114.213119},
-                                    {lat: 22.384513, lng: 114.215007},
-                                    {lat: 22.384503, lng: 114.216793},
-                                    {lat: 22.384647, lng: 114.217566},
-                                    {lat: 22.384404, lng: 114.218328},
-                                    {lat: 22.383992, lng: 114.218537},
-                                    {lat: 22.380193, lng: 114.218628},
-                                    {lat: 22.379796, lng: 114.218006},
-                                    {lat: 22.379473, lng: 114.214133},
-                                    {lat: 22.380699, lng: 114.213451},
-                                    {lat: 22.380505, lng: 114.213124},
-                                    {lat: 22.380391, lng: 114.212711},
-                                    {lat: 22.379468, lng: 114.212293},
-                                    {lat: 22.378466, lng: 114.212282},
-                                    {lat: 22.378179, lng: 114.211595},
-                                    {lat: 22.378610, lng: 114.210984},
-                                    {lat: 22.381343, lng: 114.208591},
-                                    {lat: 22.378713, lng: 114.204497},
-                                    {lat: 22.378336, lng: 114.203998},
-                                    {lat: 22.377894, lng: 114.202866},
-                                    {lat: 22.377701, lng: 114.201069},
-                                    {lat: 22.377205, lng: 114.199980},
-                                    {lat: 22.376654, lng: 114.199481},
-                                    {lat: 22.375925, lng: 114.198940},
-                                    {lat: 22.375573, lng: 114.198854},
-                                    {lat: 22.374556, lng: 114.199455},
-                                    {lat: 22.374129, lng: 114.199460},
-                                    {lat: 22.372953, lng: 114.199728},
-                                    {lat: 22.371108, lng: 114.200308},
-                                    {lat: 22.370314, lng: 114.199170},
-                                    {lat: 22.370830, lng: 114.197502},
-                                    {lat: 22.371505, lng: 114.196257},
-                                    {lat: 22.374789, lng: 114.196037},
-                                    {lat: 22.373492, lng: 114.191566},
-                                    {lat: 22.372837, lng: 114.190284},
-                                    {lat: 22.369586, lng: 114.187530},
-                                    {lat: 22.367423, lng: 114.184783},
-                                    {lat: 22.364964, lng: 114.181305},
-                                    {lat: 22.363660, lng: 114.179943},
-                                    {lat: 22.362925, lng: 114.178371},
-                                    {lat: 22.362052, lng: 114.177491},
-                                    {lat: 22.360038, lng: 114.175464},
-                                    {lat: 22.359860, lng: 114.175024},
-                                    {lat: 22.360370, lng: 114.173962},
-                                    {lat: 22.359954, lng: 114.172835},
-                                    {lat: 22.360723, lng: 114.170968},
-                                    {lat: 22.361467, lng: 114.170577},
-                                    {lat: 22.362548, lng: 114.170394},
-                                    {lat: 22.363590, lng: 114.171220},
-                                    {lat: 22.363972, lng: 114.170807},
-                                    {lat: 22.368606, lng: 114.173055},
-                                    {lat: 22.370967, lng: 114.175340},
-                                    {lat: 22.372599, lng: 114.174085},
-                                    {lat: 22.374067, lng: 114.176461},
-                                    {lat: 22.380943, lng: 114.171869},
-                                    {lat: 22.381548, lng: 114.172561},
-                                    {lat: 22.380957, lng: 114.174552},
-                                    {lat: 22.380699, lng: 114.174723},
-                                    {lat: 22.380759, lng: 114.175287},
-                                    {lat: 22.380610, lng: 114.175700},
-                                    {lat: 22.379573, lng: 114.176687},
-                                    {lat: 22.379653, lng: 114.177459},
-                                    {lat: 22.376776, lng: 114.179718},
-                                    {lat: 22.376984, lng: 114.180517},
-                                    {lat: 22.378800, lng: 114.184583},
-                                    {lat: 22.382138, lng: 114.186750},
-                                    {lat: 22.383046, lng: 114.187603},
-                                    {lat: 22.383199, lng: 114.187416},
-                                    {lat: 22.383735, lng: 114.187711},
-                                    {lat: 22.384603, lng: 114.187593},
-                                    {lat: 22.384717, lng: 114.186992},
-                                    {lat: 22.385119, lng: 114.187051},
-                                    {lat: 22.385213, lng: 114.186546},
-                                    {lat: 22.386290, lng: 114.186557},
-                                    {lat: 22.386012, lng: 114.188102},
-                                    {lat: 22.385258, lng: 114.189250},
-                                    {lat: 22.389990, lng: 114.193912},
-                                    {lat: 22.392341, lng: 114.191278},
-                                    {lat: 22.390912, lng: 114.189180},
-                                    {lat: 22.390104, lng: 114.187287},
-                                    {lat: 22.390372, lng: 114.185452},
-                                    {lat: 22.391160, lng: 114.184728},
-                                    {lat: 22.393373, lng: 114.185340},
-                                    {lat: 22.393655, lng: 114.187303},
-                                    {lat: 22.395017, lng: 114.187173},
-                                    {lat: 22.395052, lng: 114.189104},
-                                    {lat: 22.393941, lng: 114.189281},
-                                    {lat: 22.393336, lng: 114.190595},
-                                    {lat: 22.394491, lng: 114.191470},
-                                    {lat: 22.395721, lng: 114.191116},
-                                    {lat: 22.395845, lng: 114.191952},
-                                    {lat: 22.394462, lng: 114.192392},
-                                    {lat: 22.393990, lng: 114.196555},
-                                    {lat: 22.397491, lng: 114.199192},
-                                    {lat: 22.399273, lng: 114.200543},
-                                    {lat: 22.403060, lng: 114.203243},
-                                    {lat: 22.403509, lng: 114.205830},
-                                    {lat: 22.404463, lng: 114.206930},
-                                    {lat: 22.401447, lng: 114.210997},
-                                    {lat: 22.391254, lng: 114.201321},
-                                    {lat: 22.394102, lng: 114.197877},
-                                    {lat: 22.393723, lng: 114.197717},
-                                    {lat: 22.390861, lng: 114.201154},
-                                    {lat: 22.377859, lng: 114.188830},
-                                    {lat: 22.375393, lng: 114.183089},
-                                    {lat: 22.374650, lng: 114.182310},
-                                    {lat: 22.374414, lng: 114.181762},
-                                    {lat: 22.374438, lng: 114.181226},
-                                    {lat: 22.374697, lng: 114.180843},
-                                    {lat: 22.374202, lng: 114.180971},
-                                    {lat: 22.373848, lng: 114.181787},
-                                    {lat: 22.374745, lng: 114.183331},
-                                    {lat: 22.377647, lng: 114.190336},
-                                    {lat: 22.378072, lng: 114.190999},
-                                    {lat: 22.390707, lng: 114.203133},
-                                    {lat: 22.390447, lng: 114.203362},
-                                    {lat: 22.389397, lng: 114.203886},
-                                    {lat: 22.383664, lng: 114.210125},
-                                    {lat: 22.384100, lng: 114.210265},
-                                    {lat: 22.389680, lng: 114.204294},
-                                    {lat: 22.390648, lng: 114.203924},
-                                    {lat: 22.391415, lng: 114.203937}];
-                                var stn = new google.maps.Polygon({
-                                    paths: shaTin,
-                                    strokeColor: '#CD853F',
-                                    strokeOpacity: 0.8,
-                                    strokeWeight: 5,
-                                    fillColor: '#CD853F',
-                                    fillOpacity: 0.15
-                                });
-                                stn.setMap(map);
-                                var pakShekKok = [
-                                    {lat: 22.436218, lng: 114.199710},
-                                    {lat: 22.435618, lng: 114.201090},
-                                    {lat: 22.426926, lng: 114.213452},
-                                    {lat: 22.426326, lng: 114.214011},
-                                    {lat: 22.425675, lng: 114.214498},
-                                    {lat: 22.425133, lng: 114.214805},
-                                    {lat: 22.424449, lng: 114.215030},
-                                    {lat: 22.423807, lng: 114.215103},
-                                    {lat: 22.423090, lng: 114.215085},
-                                    {lat: 22.422548, lng: 114.214985},
-                                    {lat: 22.421597, lng: 114.214489},
-                                    {lat: 22.420947, lng: 114.214525},
-                                    {lat: 22.420880, lng: 114.213659},
-                                    {lat: 22.421814, lng: 114.213280},
-                                    {lat: 22.422907, lng: 114.212640},
-                                    {lat: 22.424107, lng: 114.211512},
-                                    {lat: 22.430112, lng: 114.202436},
-                                    {lat: 22.430587, lng: 114.201967},
-                                    {lat: 22.431196, lng: 114.201552},
-                                    {lat: 22.431621, lng: 114.201272},
-                                    {lat: 22.432447, lng: 114.200965},
-                                    {lat: 22.433648, lng: 114.200659}
-                                ];
-                                var psk = new google.maps.Polygon({
-                                    paths: pakShekKok,
-                                    strokeColor: '#6CA0DC',
-                                    strokeOpacity: 0.8,
-                                    strokeWeight: 5,
-                                    fillColor: '#6CA0DC',
-                                    fillOpacity: 0.15
-                                });
-                                psk.setMap(map);
-                                var image = "gift_marker.png"
-                                var marker = new google.maps.Marker({
-                                    position: {lat: 22.419468, lng: 114.206620},
-                                    map: map,
-                                    draggable: true,
-                                    title: "Test",
-                                    icon: image
-                                });
-                                marker.addListener('dragend', function () {
-                                    if (google.maps.geometry.poly.containsLocation(marker.getPosition(), cuhk)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>CUHK</strong>";
-                                    } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), mos)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>Ma On Shan</strong>";
-                                    } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), stn)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>Sha Tin Metro</strong>";
-                                    } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), psk)) {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: <strong>Pak Shek Kok</strong>";
-                                    } else {
-                                        document.getElementById("area").innerHTML = "Neighbourhood: Not currently supported";
-                                    }
-                                    var markLat = marker.getPosition().lat().toString();
-                                    var markLng = marker.getPosition().lng().toString();
-                                    document.getElementById("coords").innerHTML = "(".concat(markLat, ", ", markLng, ")");
-                                });
-                            }
-                        </script>
-                        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEPe62lfwgD8zFH2o7rzFdVmpkbiJFOwc&callback=initMap"
-                                async defer></script>
-                        <p id="coords" style="color:#333; font-size: x-small;" class="text-lg-center">　</p>
-
-                        <p id="area" class="text-lg-center">Drag the marker!</p>
-                        <br><a href="#" class="btn btn-outline-secondary"
-                               onclick="toastr.info('Thanks for dropping by, but I am not done yet');">Search</a>
-                    </div>
-                </div>
-            </div>
-            <div class="card card-inverse" style="background-color: firebrick; border-color: firebrick;">
-                <div class="card-block">
-                    <h3 class="card-title"><i class="fa fa-heart"></i> Charity of the day</h3>
-                    <h5 class="card-title">Yard of Environmental Sustainability</h5>
-                    <img src="https://www.cpr.cuhk.edu.hk/resources/press/photo/4ec63900474ef.jpg" width="100%">
-
-                    <p class="card-text">The Yard for Environmental Sustainability (YES) is located next to Y. C. Liang
-                        Hall, CUHK. It was opened to promote the re-use or recycling of electrical appliances, fabrics,
-                        banners, toys, books, glass and plastic goods.</p>
-
-                    <p class="card-text">It consists of seven huts designed by EMO and built with dead wood and waste
-                        materials. Interested staff and students can visit the huts to drop off or pick up items that
-                        can still be reused. Items collected will also be given to NGOs or recycling companies for reuse
-                        or recycling. Materials will be recycled only when reuse is not ideal or feasible.</p>
-                    <a href="#" class="btn btn-outline-secondary">Learn more</a>
-                </div>
-            </div>
-        </div>
+        <div ng-include="'partials/sidebar'"></div>
         <div class="col-md-8 col-lg-9 main">
             <div class="row" ng-hide="identity.isAuthenticated()">
                 <div class="col-md-6">
@@ -606,6 +85,7 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                 });
             </script>
             <br>
+
             <div class="jumbotron" ng-hide="identity.isAuthenticated()">
                 <h1 class="display-3">Welcome to Bountiful</h1>
 
@@ -614,48 +94,78 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                     accepts certain unused/second-hand goods in the Sha Tin District of Hong Kong.</p>
             </div>
             <div ng-show="identity.isAuthenticated()" ng-include="'partials/buttons'"></div>
-            <div ng-repeat="dex in [1,2,3,4,5,6,7,8,9,10]"
+            <div ng-repeat="dex in nextTen"
                  class="card card-default card-block" style="background-image: url('damasks_in_ivory.png')">
                 <div class="row">
-                    <table>
+                    <table width="100%">
                         <tr>
-                            <td rowspan="5"><img src="http://placehold.it/198x145" class="img-responsive img-rounded">
+                            <td rowspan="6" width="150px" style="vertical-align: top;"><img ng-src="data:{{dex.pic.contentType}};{{dex.pic.data}}" class="img-rounded" height="100px">
+                                <!--img-fluid (?)-->
                             </td>
-                            <td rowspan="5" style="vertical-align: top; padding-left: 5%; padding-right: 2%;">
+                            <td rowspan="6" width="250px" style="vertical-align: top; padding-left: 5%;">
                                 <p>
-                                    <span class="tag tag-pill tag-danger">Trending</span> <span
-                                        class="tag tag-pill tag-warning">New listing</span>
+                                    <span class="tag tag-pill tag-danger" ng-show="{{dex.trending}}">Trending</span> <span
+                                        class="tag tag-pill tag-warning" ng-show="{{dex.newListing}}">New listing</span>
                                 </p>
                             </td>
-                            <td>
-                                <h4>Item #{{dex}}</h4>
+                            <td colspan="2">
+                                <h4>{{dex.name}}</h4>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="small"><a href="#">Books and periodicals</a> > <a href="#">Computer
-                                Science</a></td>
+                                Science</a><br><br></td>
                         </tr>
                         <tr>
-                            <td><h5>Donor:　</h5></td>
-                            <td><h5><a href="#">bill_liu</a></h5></td>
+                            <td width="200px"><h5>Donor:　</h5></td>
+                            <td><h5><a ng-href="#users/{{dex.giver}}">{{dex.giver}}</a></h5></td>
                         </tr>
                         <tr>
                             <td><h5>Item quantity:　</h5></td>
-                            <td><h5>{{(dex+3)*2}}</h5></td>
+                            <td><h5>{{dex.quantity}}</h5></td>
                         </tr>
                         <tr>
                             <td><h5>Item description:　</h5></td>
-                            <td>The <kbd>ng-repeat</kbd> directive of AngularJS is used to show items.</td>
+                            <td><p ng-bind-html="dex.desc"></p></td>
                         </tr>
                         <tr>
-                            <td colspan="2"></td>
-                            <td>
+                            <td colspan="2">
                                 <hr>
-                                <a href="#" class="btn pull-lg-left btn-success btn-block"><i
+                                <a ng-href="#?take={{dex.id}}" class="btn pull-lg-left btn-success" style="width: 200px"><i
                                         class="fa fa-hand-lizard-o"></i> Take item</a></td>
                         </tr>
                     </table>
                 </div>
+            </div>
+            <div align="center">
+                <nav>
+                    <ul class="pagination">
+                        <!--<li class="page-item disabled">-->
+                        <!--<a class="page-link" href="#" aria-label="Previous">-->
+                        <!--<span aria-hidden="true">&laquo;</span>-->
+                        <!--<span class="sr-only">Previous</span>-->
+                        <!--</a>-->
+                        <!--</li>-->
+                        <li class="page-item active">
+                            <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">4</a></li>
+                        <li class="page-item"><a class="page-link" href="#">5</a></li>
+                        <li class="page-item"><a class="page-link" href="#">6</a></li>
+                        <li class="page-item"><a class="page-link" href="#">7</a></li>
+                        <li class="page-item"><a class="page-link" href="#">8</a></li>
+                        <li class="page-item"><a class="page-link" href="#">9</a></li>
+                        <li class="page-item"><a class="page-link" href="#">10</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
@@ -689,7 +199,51 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
             </div>
         </div>
     </div>
-</div><footer class="card-footer"><p class="text-lg-center"><i class="fa fa-copyright fa-rotate-180"></i> Copyleft Alexander Poon, 2016.
+</div>
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="report_item_form_label">Report item {{item_name}} </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <fieldset class="form-group">
+                        <label for="report_item_form_datetime">Time of report</label>
+                        <input class="form-control" id="report_item_form_datetime" type="text"
+                               placeholder="{{datetime | date:'yyyy-MM-dd hh:mm:ss a'}}" readonly>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="report_item_form_reporter_name">Reporter user name</label>
+                        <input class="form-control" id="report_item_form_reporter_name" type="text"
+                               placeholder="{{reporter_name}}" readonly>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="report_item_form_item_name">Subject user name</label>
+                        <input class="form-control" id="report_item_form_item_name" type="text"
+                               placeholder="{{item_name}}" readonly>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="report_item_form_abuse_type">Type of Abuse</label>
+                        <select class="form-control" id="report_item_form_abuse_type">
+                            <option>(Choose one)</option>
+                        </select>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Submit Report</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Submit Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="card-footer"><p class="text-lg-center"><i class="fa fa-copyright fa-rotate-180"></i> Copyleft Alexander Poon, 2016.
  |<a href="#" data-target="#termsModal" data-toggle="modal"> Terms & conditions</a> |<a href="#" data-target="#privacyModal" data-toggle="modal"> Privacy Policy</a><br/>Powered by the MEAN stack, Jade, and<strong> Bootstrap 4 alpha</strong></p></footer><div id="termsModal" tabindex="-1" role="dialog" class="modal fade"><div role="document" class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><h4 id="myModalLabel" class="modal-title"><i class="fa fa-exclamation-circle"></i> Terms & conditions</h4></div><div class="modal-body"><h5 align="center">TERMS OF SERVICE (last modified: 21<sup>st</sup> March, 2016)</h5><p align="left">This application is designed for Sha Tin brethrens who gives away and accepts unused
 goods for free. Monetary transaction is strictly prohibited. Advertising, abusive language, fraud,
 turning out late, and posting ambiguous item description and image are not welcomed as well.

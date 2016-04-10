@@ -1,14 +1,14 @@
 {
   "name": "mongoose",
   "homepage": "https://github.com/LearnBoost/mongoose",
-  "version": "4.4.7",
-  "_release": "4.4.7",
+  "version": "4.4.12",
+  "_release": "4.4.12",
   "_resolution": {
     "type": "version",
-    "tag": "4.4.7",
-    "commit": "d23f6101872595ed231065b5fdcf3f3b3689dab1"
+    "tag": "4.4.12",
+    "commit": "239006ca12982d62369b8716e3fde917084d69ce"
   },
-  "_source": "git://github.com/LearnBoost/mongoose.git",
+  "_source": "https://github.com/LearnBoost/mongoose.git",
   "_target": "^4.4.7",
   "_originalSource": "mongoose"
 }

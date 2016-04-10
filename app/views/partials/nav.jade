@@ -31,12 +31,15 @@
                 strong  {{identity.currentUser.firstName + " " + identity.currentUser.lastName}}
                 | .
         li.nav-item
-            .nav-link
-                strong EN
-        li.nav-item
-            .nav-link |
-        li.nav-item
-            a.nav-link(href='#') 中文
+            a.tag.tag-danger(ng-show="identity.currentUser.isAdmin()")
+                | Admin
+        //li.nav-item
+        //    .nav-link
+        //        strong EN
+        //li.nav-item
+        //    .nav-link |
+        //li.nav-item
+        //    a.nav-link(href='#') 中文
         li.nav-item
             a.nav-link(href='#', ng-click='signOut()')
                 i.fa.fa-sign-out.fa-lg

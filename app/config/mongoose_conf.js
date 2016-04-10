@@ -15,7 +15,7 @@ module.exports = function () {
         lastName: String,
         salt: String,
         hashed_pwd: String,
-        privilege: Number,
+        roles: [String],
         status: Number
     });
     usersSchema.methods = {
@@ -35,14 +35,16 @@ module.exports = function () {
                 lastName: 'Bloggs',
                 salt: salt,
                 hashed_pwd: hash,
-                privilege: 0,
+                roles: ['admin'],
                 status: 0
             });
         }
     });
     Users.findOne({}).exec(function (err, document) {
-        var found = document.lastName;
-        console.log(found);
+        if (!err) {
+            var found = document.lastName;
+            console.log(found);
+        }
     });
 
     var itemsSchema = new mongoose.Schema({

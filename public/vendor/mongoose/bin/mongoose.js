@@ -234,7 +234,7 @@ Document.prototype.constructor = Document;
 Document.ValidationError = ValidationError;
 module.exports = exports = Document;
 
-},{"./document":5,"./error":12,"./internal":23,"./schema":26,"./types/objectid":46,"./utils":48,"events":74}],4:[function(require,module,exports){
+},{"./document":5,"./error":12,"./internal":23,"./schema":26,"./types/objectid":46,"./utils":48,"events":72}],4:[function(require,module,exports){
 /*!
  * Module dependencies.
  */
@@ -503,6 +503,9 @@ function Document(obj, fields, skipId) {
   this._doc = this.$__buildDoc(obj, fields, skipId);
 
   if (obj) {
+    if (obj instanceof Document) {
+      this.isNew = obj.isNew;
+    }
     this.set(obj, undefined, true);
   }
 
@@ -952,7 +955,7 @@ Document.prototype.set = function(path, val, type, options) {
         pathtype = this.schema.pathType(pathName);
 
         if (path[key] !== null
-            && path[key] !== undefined
+            && path[key] !== void 0
               // need to know if plain object - no Buffer, ObjectId, ref, etc
             && utils.isObject(path[key])
             && (!path[key].constructor || utils.getFunctionName(path[key].constructor) === 'Object')
@@ -964,6 +967,12 @@ Document.prototype.set = function(path, val, type, options) {
             this.schema.paths[pathName].options.ref)) {
           this.set(path[key], prefix + key, constructing);
         } else if (strict) {
+          // Don't overwrite defaults with undefined keys (gh-3981)
+          if (constructing && path[key] === void 0 &&
+              this.get(key) !== void 0) {
+            continue;
+          }
+
           if (pathtype === 'real' || pathtype === 'virtual') {
             // Check for setting single embedded schema to document (gh-3535)
             if (this.schema.paths[pathName] &&
@@ -982,7 +991,7 @@ Document.prototype.set = function(path, val, type, options) {
               throw new StrictModeError(key);
             }
           }
-        } else if (undefined !== path[key]) {
+        } else if (path[key] !== void 0) {
           this.set(prefix + key, path[key], constructing);
         }
       }
@@ -1156,6 +1165,14 @@ Document.prototype.$__shouldModify = function(pathToMark, path, constructing, pa
 
   if (undefined === val && path in this.$__.activePaths.states.default) {
     // we're just unsetting the default value which was never saved
+    return false;
+  }
+
+  // gh-3992: if setting a populated field to a doc, don't mark modified
+  // if they have the same _id
+  if (this.populated(path) &&
+      val instanceof Document &&
+      deepEqual(val._id, priorVal)) {
     return false;
   }
 
@@ -1764,10 +1781,12 @@ Document.prototype.validateSync = function(pathsToValidate) {
  * @param {String} path the field to invalidate
  * @param {String|Error} errorMsg the error which states the reason `path` was invalid
  * @param {Object|String|Number|any} value optional invalid value
+ * @param {String} [kind] optional `kind` property for the error
+ * @return {ValidationError} the current ValidationError, with all currently invalidated paths
  * @api public
  */
 
-Document.prototype.invalidate = function(path, err, val) {
+Document.prototype.invalidate = function(path, err, val, kind) {
   if (!this.$__.validationError) {
     this.$__.validationError = new ValidationError(this);
   }
@@ -1780,16 +1799,17 @@ Document.prototype.invalidate = function(path, err, val) {
     err = new ValidatorError({
       path: path,
       message: err,
-      type: 'user defined',
+      type: kind || 'user defined',
       value: val
     });
   }
 
   if (this.$__.validationError === err) {
-    return;
+    return this.$__.validationError;
   }
 
   this.$__.validationError.errors[path] = err;
+  return this.$__.validationError;
 };
 
 /**
@@ -2322,14 +2342,14 @@ Document.prototype.$toObject = function(options, json) {
       (options && options._useSchemaOptions)) {
     if (json) {
       options = this.schema.options.toJSON ?
-          clone(this.schema.options.toJSON) :
-      {};
+        clone(this.schema.options.toJSON) :
+        {};
       options.json = true;
       options._useSchemaOptions = true;
     } else {
       options = this.schema.options.toObject ?
-          clone(this.schema.options.toObject) :
-      {};
+        clone(this.schema.options.toObject) :
+        {};
       options.json = false;
       options._useSchemaOptions = true;
     }
@@ -2611,7 +2631,16 @@ Document.prototype.toJSON = function(options) {
  */
 
 Document.prototype.inspect = function(options) {
-  var opts = options && utils.getFunctionName(options.constructor) === 'Object' ? options : {};
+  var isPOJO = options &&
+    utils.getFunctionName(options.constructor) === 'Object';
+  var opts;
+  if (isPOJO) {
+    opts = options;
+  } else if (this.schema.options.toObject) {
+    opts = clone(this.schema.options.toObject);
+  } else {
+    opts = {};
+  }
   opts.minimize = false;
   opts.retainKeyOrder = true;
   return this.toObject(opts);
@@ -2861,7 +2890,7 @@ Document.ValidationError = ValidationError;
 module.exports = exports = Document;
 
 }).call(this,require("g5I+bs"),require("buffer").Buffer)
-},{"./error":12,"./error/objectExpected":17,"./error/strict":19,"./internal":23,"./promise_provider":25,"./schema":26,"./schema/mixed":34,"./schematype":39,"./types/array":41,"./types/documentarray":43,"./types/embedded":44,"./utils":48,"buffer":71,"events":74,"g5I+bs":94,"hooks-fixed":75,"util":98}],6:[function(require,module,exports){
+},{"./error":12,"./error/objectExpected":17,"./error/strict":19,"./internal":23,"./promise_provider":25,"./schema":26,"./schema/mixed":34,"./schematype":39,"./types/array":41,"./types/documentarray":43,"./types/embedded":44,"./utils":48,"buffer":71,"events":72,"g5I+bs":94,"hooks-fixed":73,"util":98}],6:[function(require,module,exports){
 'use strict';
 
 /* eslint-env browser */
@@ -3369,7 +3398,6 @@ function ValidatorError(properties) {
     msg = errorMessages.general.default;
   }
 
-  this.properties = properties;
   var message = this.formatMessage(msg, properties);
   MongooseError.call(this, message);
   if (Error.captureStackTrace) {
@@ -3377,6 +3405,7 @@ function ValidatorError(properties) {
   } else {
     this.stack = new Error().stack;
   }
+  this.properties = properties;
   this.name = 'ValidatorError';
   this.kind = properties.type;
   this.path = properties.path;
@@ -3389,6 +3418,17 @@ function ValidatorError(properties) {
 
 ValidatorError.prototype = Object.create(MongooseError.prototype);
 ValidatorError.prototype.constructor = MongooseError;
+
+/*!
+ * The object used to define this validator. Not enumerable to hide
+ * it from `require('util').inspect()` output re: gh-3925
+ */
+
+Object.defineProperty(ValidatorError.prototype, 'properties', {
+  enumerable: false,
+  writable: true,
+  value: null
+});
 
 /*!
  * Formats error messages
@@ -3780,7 +3820,7 @@ Promise.prototype.addErrback = Promise.prototype.onReject;
 
 module.exports = Promise;
 
-},{"mpromise":82,"util":98}],25:[function(require,module,exports){
+},{"mpromise":80,"util":98}],25:[function(require,module,exports){
 /*!
  * Module dependencies.
  */
@@ -3833,7 +3873,7 @@ Promise.reset = function() {
 
 module.exports = Promise;
 
-},{"./ES6Promise":1,"./promise":24,"mquery":87}],26:[function(require,module,exports){
+},{"./ES6Promise":1,"./promise":24,"mquery":85}],26:[function(require,module,exports){
 (function (Buffer){
 /*!
  * Module dependencies.
@@ -4544,7 +4584,9 @@ Schema.prototype.setupTimestamp = function(timestamps) {
         this[createdAt] = auto_id ? this._id.getTimestamp() : defaultTimestamp;
       }
 
-      this[updatedAt] = this.isNew ? this[createdAt] : defaultTimestamp;
+      if (this.isNew || this.isModified()) {
+        this[updatedAt] = this.isNew ? this[createdAt] : defaultTimestamp;
+      }
 
       next();
     });
@@ -5238,7 +5280,7 @@ Schema.Types = MongooseTypes = require('./schema/index');
 exports.ObjectId = MongooseTypes.ObjectId;
 
 }).call(this,require("buffer").Buffer)
-},{"./drivers":11,"./schema/index":33,"./utils":48,"./virtualtype":49,"async":51,"buffer":71,"events":74,"kareem":79}],27:[function(require,module,exports){
+},{"./drivers":11,"./schema/index":33,"./utils":48,"./virtualtype":49,"async":51,"buffer":71,"events":72,"kareem":77}],27:[function(require,module,exports){
 /*!
  * Module dependencies.
  */
@@ -9408,6 +9450,8 @@ MongooseArray.mixin = {
    *     doc.subdocs.push({ _id: 4815162342 })
    *     doc.subdocs.pull(4815162342); // works
    *
+   * The first pull call will result in a atomic operation on the database, if pull is called repeatedly without saving the document, a $set operation is used on the complete array instead, overwriting possible changes that happened on the database in the meantime.
+   *
    * @param {any} [args...]
    * @see mongodb http://www.mongodb.org/display/DOCS/Updating/#Updating-%24pull
    * @api public
@@ -10114,7 +10158,7 @@ MongooseDocumentArray.mixin = {
         if (sid == _id._id) {
           return this[i];
         }
-      } else if (!(_id instanceof ObjectId)) {
+      } else if (!(id instanceof ObjectId) && !(_id instanceof ObjectId)) {
         if (utils.deepEqual(id, _id)) {
           return this[i];
         }
@@ -10581,9 +10625,9 @@ module.exports = Subdocument;
  * @api private
  */
 
-function Subdocument() {
+function Subdocument(value, fields) {
   this.$isSingleNested = true;
-  Document.apply(this, arguments);
+  Document.call(this, value, fields);
 }
 
 Subdocument.prototype = Object.create(Document.prototype);
@@ -11304,6 +11348,7 @@ exports.populate = function populate(path, select, model, match, options, subPop
 
   var ret = [];
   var paths = path.split(' ');
+  options = exports.clone(options, { retainKeyOrder: true });
   for (var i = 0; i < paths.length; ++i) {
     ret.push(new PopulateOptions(paths[i], select, match, options, model, subPopulate));
   }
@@ -11543,7 +11588,7 @@ exports.each = function(arr, fn) {
 };
 
 }).call(this,require("g5I+bs"),require("buffer").Buffer)
-},{"./document":5,"./types":45,"./types/objectid":46,"buffer":71,"g5I+bs":94,"mpath":80,"ms":93,"regexp-clone":95,"sliced":96}],49:[function(require,module,exports){
+},{"./document":5,"./types":45,"./types/objectid":46,"buffer":71,"g5I+bs":94,"mpath":78,"ms":93,"regexp-clone":95,"sliced":96}],49:[function(require,module,exports){
 
 /**
  * VirtualType constructor
@@ -13402,11 +13447,15 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
 },{}],53:[function(require,module,exports){
+(function (global){
 /**
  * Module dependencies.
  * @ignore
  */
-if(typeof window === 'undefined') {
+
+// Test if we're in Node via presence of "global" not absence of "window"
+// to support hybrid environments like Electron
+if(typeof global !== 'undefined') {
   var Buffer = require('buffer').Buffer; // TODO just use global Buffer
 }
 
@@ -13747,6 +13796,7 @@ Binary.SUBTYPE_USER_DEFINED = 128;
 module.exports = Binary;
 module.exports.Binary = Binary;
 
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"buffer":71}],54:[function(require,module,exports){
 (function (process){
 /**
@@ -15948,6 +15998,9 @@ ObjectID.isValid = function isValid(id) {
   if(typeof id == 'string') {
     return id.length == 12 || (id.length == 24 && checkForHexRegExp.test(id));
   }
+  if(id instanceof ObjectID) {
+    return true;
+  }
   return false;
 };
 
@@ -16310,7 +16363,7 @@ var deserialize = function(buffer, options, isArray) {
 	options = options == null ? {} : options;
 	var index = options && options.index ? options.index : 0;
 	// Read the document size
-  var size = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;
+  var size = buffer[index] | buffer[index+1] << 8 | buffer[index+2] << 16 | buffer[index+3] << 24;
 
 	// Ensure buffer is valid size
   if(size < 5 || buffer.length < size) {
@@ -16318,12 +16371,12 @@ var deserialize = function(buffer, options, isArray) {
 	}
 
 	// Illegal end value
-	if(buffer[size - 1] != 0) {
+	if(buffer[index + size - 1] != 0) {
 		throw new Error("One object, sized correctly, with a spot for an EOO, but the EOO isn't 0x00");
 	}
 
 	// Start deserializtion
-	return deserializeObject(buffer, index - 4, options, isArray);
+	return deserializeObject(buffer, index, options, isArray);
 }
 
 var deserializeObject = function(buffer, index, options, isArray) {
@@ -16683,6 +16736,12 @@ BSON.BSON_DATA_ARRAY = 4;
  * @classconstant BSON_DATA_BINARY
  **/
 BSON.BSON_DATA_BINARY = 5;
+/**
+ * Binary BSON Type
+ *
+ * @classconstant BSON_DATA_UNDEFINED
+ **/
+BSON.BSON_DATA_UNDEFINED = 7;
 /**
  * ObjectID BSON Type
  *
@@ -19722,376 +19781,7 @@ function decodeUtf8Char (str) {
   }
 }
 
-},{"base64-js":52,"ieee754":76,"is-array":78}],72:[function(require,module,exports){
-
-/**
- * This is the web browser implementation of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
-exports = module.exports = require('./debug');
-exports.log = log;
-exports.formatArgs = formatArgs;
-exports.save = save;
-exports.load = load;
-exports.useColors = useColors;
-exports.storage = 'undefined' != typeof chrome
-               && 'undefined' != typeof chrome.storage
-                  ? chrome.storage.local
-                  : localstorage();
-
-/**
- * Colors.
- */
-
-exports.colors = [
-  'lightseagreen',
-  'forestgreen',
-  'goldenrod',
-  'dodgerblue',
-  'darkorchid',
-  'crimson'
-];
-
-/**
- * Currently only WebKit-based Web Inspectors, Firefox >= v31,
- * and the Firebug extension (any Firefox version) are known
- * to support "%c" CSS customizations.
- *
- * TODO: add a `localStorage` variable to explicitly enable/disable colors
- */
-
-function useColors() {
-  // is webkit? http://stackoverflow.com/a/16459606/376773
-  return ('WebkitAppearance' in document.documentElement.style) ||
-    // is firebug? http://stackoverflow.com/a/398120/376773
-    (window.console && (console.firebug || (console.exception && console.table))) ||
-    // is firefox >= v31?
-    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-    (navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31);
-}
-
-/**
- * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
- */
-
-exports.formatters.j = function(v) {
-  return JSON.stringify(v);
-};
-
-
-/**
- * Colorize log arguments if enabled.
- *
- * @api public
- */
-
-function formatArgs() {
-  var args = arguments;
-  var useColors = this.useColors;
-
-  args[0] = (useColors ? '%c' : '')
-    + this.namespace
-    + (useColors ? ' %c' : ' ')
-    + args[0]
-    + (useColors ? '%c ' : ' ')
-    + '+' + exports.humanize(this.diff);
-
-  if (!useColors) return args;
-
-  var c = 'color: ' + this.color;
-  args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
-
-  // the final "%c" is somewhat tricky, because there could be other
-  // arguments passed either before or after the %c, so we need to
-  // figure out the correct index to insert the CSS into
-  var index = 0;
-  var lastC = 0;
-  args[0].replace(/%[a-z%]/g, function(match) {
-    if ('%%' === match) return;
-    index++;
-    if ('%c' === match) {
-      // we only are interested in the *last* %c
-      // (the user may have provided their own)
-      lastC = index;
-    }
-  });
-
-  args.splice(lastC, 0, c);
-  return args;
-}
-
-/**
- * Invokes `console.log()` when available.
- * No-op when `console.log` is not a "function".
- *
- * @api public
- */
-
-function log() {
-  // this hackery is required for IE8/9, where
-  // the `console.log` function doesn't have 'apply'
-  return 'object' === typeof console
-    && console.log
-    && Function.prototype.apply.call(console.log, console, arguments);
-}
-
-/**
- * Save `namespaces`.
- *
- * @param {String} namespaces
- * @api private
- */
-
-function save(namespaces) {
-  try {
-    if (null == namespaces) {
-      exports.storage.removeItem('debug');
-    } else {
-      exports.storage.debug = namespaces;
-    }
-  } catch(e) {}
-}
-
-/**
- * Load `namespaces`.
- *
- * @return {String} returns the previously persisted debug modes
- * @api private
- */
-
-function load() {
-  var r;
-  try {
-    r = exports.storage.debug;
-  } catch(e) {}
-  return r;
-}
-
-/**
- * Enable namespaces listed in `localStorage.debug` initially.
- */
-
-exports.enable(load());
-
-/**
- * Localstorage attempts to return the localstorage.
- *
- * This is necessary because safari throws
- * when a user disables cookies/localstorage
- * and you attempt to access it.
- *
- * @return {LocalStorage}
- * @api private
- */
-
-function localstorage(){
-  try {
-    return window.localStorage;
-  } catch (e) {}
-}
-
-},{"./debug":73}],73:[function(require,module,exports){
-
-/**
- * This is the common logic for both the Node.js and web browser
- * implementations of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
-exports = module.exports = debug;
-exports.coerce = coerce;
-exports.disable = disable;
-exports.enable = enable;
-exports.enabled = enabled;
-exports.humanize = require('ms');
-
-/**
- * The currently active debug mode names, and names to skip.
- */
-
-exports.names = [];
-exports.skips = [];
-
-/**
- * Map of special "%n" handling functions, for the debug "format" argument.
- *
- * Valid key names are a single, lowercased letter, i.e. "n".
- */
-
-exports.formatters = {};
-
-/**
- * Previously assigned color.
- */
-
-var prevColor = 0;
-
-/**
- * Previous log timestamp.
- */
-
-var prevTime;
-
-/**
- * Select a color.
- *
- * @return {Number}
- * @api private
- */
-
-function selectColor() {
-  return exports.colors[prevColor++ % exports.colors.length];
-}
-
-/**
- * Create a debugger with the given `namespace`.
- *
- * @param {String} namespace
- * @return {Function}
- * @api public
- */
-
-function debug(namespace) {
-
-  // define the `disabled` version
-  function disabled() {
-  }
-  disabled.enabled = false;
-
-  // define the `enabled` version
-  function enabled() {
-
-    var self = enabled;
-
-    // set `diff` timestamp
-    var curr = +new Date();
-    var ms = curr - (prevTime || curr);
-    self.diff = ms;
-    self.prev = prevTime;
-    self.curr = curr;
-    prevTime = curr;
-
-    // add the `color` if not set
-    if (null == self.useColors) self.useColors = exports.useColors();
-    if (null == self.color && self.useColors) self.color = selectColor();
-
-    var args = Array.prototype.slice.call(arguments);
-
-    args[0] = exports.coerce(args[0]);
-
-    if ('string' !== typeof args[0]) {
-      // anything else let's inspect with %o
-      args = ['%o'].concat(args);
-    }
-
-    // apply any `formatters` transformations
-    var index = 0;
-    args[0] = args[0].replace(/%([a-z%])/g, function(match, format) {
-      // if we encounter an escaped % then don't increase the array index
-      if (match === '%%') return match;
-      index++;
-      var formatter = exports.formatters[format];
-      if ('function' === typeof formatter) {
-        var val = args[index];
-        match = formatter.call(self, val);
-
-        // now we need to remove `args[index]` since it's inlined in the `format`
-        args.splice(index, 1);
-        index--;
-      }
-      return match;
-    });
-
-    if ('function' === typeof exports.formatArgs) {
-      args = exports.formatArgs.apply(self, args);
-    }
-    var logFn = enabled.log || exports.log || console.log.bind(console);
-    logFn.apply(self, args);
-  }
-  enabled.enabled = true;
-
-  var fn = exports.enabled(namespace) ? enabled : disabled;
-
-  fn.namespace = namespace;
-
-  return fn;
-}
-
-/**
- * Enables a debug mode by namespaces. This can include modes
- * separated by a colon and wildcards.
- *
- * @param {String} namespaces
- * @api public
- */
-
-function enable(namespaces) {
-  exports.save(namespaces);
-
-  var split = (namespaces || '').split(/[\s,]+/);
-  var len = split.length;
-
-  for (var i = 0; i < len; i++) {
-    if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace(/\*/g, '.*?');
-    if (namespaces[0] === '-') {
-      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
-    } else {
-      exports.names.push(new RegExp('^' + namespaces + '$'));
-    }
-  }
-}
-
-/**
- * Disable debug output.
- *
- * @api public
- */
-
-function disable() {
-  exports.enable('');
-}
-
-/**
- * Returns true if the given mode name is enabled, false otherwise.
- *
- * @param {String} name
- * @return {Boolean}
- * @api public
- */
-
-function enabled(name) {
-  var i, len;
-  for (i = 0, len = exports.skips.length; i < len; i++) {
-    if (exports.skips[i].test(name)) {
-      return false;
-    }
-  }
-  for (i = 0, len = exports.names.length; i < len; i++) {
-    if (exports.names[i].test(name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Coerce `val`.
- *
- * @param {Mixed} val
- * @return {Mixed}
- * @api private
- */
-
-function coerce(val) {
-  if (val instanceof Error) return val.stack || val.message;
-  return val;
-}
-
-},{"ms":93}],74:[function(require,module,exports){
+},{"base64-js":52,"ieee754":74,"is-array":76}],72:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -20394,7 +20084,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],75:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 // TODO Add in pre and post skipping options
 module.exports = {
   /**
@@ -20587,7 +20277,7 @@ function once (fn, scope) {
   };
 }
 
-},{}],76:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -20673,7 +20363,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],77:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -20698,7 +20388,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],78:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 
 /**
  * isArray
@@ -20733,7 +20423,7 @@ module.exports = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
-},{}],79:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -20966,10 +20656,10 @@ Kareem.prototype.clone = function() {
 module.exports = Kareem;
 
 }).call(this,require("g5I+bs"))
-},{"g5I+bs":94}],80:[function(require,module,exports){
+},{"g5I+bs":94}],78:[function(require,module,exports){
 module.exports = exports = require('./lib');
 
-},{"./lib":81}],81:[function(require,module,exports){
+},{"./lib":79}],79:[function(require,module,exports){
 /**
  * Returns the value of object `o` at the given `path`.
  *
@@ -21186,7 +20876,7 @@ function K (v) {
   return v;
 }
 
-},{}],82:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 (function (process){
 'use strict';
 var util = require('util');
@@ -21635,7 +21325,7 @@ Promise.deferred = function deferred() {
 /* End A+ tests adapter bit */
 
 }).call(this,require("g5I+bs"))
-},{"events":74,"g5I+bs":94,"util":98}],83:[function(require,module,exports){
+},{"events":72,"g5I+bs":94,"util":98}],81:[function(require,module,exports){
 'use strict';
 
 /**
@@ -21679,7 +21369,7 @@ function notImplemented (method) {
 }
 
 
-},{}],84:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 'use strict';
 
 var env = require('../env')
@@ -21694,7 +21384,7 @@ module.exports =
   require('./collection');
 
 
-},{"../env":86,"./collection":83,"./node":85}],85:[function(require,module,exports){
+},{"../env":84,"./collection":81,"./node":83}],83:[function(require,module,exports){
 'use strict';
 
 /**
@@ -21804,7 +21494,7 @@ NodeCollection.prototype.findCursor = function(match, findOptions) {
 module.exports = exports = NodeCollection;
 
 
-},{"../utils":89,"./collection":83}],86:[function(require,module,exports){
+},{"../utils":87,"./collection":81}],84:[function(require,module,exports){
 (function (process,global,Buffer){
 'use strict';
 
@@ -21830,7 +21520,7 @@ exports.type = exports.isNode ? 'node'
   : 'unknown'
 
 }).call(this,require("g5I+bs"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"buffer":71,"g5I+bs":94}],87:[function(require,module,exports){
+},{"buffer":71,"g5I+bs":94}],85:[function(require,module,exports){
 'use strict';
 
 /**
@@ -22130,6 +21820,34 @@ Query.prototype.where = function () {
 
 Query.prototype.equals = function equals (val) {
   this._ensurePath('equals');
+  var path = this._path;
+  this._conditions[path] = val;
+  return this;
+}
+
+/**
+ * Specifies the complementary comparison value for paths specified with `where()`
+ * This is alias of `equals`
+ *
+ * ####Example
+ *
+ *     User.where('age').eq(49);
+ *
+ *     // is the same as
+ *
+ *     User.shere('age').equals(49);
+ *
+ *     // is the same as
+ *
+ *     User.where('age', 49);
+ *
+ * @param {Object} val
+ * @return {Query} this
+ * @api public
+ */
+
+Query.prototype.eq = function eq (val) {
+  this._ensurePath('eq');
   var path = this._path;
   this._conditions[path] = val;
   return this;
@@ -23004,27 +22722,40 @@ Query.prototype.slice = function () {
  *     // these are equivalent
  *     query.sort({ field: 'asc', test: -1 });
  *     query.sort('field -test');
+ *     query.sort([['field', 1], ['test', -1]]);
  *
  * ####Note
  *
- * Cannot be used with `distinct()`
+ *  - The array syntax `.sort([['field', 1], ['test', -1]])` can only be used with [mongodb driver >= 2.0.46](https://github.com/mongodb/node-mongodb-native/blob/2.1/HISTORY.md#2046-2015-10-15).
+ *  - Cannot be used with `distinct()`
  *
- * @param {Object|String} arg
+ * @param {Object|String|Array} arg
  * @return {Query} this
  * @api public
  */
 
 Query.prototype.sort = function (arg) {
   if (!arg) return this;
+  var len;
 
   this._validate('sort');
 
   var type = typeof arg;
 
+  // .sort([['field', 1], ['test', -1]])
+  if (Array.isArray(arg)) {
+    len = arg.length;
+    for (var i = 0; i < arg.length; ++i) {
+      _pushArr(this.options, arg[i][0], arg[i][1]);
+    }
+    return this;
+  }
+
+  // .sort('field -test')
   if (1 === arguments.length && 'string' == type) {
     arg = arg.split(/\s+/);
-
-    for (var i = 0, len = arg.length; i < len; ++i) {
+    len = arg.length;
+    for (var i = 0; i < len; ++i) {
       var field = arg[i];
       if (!field) continue;
       var ascend = '-' == field[0] ? -1 : 1;
@@ -23035,6 +22766,7 @@ Query.prototype.sort = function (arg) {
     return this;
   }
 
+  // .sort({ field: 1, test: -1 })
   if (utils.isObject(arg)) {
     var keys = utils.keys(arg);
     for (var i = 0; i < keys.length; ++i) {
@@ -23045,7 +22777,7 @@ Query.prototype.sort = function (arg) {
     return this;
   }
 
-  throw new TypeError('Invalid sort() argument. Must be a string or object.');
+  throw new TypeError('Invalid sort() argument. Must be a string, object, or array.');
 }
 
 /*!
@@ -23053,6 +22785,12 @@ Query.prototype.sort = function (arg) {
  */
 
 function push (opts, field, value) {
+  if (Array.isArray(opts.sort)) {
+    throw new TypeError("Can't mix sort syntaxes. Use either array or object:" +
+      "\n- `.sort([['field', 1], ['test', -1]])`" +
+      "\n- `.sort({ field: 1, test: -1 })`");
+  }
+
   if (value && value.$meta) {
     var s = opts.sort || (opts.sort = {});
     s[field] = { $meta : value.$meta };
@@ -23072,6 +22810,21 @@ function push (opts, field, value) {
                   .replace("desc", "-1")
                   .replace("descending", "-1");
   s[field] = parseInt(valueStr, 10);
+}
+
+function _pushArr (opts, field, value) {
+  opts.sort = opts.sort || [];
+  if (!Array.isArray(opts.sort)) {
+    throw new TypeError("Can't mix sort syntaxes. Use either array or object:" +
+      "\n- `.sort([['field', 1], ['test', -1]])`" +
+      "\n- `.sort({ field: 1, test: -1 })`");
+  }
+  var valueStr = value.toString()
+    .replace("asc", "1")
+    .replace("ascending", "1")
+    .replace("desc", "-1")
+    .replace("descending", "-1");
+  opts.sort.push([field, value]);
 }
 
 /**
@@ -24489,7 +24242,7 @@ module.exports = exports = Query;
 // TODO
 // test utils
 
-},{"./collection":84,"./collection/collection":83,"./env":86,"./permissions":88,"./utils":89,"assert":50,"bluebird":90,"debug":72,"sliced":91,"util":98}],88:[function(require,module,exports){
+},{"./collection":82,"./collection/collection":81,"./env":84,"./permissions":86,"./utils":87,"assert":50,"bluebird":88,"debug":89,"sliced":91,"util":98}],86:[function(require,module,exports){
 'use strict';
 
 var denied = exports;
@@ -24579,7 +24332,7 @@ denied.count.maxScan =
 denied.count.snapshot =
 denied.count.tailable = true;
 
-},{}],89:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 (function (process,Buffer){
 'use strict';
 
@@ -24925,19 +24678,19 @@ exports.isArgumentsObject = function(v) {
 };
 
 }).call(this,require("g5I+bs"),require("buffer").Buffer)
-},{"buffer":71,"g5I+bs":94,"regexp-clone":95}],90:[function(require,module,exports){
+},{"buffer":71,"g5I+bs":94,"regexp-clone":95}],88:[function(require,module,exports){
 (function (process,global){
 /* @preserve
  * The MIT License (MIT)
  * 
- * Copyright (c) 2014 Petka Antonov
+ * Copyright (c) 2013-2015 Petka Antonov
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:</p>
+ * furnished to do so, subject to the following conditions:
  * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
@@ -24952,7 +24705,7 @@ exports.isArgumentsObject = function(v) {
  * 
  */
 /**
- * bluebird build version 2.9.26
+ * bluebird build version 2.10.2
  * Features enabled: core, race, call_get, generators, map, nodeify, promisify, props, reduce, settle, some, cancel, using, filter, any, each, timers
 */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Promise=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
@@ -25023,8 +24776,6 @@ Async.prototype.throwLater = function(fn, arg) {
         arg = fn;
         fn = function () { throw arg; };
     }
-    var domain = this._getDomain();
-    if (domain !== undefined) fn = domain.bind(fn);
     if (typeof setTimeout !== "undefined") {
         setTimeout(function() {
             fn(arg);
@@ -25038,73 +24789,18 @@ Async.prototype.throwLater = function(fn, arg) {
     }
 };
 
-Async.prototype._getDomain = function() {};
-
-if (!true) {
-if (util.isNode) {
-    var EventsModule = _dereq_("events");
-
-    var domainGetter = function() {
-        var domain = process.domain;
-        if (domain === null) return undefined;
-        return domain;
-    };
-
-    if (EventsModule.usingDomains) {
-        Async.prototype._getDomain = domainGetter;
-    } else {
-        var descriptor =
-            Object.getOwnPropertyDescriptor(EventsModule, "usingDomains");
-
-        if (descriptor) {
-            if (!descriptor.configurable) {
-                process.on("domainsActivated", function() {
-                    Async.prototype._getDomain = domainGetter;
-                });
-            } else {
-                var usingDomains = false;
-                Object.defineProperty(EventsModule, "usingDomains", {
-                    configurable: false,
-                    enumerable: true,
-                    get: function() {
-                        return usingDomains;
-                    },
-                    set: function(value) {
-                        if (usingDomains || !value) return;
-                        usingDomains = true;
-                        Async.prototype._getDomain = domainGetter;
-                        util.toFastProperties(process);
-                        process.emit("domainsActivated");
-                    }
-                });
-            }
-        }
-    }
-}
-}
-
 function AsyncInvokeLater(fn, receiver, arg) {
-    var domain = this._getDomain();
-    if (domain !== undefined) fn = domain.bind(fn);
     this._lateQueue.push(fn, receiver, arg);
     this._queueTick();
 }
 
 function AsyncInvoke(fn, receiver, arg) {
-    var domain = this._getDomain();
-    if (domain !== undefined) fn = domain.bind(fn);
     this._normalQueue.push(fn, receiver, arg);
     this._queueTick();
 }
 
 function AsyncSettlePromises(promise) {
-    var domain = this._getDomain();
-    if (domain !== undefined) {
-        var fn = domain.bind(promise._settlePromises);
-        this._normalQueue.push(fn, promise, undefined);
-    } else {
-        this._normalQueue._pushOne(promise);
-    }
+    this._normalQueue._pushOne(promise);
     this._queueTick();
 }
 
@@ -25113,13 +24809,18 @@ if (!util.hasDevTools) {
     Async.prototype.invoke = AsyncInvoke;
     Async.prototype.settlePromises = AsyncSettlePromises;
 } else {
+    if (schedule.isStatic) {
+        schedule = function(fn) { setTimeout(fn, 0); };
+    }
     Async.prototype.invokeLater = function (fn, receiver, arg) {
         if (this._trampolineEnabled) {
             AsyncInvokeLater.call(this, fn, receiver, arg);
         } else {
-            setTimeout(function() {
-                fn.call(receiver, arg);
-            }, 100);
+            this._schedule(function() {
+                setTimeout(function() {
+                    fn.call(receiver, arg);
+                }, 100);
+            });
         }
     };
 
@@ -25127,9 +24828,9 @@ if (!util.hasDevTools) {
         if (this._trampolineEnabled) {
             AsyncInvoke.call(this, fn, receiver, arg);
         } else {
-            setTimeout(function() {
+            this._schedule(function() {
                 fn.call(receiver, arg);
-            }, 0);
+            });
         }
     };
 
@@ -25137,16 +24838,14 @@ if (!util.hasDevTools) {
         if (this._trampolineEnabled) {
             AsyncSettlePromises.call(this, promise);
         } else {
-            setTimeout(function() {
+            this._schedule(function() {
                 promise._settlePromises();
-            }, 0);
+            });
         }
     };
 }
 
 Async.prototype.invokeFirst = function (fn, receiver, arg) {
-    var domain = this._getDomain();
-    if (domain !== undefined) fn = domain.bind(fn);
     this._normalQueue.unshift(fn, receiver, arg);
     this._queueTick();
 };
@@ -25184,7 +24883,7 @@ Async.prototype._reset = function () {
 module.exports = new Async();
 module.exports.firstLineError = firstLineError;
 
-},{"./queue.js":28,"./schedule.js":31,"./util.js":38,"events":39}],3:[function(_dereq_,module,exports){
+},{"./queue.js":28,"./schedule.js":31,"./util.js":38}],3:[function(_dereq_,module,exports){
 "use strict";
 module.exports = function(Promise, INTERNAL, tryConvertToPromise) {
 var rejectThis = function(_, e) {
@@ -25197,7 +24896,6 @@ var targetRejected = function(e, context) {
 };
 
 var bindingResolved = function(thisArg, context) {
-    this._setBoundTo(thisArg);
     if (this._isPending()) {
         this._resolveCallback(context.target);
     }
@@ -25212,6 +24910,8 @@ Promise.prototype.bind = function (thisArg) {
     var ret = new Promise(INTERNAL);
     ret._propagateFrom(this, 1);
     var target = this._target();
+
+    ret._setBoundTo(maybePromise);
     if (maybePromise instanceof Promise) {
         var context = {
             promiseRejectionQueued: false,
@@ -25223,7 +24923,6 @@ Promise.prototype.bind = function (thisArg) {
         maybePromise._then(
             bindingResolved, bindingRejected, ret._progress, ret, context);
     } else {
-        ret._setBoundTo(thisArg);
         ret._resolveCallback(target);
     }
     return ret;
@@ -25246,13 +24945,12 @@ Promise.bind = function (thisArg, value) {
     var maybePromise = tryConvertToPromise(thisArg);
     var ret = new Promise(INTERNAL);
 
+    ret._setBoundTo(maybePromise);
     if (maybePromise instanceof Promise) {
-        maybePromise._then(function(thisArg) {
-            ret._setBoundTo(thisArg);
+        maybePromise._then(function() {
             ret._resolveCallback(value);
         }, ret._reject, ret._progress, ret, null);
     } else {
-        ret._setBoundTo(thisArg);
         ret._resolveCallback(value);
     }
     return ret;
@@ -25832,7 +25530,8 @@ var captureStackTrace = (function stackDetection() {
     catch(e) {
         hasStackAfterThrow = ("stack" in e);
     }
-    if (!("stack" in err) && hasStackAfterThrow) {
+    if (!("stack" in err) && hasStackAfterThrow &&
+        typeof Error.stackTraceLimit === "number") {
         stackFramePattern = v8stackFramePattern;
         formatStack = v8stackFormatter;
         return function captureStackTrace(o) {
@@ -25974,7 +25673,7 @@ function safePredicate(predicate, e) {
 CatchFilter.prototype.doFilter = function (e) {
     var cb = this._callback;
     var promise = this._promise;
-    var boundTo = promise._boundTo;
+    var boundTo = promise._boundValue();
     for (var i = 0, len = this._instances.length; i < len; ++i) {
         var item = this._instances[i];
         var itemIsErrorType = item === Error ||
@@ -26052,6 +25751,7 @@ return createContext;
 },{}],10:[function(_dereq_,module,exports){
 "use strict";
 module.exports = function(Promise, CapturedTrace) {
+var getDomain = Promise._getDomain;
 var async = _dereq_("./async.js");
 var Warning = _dereq_("./errors.js").Warning;
 var util = _dereq_("./util.js");
@@ -26062,11 +25762,19 @@ var debugging = false || (util.isNode &&
                     (!!process.env["BLUEBIRD_DEBUG"] ||
                      process.env["NODE_ENV"] === "development"));
 
+if (util.isNode && process.env["BLUEBIRD_DEBUG"] == 0) debugging = false;
+
 if (debugging) {
     async.disableTrampolineIfNecessary();
 }
 
+Promise.prototype._ignoreRejections = function() {
+    this._unsetRejectionIsUnhandled();
+    this._bitField = this._bitField | 16777216;
+};
+
 Promise.prototype._ensurePossibleRejectionHandled = function () {
+    if ((this._bitField & 16777216) !== 0) return;
     this._setRejectionIsUnhandled();
     async.invokeLater(this._notifyUnhandledRejection, this, undefined);
 };
@@ -26165,11 +25873,17 @@ Promise.prototype._warn = function(message) {
 };
 
 Promise.onPossiblyUnhandledRejection = function (fn) {
-    possiblyUnhandledRejection = typeof fn === "function" ? fn : undefined;
+    var domain = getDomain();
+    possiblyUnhandledRejection =
+        typeof fn === "function" ? (domain === null ? fn : domain.bind(fn))
+                                 : undefined;
 };
 
 Promise.onUnhandledRejectionHandled = function (fn) {
-    unhandledRejectionHandled = typeof fn === "function" ? fn : undefined;
+    var domain = getDomain();
+    unhandledRejectionHandled =
+        typeof fn === "function" ? (domain === null ? fn : domain.bind(fn))
+                                 : undefined;
 };
 
 Promise.longStackTraces = function () {
@@ -26202,7 +25916,6 @@ return function() {
 "use strict";
 var util = _dereq_("./util.js");
 var isPrimitive = util.isPrimitive;
-var wrapsPrimitiveReceiver = util.wrapsPrimitiveReceiver;
 
 module.exports = function(Promise) {
 var returner = function () {
@@ -26233,7 +25946,7 @@ Promise.prototype["return"] =
 Promise.prototype.thenReturn = function (value) {
     if (value === undefined) return this.then(returnUndefined);
 
-    if (wrapsPrimitiveReceiver && isPrimitive(value)) {
+    if (isPrimitive(value)) {
         return this._then(
             wrapper(value, 2),
             undefined,
@@ -26241,6 +25954,8 @@ Promise.prototype.thenReturn = function (value) {
             undefined,
             undefined
        );
+    } else if (value instanceof Promise) {
+        value._ignoreRejections();
     }
     return this._then(returner, undefined, undefined, value, undefined);
 };
@@ -26249,7 +25964,7 @@ Promise.prototype["throw"] =
 Promise.prototype.thenThrow = function (reason) {
     if (reason === undefined) return this.then(throwUndefined);
 
-    if (wrapsPrimitiveReceiver && isPrimitive(reason)) {
+    if (isPrimitive(reason)) {
         return this._then(
             wrapper(reason, 1),
             undefined,
@@ -26489,7 +26204,6 @@ Promise.filter = function (promises, fn, options) {
 "use strict";
 module.exports = function(Promise, NEXT_FILTER, tryConvertToPromise) {
 var util = _dereq_("./util.js");
-var wrapsPrimitiveReceiver = util.wrapsPrimitiveReceiver;
 var isPrimitive = util.isPrimitive;
 var thrower = util.thrower;
 
@@ -26511,7 +26225,7 @@ function throw$(r) {
 }
 function promisedFinally(ret, reasonOrValue, isFulfilled) {
     var then;
-    if (wrapsPrimitiveReceiver && isPrimitive(reasonOrValue)) {
+    if (isPrimitive(reasonOrValue)) {
         then = isFulfilled ? return$(reasonOrValue) : throw$(reasonOrValue);
     } else {
         then = isFulfilled ? returnThis : throwThis;
@@ -26524,7 +26238,7 @@ function finallyHandler(reasonOrValue) {
     var handler = this.handler;
 
     var ret = promise._isBound()
-                    ? handler.call(promise._boundTo)
+                    ? handler.call(promise._boundValue())
                     : handler();
 
     if (ret !== undefined) {
@@ -26549,7 +26263,7 @@ function tapHandler(value) {
     var handler = this.handler;
 
     var ret = promise._isBound()
-                    ? handler.call(promise._boundTo, value)
+                    ? handler.call(promise._boundValue(), value)
                     : handler(value);
 
     if (ret !== undefined) {
@@ -26840,6 +26554,7 @@ module.exports = function(Promise,
                           apiRejection,
                           tryConvertToPromise,
                           INTERNAL) {
+var getDomain = Promise._getDomain;
 var async = _dereq_("./async.js");
 var util = _dereq_("./util.js");
 var tryCatch = util.tryCatch;
@@ -26850,7 +26565,8 @@ var EMPTY_ARRAY = [];
 function MappingPromiseArray(promises, fn, limit, _filter) {
     this.constructor$(promises);
     this._promise._captureStackTrace();
-    this._callback = fn;
+    var domain = getDomain();
+    this._callback = domain === null ? fn : domain.bind(fn);
     this._preservedValues = _filter === INTERNAL
         ? new Array(this.length())
         : null;
@@ -26885,7 +26601,7 @@ MappingPromiseArray.prototype._promiseFulfilled = function (value, index) {
         if (preservedValues !== null) preservedValues[index] = value;
 
         var callback = this._callback;
-        var receiver = this._promise._boundTo;
+        var receiver = this._promise._boundValue();
         this._promise._pushContext();
         var ret = tryCatch(callback).call(receiver, value, index, length);
         this._promise._popContext();
@@ -27023,7 +26739,8 @@ var errorObj = util.errorObj;
 function spreadAdapter(val, nodeback) {
     var promise = this;
     if (!util.isArray(val)) return successAdapter.call(promise, val, nodeback);
-    var ret = tryCatch(nodeback).apply(promise._boundTo, [null].concat(val));
+    var ret =
+        tryCatch(nodeback).apply(promise._boundValue(), [null].concat(val));
     if (ret === errorObj) {
         async.throwLater(ret.e);
     }
@@ -27031,7 +26748,7 @@ function spreadAdapter(val, nodeback) {
 
 function successAdapter(val, nodeback) {
     var promise = this;
-    var receiver = promise._boundTo;
+    var receiver = promise._boundValue();
     var ret = val === undefined
         ? tryCatch(nodeback).call(receiver, null)
         : tryCatch(nodeback).call(receiver, null, val);
@@ -27047,13 +26764,13 @@ function errorAdapter(reason, nodeback) {
         newReason.cause = reason;
         reason = newReason;
     }
-    var ret = tryCatch(nodeback).call(promise._boundTo, reason);
+    var ret = tryCatch(nodeback).call(promise._boundValue(), reason);
     if (ret === errorObj) {
         async.throwLater(ret.e);
     }
 }
 
-Promise.prototype.asCallback = 
+Promise.prototype.asCallback =
 Promise.prototype.nodeify = function (nodeback, options) {
     if (typeof nodeback == "function") {
         var adapter = successAdapter;
@@ -27162,7 +26879,24 @@ var reflect = function() {
 var apiRejection = function(msg) {
     return Promise.reject(new TypeError(msg));
 };
+
 var util = _dereq_("./util.js");
+
+var getDomain;
+if (util.isNode) {
+    getDomain = function() {
+        var ret = process.domain;
+        if (ret === undefined) ret = null;
+        return ret;
+    };
+} else {
+    getDomain = function() {
+        return null;
+    };
+}
+util.notEnumerableProp(Promise, "_getDomain", getDomain);
+
+var UNDEFINED_BINDING = {};
 var async = _dereq_("./async.js");
 var errors = _dereq_("./errors.js");
 var TypeError = Promise.TypeError = errors.TypeError;
@@ -27361,8 +27095,12 @@ Promise.prototype._then = function (
         if (!haveInternalData) ret._setIsMigrated();
     }
 
-    var callbackIndex =
-        target._addCallbacks(didFulfill, didReject, didProgress, ret, receiver);
+    var callbackIndex = target._addCallbacks(didFulfill,
+                                             didReject,
+                                             didProgress,
+                                             ret,
+                                             receiver,
+                                             getDomain());
 
     if (target._isResolved() && !target._isSettlePromisesQueued()) {
         async.invoke(
@@ -27443,8 +27181,10 @@ Promise.prototype._receiverAt = function (index) {
         ? this._receiver0
         : this[
             index * 5 - 5 + 4];
-    if (ret === undefined && this._isBound()) {
-        return this._boundTo;
+    if (ret === UNDEFINED_BINDING) {
+        return undefined;
+    } else if (ret === undefined && this._isBound()) {
+        return this._boundValue();
     }
     return ret;
 };
@@ -27467,6 +27207,20 @@ Promise.prototype._rejectionHandlerAt = function (index) {
         : this[index * 5 - 5 + 1];
 };
 
+Promise.prototype._boundValue = function() {
+    var ret = this._boundTo;
+    if (ret !== undefined) {
+        if (ret instanceof Promise) {
+            if (ret.isFulfilled()) {
+                return ret.value();
+            } else {
+                return undefined;
+            }
+        }
+    }
+    return ret;
+};
+
 Promise.prototype._migrateCallbacks = function (follower, index) {
     var fulfill = follower._fulfillmentHandlerAt(index);
     var reject = follower._rejectionHandlerAt(index);
@@ -27474,7 +27228,8 @@ Promise.prototype._migrateCallbacks = function (follower, index) {
     var promise = follower._promiseAt(index);
     var receiver = follower._receiverAt(index);
     if (promise instanceof Promise) promise._setIsMigrated();
-    this._addCallbacks(fulfill, reject, progress, promise, receiver);
+    if (receiver === undefined) receiver = UNDEFINED_BINDING;
+    this._addCallbacks(fulfill, reject, progress, promise, receiver, null);
 };
 
 Promise.prototype._addCallbacks = function (
@@ -27482,7 +27237,8 @@ Promise.prototype._addCallbacks = function (
     reject,
     progress,
     promise,
-    receiver
+    receiver,
+    domain
 ) {
     var index = this._length();
 
@@ -27494,20 +27250,34 @@ Promise.prototype._addCallbacks = function (
     if (index === 0) {
         this._promise0 = promise;
         if (receiver !== undefined) this._receiver0 = receiver;
-        if (typeof fulfill === "function" && !this._isCarryingStackTrace())
-            this._fulfillmentHandler0 = fulfill;
-        if (typeof reject === "function") this._rejectionHandler0 = reject;
-        if (typeof progress === "function") this._progressHandler0 = progress;
+        if (typeof fulfill === "function" && !this._isCarryingStackTrace()) {
+            this._fulfillmentHandler0 =
+                domain === null ? fulfill : domain.bind(fulfill);
+        }
+        if (typeof reject === "function") {
+            this._rejectionHandler0 =
+                domain === null ? reject : domain.bind(reject);
+        }
+        if (typeof progress === "function") {
+            this._progressHandler0 =
+                domain === null ? progress : domain.bind(progress);
+        }
     } else {
         var base = index * 5 - 5;
         this[base + 3] = promise;
         this[base + 4] = receiver;
-        if (typeof fulfill === "function")
-            this[base + 0] = fulfill;
-        if (typeof reject === "function")
-            this[base + 1] = reject;
-        if (typeof progress === "function")
-            this[base + 2] = progress;
+        if (typeof fulfill === "function") {
+            this[base + 0] =
+                domain === null ? fulfill : domain.bind(fulfill);
+        }
+        if (typeof reject === "function") {
+            this[base + 1] =
+                domain === null ? reject : domain.bind(reject);
+        }
+        if (typeof progress === "function") {
+            this[base + 2] =
+                domain === null ? progress : domain.bind(progress);
+        }
     }
     this._setLength(index + 1);
     return index;
@@ -27602,7 +27372,7 @@ Promise.prototype._settlePromiseFromHandler = function (
     promise._pushContext();
     var x;
     if (receiver === APPLY && !this._isRejected()) {
-        x = tryCatch(handler).apply(this._boundTo, value);
+        x = tryCatch(handler).apply(this._boundValue(), value);
     } else {
         x = tryCatch(handler).call(receiver, value);
     }
@@ -27672,8 +27442,6 @@ Promise.prototype._settlePromiseAt = function (index) {
         this._isCarryingStackTrace() ? this._getCarriedStackTrace() : undefined;
     var value = this._settledValue;
     var receiver = this._receiverAt(index);
-
-
     this._clearCallbackDataAtIndex(index);
 
     if (typeof handler === "function") {
@@ -27800,7 +27568,10 @@ Promise.prototype._settlePromises = function () {
     }
 };
 
-Promise._makeSelfResolutionError = makeSelfResolutionError;
+util.notEnumerableProp(Promise,
+                       "_makeSelfResolutionError",
+                       makeSelfResolutionError);
+
 _dereq_("./progress.js")(Promise, PromiseArray);
 _dereq_("./method.js")(Promise, INTERNAL, tryConvertToPromise, apiRejection);
 _dereq_("./bind.js")(Promise, INTERNAL, tryConvertToPromise);
@@ -27935,7 +27706,7 @@ PromiseArray.prototype._init = function init(_, resolveValueIfEmpty) {
         if (maybePromise instanceof Promise) {
             maybePromise = maybePromise._target();
             if (isResolved) {
-                maybePromise._unsetRejectionIsUnhandled();
+                maybePromise._ignoreRejections();
             } else if (maybePromise._isPending()) {
                 maybePromise._proxyPromiseArray(this, i);
             } else if (maybePromise._isFulfilled()) {
@@ -28134,12 +27905,21 @@ var canEvaluate = util.canEvaluate;
 var TypeError = _dereq_("./errors").TypeError;
 var defaultSuffix = "Async";
 var defaultPromisified = {__isPromisified__: true};
-var noCopyPropsPattern =
-    /^(?:length|name|arguments|caller|callee|prototype|__isPromisified__)$/;
-var defaultFilter = function(name, func) {
+var noCopyProps = [
+    "arity",    "length",
+    "name",
+    "arguments",
+    "caller",
+    "callee",
+    "prototype",
+    "__isPromisified__"
+];
+var noCopyPropsPattern = new RegExp("^(?:" + noCopyProps.join("|") + ")$");
+
+var defaultFilter = function(name) {
     return util.isIdentifier(name) &&
         name.charAt(0) !== "_" &&
-        !util.isClass(func);
+        name !== "constructor";
 };
 
 function propsFilter(key) {
@@ -28283,6 +28063,7 @@ function(callback, receiver, originalName, fn) {
                         "nodebackForPromise",
                         "tryCatch",
                         "errorObj",
+                        "notEnumerableProp",
                         "INTERNAL","'use strict';                            \n\
         var ret = function (Parameters) {                                    \n\
             'use strict';                                                    \n\
@@ -28300,7 +28081,7 @@ function(callback, receiver, originalName, fn) {
             }                                                                \n\
             return promise;                                                  \n\
         };                                                                   \n\
-        ret.__isPromisified__ = true;                                        \n\
+        notEnumerableProp(ret, '__isPromisified__', true);                   \n\
         return ret;                                                          \n\
         "
         .replace("Parameters", parameterDeclaration(newParameterCount))
@@ -28314,6 +28095,7 @@ function(callback, receiver, originalName, fn) {
             nodebackForPromise,
             util.tryCatch,
             util.errorObj,
+            util.notEnumerableProp,
             INTERNAL
         );
 };
@@ -28340,7 +28122,7 @@ function makeNodePromisifiedClosure(callback, receiver, _, fn) {
         }
         return promise;
     }
-    promisified.__isPromisified__ = true;
+    util.notEnumerableProp(promisified, "__isPromisified__", true);
     return promisified;
 }
 
@@ -28357,11 +28139,16 @@ function promisifyAll(obj, suffix, filter, promisifier) {
         var key = methods[i];
         var fn = methods[i+1];
         var promisifiedKey = key + suffix;
-        obj[promisifiedKey] = promisifier === makeNodePromisified
-                ? makeNodePromisified(key, THIS, key, fn, suffix)
-                : promisifier(fn, function() {
-                    return makeNodePromisified(key, THIS, key, fn, suffix);
-                });
+        if (promisifier === makeNodePromisified) {
+            obj[promisifiedKey] =
+                makeNodePromisified(key, THIS, key, fn, suffix);
+        } else {
+            var promisified = promisifier(fn, function() {
+                return makeNodePromisified(key, THIS, key, fn, suffix);
+            });
+            util.notEnumerableProp(promisified, "__isPromisified__", true);
+            obj[promisifiedKey] = promisified;
+        }
     }
     util.toFastProperties(obj);
     return obj;
@@ -28643,6 +28430,7 @@ module.exports = function(Promise,
                           apiRejection,
                           tryConvertToPromise,
                           INTERNAL) {
+var getDomain = Promise._getDomain;
 var async = _dereq_("./async.js");
 var util = _dereq_("./util.js");
 var tryCatch = util.tryCatch;
@@ -28671,7 +28459,8 @@ function ReductionPromiseArray(promises, fn, accum, _each) {
         }
     }
     if (!(isPromise || this._zerothIsAccum)) this._gotAccum = true;
-    this._callback = fn;
+    var domain = getDomain();
+    this._callback = domain === null ? fn : domain.bind(fn);
     this._accum = accum;
     if (!rejected) async.invoke(init, this, undefined);
 }
@@ -28725,7 +28514,7 @@ ReductionPromiseArray.prototype._promiseFulfilled = function (value, index) {
     if (!gotAccum) return;
 
     var callback = this._callback;
-    var receiver = this._promise._boundTo;
+    var receiver = this._promise._boundValue();
     var ret;
 
     for (var i = this._reducingIndex; i < length; ++i) {
@@ -28787,24 +28576,20 @@ Promise.reduce = function (promises, fn, initialValue, _each) {
 },{"./async.js":2,"./util.js":38}],31:[function(_dereq_,module,exports){
 "use strict";
 var schedule;
+var util = _dereq_("./util");
 var noAsyncScheduler = function() {
     throw new Error("No async scheduler available\u000a\u000a    See http://goo.gl/m3OTXk\u000a");
 };
-if (_dereq_("./util.js").isNode) {
-    var version = process.versions.node.split(".").map(Number);
-    schedule = (version[0] === 0 && version[1] > 10) || (version[0] > 0)
-        ? function(fn) { global.setImmediate(fn); } : process.nextTick;
-
-    if (!schedule) {
-        if (typeof setImmediate !== "undefined") {
-            schedule = setImmediate;
-        } else if (typeof setTimeout !== "undefined") {
-            schedule = setTimeout;
-        } else {
-            schedule = noAsyncScheduler;
-        }
-    }
-} else if (typeof MutationObserver !== "undefined") {
+if (util.isNode && typeof MutationObserver === "undefined") {
+    var GlobalSetImmediate = global.setImmediate;
+    var ProcessNextTick = process.nextTick;
+    schedule = util.isRecentNode
+                ? function(fn) { GlobalSetImmediate.call(global, fn); }
+                : function(fn) { ProcessNextTick.call(process, fn); };
+} else if ((typeof MutationObserver !== "undefined") &&
+          !(typeof window !== "undefined" &&
+            window.navigator &&
+            window.navigator.standalone)) {
     schedule = function(fn) {
         var div = document.createElement("div");
         var observer = new MutationObserver(fn);
@@ -28825,7 +28610,7 @@ if (_dereq_("./util.js").isNode) {
 }
 module.exports = schedule;
 
-},{"./util.js":38}],32:[function(_dereq_,module,exports){
+},{"./util":38}],32:[function(_dereq_,module,exports){
 "use strict";
 module.exports =
     function(Promise, PromiseArray) {
@@ -29154,12 +28939,7 @@ function doThenable(x, then, context) {
 
     function resolveFromThenable(value) {
         if (!promise) return;
-        if (x === value) {
-            promise._rejectCallback(
-                Promise._makeSelfResolutionError(), false, true);
-        } else {
-            promise._resolveCallback(value);
-        }
+        promise._resolveCallback(value);
         promise = null;
     }
 
@@ -29189,10 +28969,16 @@ var TimeoutError = Promise.TimeoutError;
 
 var afterTimeout = function (promise, message) {
     if (!promise.isPending()) return;
-    if (typeof message !== "string") {
-        message = "operation timed out";
+    
+    var err;
+    if(!util.isPrimitive(message) && (message instanceof Error)) {
+        err = message;
+    } else {
+        if (typeof message !== "string") {
+            message = "operation timed out";
+        }
+        err = new TimeoutError(message);
     }
-    var err = new TimeoutError(message);
     util.markAsOriginatingFromRejection(err);
     promise._attachExtraTrace(err);
     promise._cancel(err);
@@ -29379,10 +29165,20 @@ module.exports = function (Promise, apiRejection, tryConvertToPromise,
                         "you must pass at least 2 arguments to Promise.using");
         var fn = arguments[len - 1];
         if (typeof fn !== "function") return apiRejection("fn must be a function\u000a\u000a    See http://goo.gl/916lJJ\u000a");
-        len--;
+
+        var input;
+        var spreadArgs = true;
+        if (len === 2 && Array.isArray(arguments[0])) {
+            input = arguments[0];
+            len = input.length;
+            spreadArgs = false;
+        } else {
+            input = arguments;
+            len--;
+        }
         var resources = new Array(len);
         for (var i = 0; i < len; ++i) {
-            var resource = arguments[i];
+            var resource = input[i];
             if (Disposer.isDisposer(resource)) {
                 var disposer = resource;
                 resource = resource.promise();
@@ -29406,7 +29202,8 @@ module.exports = function (Promise, apiRejection, tryConvertToPromise,
                 promise._pushContext();
                 var ret;
                 try {
-                    ret = fn.apply(undefined, vals);
+                    ret = spreadArgs
+                        ? fn.apply(undefined, vals) : fn.call(undefined,  vals);
                 } finally {
                     promise._popContext();
                 }
@@ -29469,7 +29266,9 @@ var errorObj = {e: {}};
 var tryCatchTarget;
 function tryCatcher() {
     try {
-        return tryCatchTarget.apply(this, arguments);
+        var target = tryCatchTarget;
+        tryCatchTarget = null;
+        return target.apply(this, arguments);
     } catch (e) {
         errorObj.e = e;
         return errorObj;
@@ -29530,6 +29329,7 @@ function withAppended(target, appendee) {
 function getDataPropertyOrDefault(obj, key, defaultValue) {
     if (es5.isES5) {
         var desc = Object.getOwnPropertyDescriptor(obj, key);
+
         if (desc != null) {
             return desc.get == null && desc.set == null
                     ? desc.value
@@ -29552,23 +29352,32 @@ function notEnumerableProp(obj, name, value) {
     return obj;
 }
 
-
-var wrapsPrimitiveReceiver = (function() {
-    return this !== "string";
-}).call("string");
-
 function thrower(r) {
     throw r;
 }
 
 var inheritedDataKeys = (function() {
+    var excludedPrototypes = [
+        Array.prototype,
+        Object.prototype,
+        Function.prototype
+    ];
+
+    var isExcludedProto = function(val) {
+        for (var i = 0; i < excludedPrototypes.length; ++i) {
+            if (excludedPrototypes[i] === val) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     if (es5.isES5) {
-        var oProto = Object.prototype;
         var getKeys = Object.getOwnPropertyNames;
         return function(obj) {
             var ret = [];
             var visitedKeys = Object.create(null);
-            while (obj != null && obj !== oProto) {
+            while (obj != null && !isExcludedProto(obj)) {
                 var keys;
                 try {
                     keys = getKeys(obj);
@@ -29589,11 +29398,23 @@ var inheritedDataKeys = (function() {
             return ret;
         };
     } else {
+        var hasProp = {}.hasOwnProperty;
         return function(obj) {
+            if (isExcludedProto(obj)) return [];
             var ret = [];
+
             /*jshint forin:false */
-            for (var key in obj) {
-                ret.push(key);
+            enumeration: for (var key in obj) {
+                if (hasProp.call(obj, key)) {
+                    ret.push(key);
+                } else {
+                    for (var i = 0; i < excludedPrototypes.length; ++i) {
+                        if (hasProp.call(excludedPrototypes[i], key)) {
+                            continue enumeration;
+                        }
+                    }
+                    ret.push(key);
+                }
             }
             return ret;
         };
@@ -29601,13 +29422,22 @@ var inheritedDataKeys = (function() {
 
 })();
 
+var thisAssignmentPattern = /this\s*\.\s*\S+\s*=/;
 function isClass(fn) {
     try {
         if (typeof fn === "function") {
             var keys = es5.names(fn.prototype);
-            if (es5.isES5) return keys.length > 1;
-            return keys.length > 0 &&
-                   !(keys.length === 1 && keys[0] === "constructor");
+
+            var hasMethods = es5.isES5 && keys.length > 1;
+            var hasMethodsOtherThanConstructor = keys.length > 0 &&
+                !(keys.length === 1 && keys[0] === "constructor");
+            var hasThisAssignmentAndStaticMethods =
+                thisAssignmentPattern.test(fn + "") && es5.names(fn).length > 0;
+
+            if (hasMethods || hasMethodsOtherThanConstructor ||
+                hasThisAssignmentAndStaticMethods) {
+                return true;
+            }
         }
         return false;
     } catch (e) {
@@ -29687,7 +29517,9 @@ function copyDescriptors(from, to, filter) {
     for (var i = 0; i < keys.length; ++i) {
         var key = keys[i];
         if (filter(key)) {
-            es5.defineProperty(to, key, es5.getDescriptor(from, key));
+            try {
+                es5.defineProperty(to, key, es5.getDescriptor(from, key));
+            } catch (ignore) {}
         }
     }
 }
@@ -29709,7 +29541,6 @@ var ret = {
     inherits: inherits,
     withAppended: withAppended,
     maybeWrapAsError: maybeWrapAsError,
-    wrapsPrimitiveReceiver: wrapsPrimitiveReceiver,
     toFastProperties: toFastProperties,
     filledRange: filledRange,
     toString: safeToString,
@@ -29724,316 +29555,389 @@ var ret = {
     isNode: typeof process !== "undefined" &&
         classString(process).toLowerCase() === "[object process]"
 };
+ret.isRecentNode = ret.isNode && (function() {
+    var version = process.versions.node.split(".").map(Number);
+    return (version[0] === 0 && version[1] > 10) || (version[0] > 0);
+})();
+
+if (ret.isNode) ret.toFastProperties(process);
+
 try {throw new Error(); } catch (e) {ret.lastLineError = e;}
 module.exports = ret;
 
-},{"./es5.js":14}],39:[function(_dereq_,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      }
-      throw TypeError('Uncaught, unspecified "error" event.');
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        len = arguments.length;
-        args = new Array(len - 1);
-        for (i = 1; i < len; i++)
-          args[i - 1] = arguments[i];
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    len = arguments.length;
-    args = new Array(len - 1);
-    for (i = 1; i < len; i++)
-      args[i - 1] = arguments[i];
-
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    var m;
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  var ret;
-  if (!emitter._events || !emitter._events[type])
-    ret = 0;
-  else if (isFunction(emitter._events[type]))
-    ret = 1;
-  else
-    ret = emitter._events[type].length;
-  return ret;
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}]},{},[4])(4)
+},{"./es5.js":14}]},{},[4])(4)
 });                    ;if (typeof window !== 'undefined' && window !== null) {                               window.P = window.Promise;                                                     } else if (typeof self !== 'undefined' && self !== null) {                             self.P = self.Promise;                                                         }
 }).call(this,require("g5I+bs"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"g5I+bs":94}],91:[function(require,module,exports){
+},{"g5I+bs":94}],89:[function(require,module,exports){
+
+/**
+ * This is the web browser implementation of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = require('./debug');
+exports.log = log;
+exports.formatArgs = formatArgs;
+exports.save = save;
+exports.load = load;
+exports.useColors = useColors;
+exports.storage = 'undefined' != typeof chrome
+               && 'undefined' != typeof chrome.storage
+                  ? chrome.storage.local
+                  : localstorage();
+
+/**
+ * Colors.
+ */
+
+exports.colors = [
+  'lightseagreen',
+  'forestgreen',
+  'goldenrod',
+  'dodgerblue',
+  'darkorchid',
+  'crimson'
+];
+
+/**
+ * Currently only WebKit-based Web Inspectors, Firefox >= v31,
+ * and the Firebug extension (any Firefox version) are known
+ * to support "%c" CSS customizations.
+ *
+ * TODO: add a `localStorage` variable to explicitly enable/disable colors
+ */
+
+function useColors() {
+  // is webkit? http://stackoverflow.com/a/16459606/376773
+  return ('WebkitAppearance' in document.documentElement.style) ||
+    // is firebug? http://stackoverflow.com/a/398120/376773
+    (window.console && (console.firebug || (console.exception && console.table))) ||
+    // is firefox >= v31?
+    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+    (navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31);
+}
+
+/**
+ * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
+ */
+
+exports.formatters.j = function(v) {
+  return JSON.stringify(v);
+};
+
+
+/**
+ * Colorize log arguments if enabled.
+ *
+ * @api public
+ */
+
+function formatArgs() {
+  var args = arguments;
+  var useColors = this.useColors;
+
+  args[0] = (useColors ? '%c' : '')
+    + this.namespace
+    + (useColors ? ' %c' : ' ')
+    + args[0]
+    + (useColors ? '%c ' : ' ')
+    + '+' + exports.humanize(this.diff);
+
+  if (!useColors) return args;
+
+  var c = 'color: ' + this.color;
+  args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
+
+  // the final "%c" is somewhat tricky, because there could be other
+  // arguments passed either before or after the %c, so we need to
+  // figure out the correct index to insert the CSS into
+  var index = 0;
+  var lastC = 0;
+  args[0].replace(/%[a-z%]/g, function(match) {
+    if ('%%' === match) return;
+    index++;
+    if ('%c' === match) {
+      // we only are interested in the *last* %c
+      // (the user may have provided their own)
+      lastC = index;
+    }
+  });
+
+  args.splice(lastC, 0, c);
+  return args;
+}
+
+/**
+ * Invokes `console.log()` when available.
+ * No-op when `console.log` is not a "function".
+ *
+ * @api public
+ */
+
+function log() {
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console
+    && console.log
+    && Function.prototype.apply.call(console.log, console, arguments);
+}
+
+/**
+ * Save `namespaces`.
+ *
+ * @param {String} namespaces
+ * @api private
+ */
+
+function save(namespaces) {
+  try {
+    if (null == namespaces) {
+      exports.storage.removeItem('debug');
+    } else {
+      exports.storage.debug = namespaces;
+    }
+  } catch(e) {}
+}
+
+/**
+ * Load `namespaces`.
+ *
+ * @return {String} returns the previously persisted debug modes
+ * @api private
+ */
+
+function load() {
+  var r;
+  try {
+    r = exports.storage.debug;
+  } catch(e) {}
+  return r;
+}
+
+/**
+ * Enable namespaces listed in `localStorage.debug` initially.
+ */
+
+exports.enable(load());
+
+/**
+ * Localstorage attempts to return the localstorage.
+ *
+ * This is necessary because safari throws
+ * when a user disables cookies/localstorage
+ * and you attempt to access it.
+ *
+ * @return {LocalStorage}
+ * @api private
+ */
+
+function localstorage(){
+  try {
+    return window.localStorage;
+  } catch (e) {}
+}
+
+},{"./debug":90}],90:[function(require,module,exports){
+
+/**
+ * This is the common logic for both the Node.js and web browser
+ * implementations of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = debug;
+exports.coerce = coerce;
+exports.disable = disable;
+exports.enable = enable;
+exports.enabled = enabled;
+exports.humanize = require('ms');
+
+/**
+ * The currently active debug mode names, and names to skip.
+ */
+
+exports.names = [];
+exports.skips = [];
+
+/**
+ * Map of special "%n" handling functions, for the debug "format" argument.
+ *
+ * Valid key names are a single, lowercased letter, i.e. "n".
+ */
+
+exports.formatters = {};
+
+/**
+ * Previously assigned color.
+ */
+
+var prevColor = 0;
+
+/**
+ * Previous log timestamp.
+ */
+
+var prevTime;
+
+/**
+ * Select a color.
+ *
+ * @return {Number}
+ * @api private
+ */
+
+function selectColor() {
+  return exports.colors[prevColor++ % exports.colors.length];
+}
+
+/**
+ * Create a debugger with the given `namespace`.
+ *
+ * @param {String} namespace
+ * @return {Function}
+ * @api public
+ */
+
+function debug(namespace) {
+
+  // define the `disabled` version
+  function disabled() {
+  }
+  disabled.enabled = false;
+
+  // define the `enabled` version
+  function enabled() {
+
+    var self = enabled;
+
+    // set `diff` timestamp
+    var curr = +new Date();
+    var ms = curr - (prevTime || curr);
+    self.diff = ms;
+    self.prev = prevTime;
+    self.curr = curr;
+    prevTime = curr;
+
+    // add the `color` if not set
+    if (null == self.useColors) self.useColors = exports.useColors();
+    if (null == self.color && self.useColors) self.color = selectColor();
+
+    var args = Array.prototype.slice.call(arguments);
+
+    args[0] = exports.coerce(args[0]);
+
+    if ('string' !== typeof args[0]) {
+      // anything else let's inspect with %o
+      args = ['%o'].concat(args);
+    }
+
+    // apply any `formatters` transformations
+    var index = 0;
+    args[0] = args[0].replace(/%([a-z%])/g, function(match, format) {
+      // if we encounter an escaped % then don't increase the array index
+      if (match === '%%') return match;
+      index++;
+      var formatter = exports.formatters[format];
+      if ('function' === typeof formatter) {
+        var val = args[index];
+        match = formatter.call(self, val);
+
+        // now we need to remove `args[index]` since it's inlined in the `format`
+        args.splice(index, 1);
+        index--;
+      }
+      return match;
+    });
+
+    if ('function' === typeof exports.formatArgs) {
+      args = exports.formatArgs.apply(self, args);
+    }
+    var logFn = enabled.log || exports.log || console.log.bind(console);
+    logFn.apply(self, args);
+  }
+  enabled.enabled = true;
+
+  var fn = exports.enabled(namespace) ? enabled : disabled;
+
+  fn.namespace = namespace;
+
+  return fn;
+}
+
+/**
+ * Enables a debug mode by namespaces. This can include modes
+ * separated by a colon and wildcards.
+ *
+ * @param {String} namespaces
+ * @api public
+ */
+
+function enable(namespaces) {
+  exports.save(namespaces);
+
+  var split = (namespaces || '').split(/[\s,]+/);
+  var len = split.length;
+
+  for (var i = 0; i < len; i++) {
+    if (!split[i]) continue; // ignore empty strings
+    namespaces = split[i].replace(/\*/g, '.*?');
+    if (namespaces[0] === '-') {
+      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+    } else {
+      exports.names.push(new RegExp('^' + namespaces + '$'));
+    }
+  }
+}
+
+/**
+ * Disable debug output.
+ *
+ * @api public
+ */
+
+function disable() {
+  exports.enable('');
+}
+
+/**
+ * Returns true if the given mode name is enabled, false otherwise.
+ *
+ * @param {String} name
+ * @return {Boolean}
+ * @api public
+ */
+
+function enabled(name) {
+  var i, len;
+  for (i = 0, len = exports.skips.length; i < len; i++) {
+    if (exports.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (i = 0, len = exports.names.length; i < len; i++) {
+    if (exports.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Coerce `val`.
+ *
+ * @param {Mixed} val
+ * @return {Mixed}
+ * @api private
+ */
+
+function coerce(val) {
+  if (val instanceof Error) return val.stack || val.message;
+  return val;
+}
+
+},{"ms":93}],91:[function(require,module,exports){
 module.exports = exports = require('./lib/sliced');
 
 },{"./lib/sliced":92}],92:[function(require,module,exports){
@@ -30884,4 +30788,4 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require("g5I+bs"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":97,"g5I+bs":94,"inherits":77}]},{},[2])
+},{"./support/isBuffer":97,"g5I+bs":94,"inherits":75}]},{},[2])
