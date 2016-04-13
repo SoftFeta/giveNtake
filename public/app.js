@@ -100,7 +100,8 @@ app.controller('mainCtrl', function ($scope, $http, $sce, mvIdentity) {
             trending: true,
             newListing: true,
             name: 'A Lump of Coal',
-            cat: 'book1',
+            cat: 'Junk',
+            subcat: 'Interesting junk',
             neighbourhood: 'psk',
             quantity: 1,
             desc: $sce.trustAsHtml("Uh-oh."),
@@ -116,7 +117,8 @@ app.controller('mainCtrl', function ($scope, $http, $sce, mvIdentity) {
             trending: true,
             newListing: false,
             name: 'Some Pieces of Wool',
-            cat: 'book1',
+            cat: 'Material',
+            subcat: null,
             neighbourhood: 'cuhk',
             quantity: 3,
             desc: $sce.trustAsHtml("no description"),
@@ -132,7 +134,8 @@ app.controller('mainCtrl', function ($scope, $http, $sce, mvIdentity) {
             trending: false,
             newListing: true,
             name: 'Some Pieces of Wool',
-            cat: 'book1',
+            cat: 'Material',
+            subcat: null,
             neighbourhood: 'cuhk',
             quantity: 2,
             desc: $sce.trustAsHtml('<div style="font-family: ' + "'times new roman'; color: firebrick; font-size: 48px; font-weight: bold; font-style: italic; text-decoration: underline;" + '">Description with formatting!</style>'),
@@ -141,14 +144,15 @@ app.controller('mainCtrl', function ($scope, $http, $sce, mvIdentity) {
         };
         var dummyItem_3 = {
             id: 6561,
-            pic: {data: response.data.image[1], contentType: 'image/png'},
+            pic: {data: response.data.image[2], contentType: 'image/png'},
             giver: 'billLiu',
             taker: 'joeBloggs',
             clickTime: new Date(),
             trending: false,
             newListing: false,
-            name: 'Some Pieces of Wool',
-            cat: 'book1',
+            name: 'Utah Teapots',
+            cat: 'Junk',
+            subcat: 'Bric-à-brac',
             neighbourhood: 'cuhk',
             quantity: 4,
             desc: $sce.trustAsHtml("The <kbd>ng-repeat</kbd> directive of AngularJS is used to show items."),
@@ -162,10 +166,6 @@ app.controller('mainCtrl', function ($scope, $http, $sce, mvIdentity) {
         console.log(keyword);
         console.log(cat);
         console.log(neighbourhood);
-        toastr.clear();
-        toastr.info("Server maintenence");
-    };
-    $scope.submitItem = function () {
         toastr.clear();
         toastr.info("Server maintenence");
     };
@@ -218,14 +218,130 @@ app.controller('mvNavbarController', function ($scope, $http, mvIdentity, mvAuth
     }
 );
 
-app.controller('mvSignUpController', function ($scope, mvAuth, $location) {
-    var newUserData = {
-        username: $scope.reg_username,
-        password: $scope.reg_password
-    };
-    mvAuth.createUser(newUserData).then(function () {
-        $location.path('');
+app.controller('mvSignUpController', function ($scope, mvAuth, $window, $timeout) {
+
+    var firstName = $('#inputFirstName'),
+        lastName = $('#inputLastName'),
+        username = $('#inputUser'),
+        password = $('#inputPassword'),
+        firstNameContainer = $('#firstNameContainer'),
+        lastNameContainer = $('#lastNameContainer'),
+        userContainer = $('#userContainer'),
+        passwordContainer = $('#passwordContainer'),
+        regex = /^((?=.*d)(?=.*[a-z])(?=.*[A-Z]).{8,20})$/
+    firstName.focusout(function () {
+        if (firstName.val().length > 0 && !firstName.hasClass('form-control-danger')) {
+            firstNameContainer.addClass('has-success');
+            firstName.addClass('form-control-success');
+        }
     });
+    lastName.focusout(function () {
+        if (lastName.val().length > 0 && !lastName.hasClass('form-control-danger')) {
+            lastNameContainer.addClass('has-success');
+            lastName.addClass('form-control-success');
+        }
+    });
+    username.focusout(function () {
+        if (username.val().length > 0 && !username.hasClass('form-control-danger')) {
+            userContainer.addClass('has-success');
+            username.addClass('form-control-success');
+        }
+    });
+    password.focusout(function () {
+        if (password.val().match(regex) != null) {
+            passwordContainer.removeClass('has-danger');
+            password.removeClass('form-control-danger');
+            passwordContainer.addClass('has-success');
+            password.addClass('form-control-success');
+        }
+    });
+
+    $scope.signUp = function () {
+        boolval = true;
+        if ($scope.fname == undefined || !($scope.fname.length >= 1)) {
+            console.log("Bad first name");
+            boolval = false;
+            firstNameContainer.removeClass('has-success');
+            firstName.removeClass('form-control-success');
+            firstNameContainer.addClass('has-danger');
+            firstName.addClass('form-control-danger');
+        }
+        if ($scope.lname == undefined || !($scope.lname.length >= 1)) {
+            console.log("Bad last name");
+            boolval = false;
+            lastNameContainer.removeClass('has-success');
+            lastName.removeClass('form-control-success');
+            lastNameContainer.addClass('has-danger');
+            lastName.addClass('form-control-danger');
+        }
+        if ($scope.reg_username == undefined || !($scope.reg_username.length >= 1)) {
+            console.log("Bad username");
+            boolval = false;
+            userContainer.removeClass('has-success');
+            username.removeClass('form-control-success');
+            userContainer.addClass('has-danger');
+            username.addClass('form-control-danger');
+        }
+        if ($scope.reg_password == undefined || $scope.reg_password.match(regex) == null) {
+            console.log("Bad password");
+            boolval = false;
+            passwordContainer.removeClass('has-success');
+            password.removeClass('form-control-success');
+            passwordContainer.addClass('has-danger');
+            password.addClass('form-control-danger');
+        }
+        //$('#signUpButton').click(function() {
+        //    $('#failed').show();
+        //    firstName.addClass('form-control-danger');
+        //    firstNameContainer.addClass('has-danger');
+        //    lastName.addClass('form-control-danger');
+        //    lastNameContainer.addClass('has-danger');
+        //    username.addClass('form-control-danger');
+        //    userContainer.addClass('has-danger');
+        //    password.addClass('form-control-danger');
+        //    passwordContainer.addClass('has-danger');
+        //});
+        if (boolval == true) {
+            console.log('Hi');
+            var newUserData = {
+                username: $scope.reg_username,
+                password: $scope.reg_password,
+                firstName: $scope.fname,
+                lastName: $scope.lname
+            };
+            mvAuth.createUser(newUserData).then(function () {
+                console.log('Called');
+                var myToast=toastr.success("Something", "Welcome to Bountiful!", {timeOut: 0});
+                var count=4;
+                loop = function () {
+                    count--;
+                    if (count > 0) {
+                        $timeout(loop,1000);
+                        $(myToast).children('.toast-message').html("You will be redirected in "+count+" seconds.");
+                    }
+                    else {
+                        $window.location.href = '../';
+                    }
+                };
+                loop();
+            }, function (reason) {
+                console.log('Error');
+                toastr.error(reason);
+            });
+        }
+    }
+});
+
+app.controller('submitCtrl', function($scope) {
+    $scope.submitItem = function () {
+        console.log($scope.name);
+        console.log($scope.quantity);
+        console.log($scope.pic);
+        console.log($scope.desc);
+        console.log($scope.tags);
+        toastr.clear();
+        toastr.info("Server maintenence");
+    };
 });
 
 app.factory('mvUser', function ($resource) {
@@ -276,7 +392,15 @@ app.factory('mvAuth', function ($http, mvIdentity, mvUser, $q) {
             return dfd.promise;
         },
         createUser: function (newUserData) {
-
+            var newUser = new mvUser(newUserData);
+            var dfd = $q.defer();
+            newUser.$save().then(function () {
+                mvIdentity.currentUser = newUser;
+                dfd.resolve();
+            }, function (response) {
+                dfd.reject(response.data.reason);
+            });
+            return dfd.promise;
         }
     }
 });

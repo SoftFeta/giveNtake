@@ -117,6 +117,20 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                     <p>Everything seems to be ok :)</p>
                 </div>
                 <form>
+                    <div id="firstNameContainer" class="form-group row">
+                        <label for="inputFirstName" class="col-sm-2 form-control-label">First name</label>
+
+                        <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
+                            <input id="inputFirstName" type="text" class="form-control" placeholder="First name">
+                        </div>
+                    </div>
+                    <div id="lastNameContainer" class="form-group row">
+                        <label for="inputLastName" class="col-sm-2 form-control-label">Last name</label>
+
+                        <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
+                            <input id="inputLastName" type="text" class="form-control" placeholder="Last name">
+                        </div>
+                    </div>
                     <div id="userContainer" class="form-group row">
                         <label for="inputUser" class="col-sm-2 form-control-label">User name</label>
 
@@ -130,35 +144,11 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                         <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
                             <input id="inputPassword" type="password" class="form-control" placeholder="Password">
                             <small class="text-muted">
-                                8 to 20 characters with at least one upper case letter, one lower case letter, and one digit
+                                8 to 20 characters with at least one upper case letter, one lower case letter, and one
+                                digit
                             </small>
                         </div>
                     </div>
-                    <script>
-                        var username=$('#inputUser');
-                        var password=$('#inputPassword');
-                        var regex=/^((?=.*d)(?=.*[a-z])(?=.*[A-Z]).{8,20})$/;
-                        username.focusout(function() {
-                            if (username.val().length>0 && !username.hasClass('form-control-danger')) {
-                                $('#userContainer').addClass('has-success');
-                                username.addClass('form-control-success');
-                            }
-                        });
-                        password.focusout(function() {
-                            var pwContainer=$('#passwordContainer');
-                            if (password.val().match(regex) != null) {
-                                pwContainer.removeClass('has-danger');
-                                password.removeClass('form-control-danger');
-                                pwContainer.addClass('has-success');
-                                password.addClass('form-control-success');
-                            } else {
-                                pwContainer.removeClass('has-success');
-                                password.removeClass('form-control-success');
-                                pwContainer.addClass('has-danger');
-                                password.addClass('form-control-danger');
-                            }
-                        });
-                    </script>
                     <!--<div class="form-group row">-->
                     <!--<label class="col-sm-2">Radios</label>-->
                     <!--<div class="col-sm-10">-->
@@ -194,9 +184,64 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                     <!--</div>-->
                     <div class="form-group row">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-warning" onclick="$('#failed').show();$('#userContainer').addClass('has-danger');$('#passwordContainer').addClass('has-danger');$('#inputUser').addClass('form-control-danger');$('#inputPassword').addClass('form-control-danger');">Sign up</button>
+                            <button id="signUpButton" type="submit" class="btn btn-warning">
+                                Sign up
+                            </button>
                         </div>
                     </div>
+                    <script>
+                        var firstName = $('#inputFirstName'),
+                                lastName = $('#inputLastName'),
+                                username = $('#inputUser'),
+                                password = $('#inputPassword'),
+                                firstNameContainer = $('#firstNameContainer'),
+                                lastNameContainer = $('#lastNameContainer'),
+                                userContainer = $('#userContainer'),
+                                passwordContainer = $('#passwordContainer'),
+                                regex = /^((?=.*d)(?=.*[a-z])(?=.*[A-Z]).{8,20})$/;
+                        firstName.focusout(function () {
+                            if (firstName.val().length > 0 && !firstName.hasClass('form-control-danger')) {
+                                firstNameContainer.addClass('has-success');
+                                firstName.addClass('form-control-success');
+                            }
+                        });
+                        lastName.focusout(function () {
+                            if (lastName.val().length > 0 && !lastName.hasClass('form-control-danger')) {
+                                lastNameContainer.addClass('has-success');
+                                lastName.addClass('form-control-success');
+                            }
+                        });
+                        username.focusout(function () {
+                            if (username.val().length > 0 && !username.hasClass('form-control-danger')) {
+                                userContainer.addClass('has-success');
+                                username.addClass('form-control-success');
+                            }
+                        });
+                        password.focusout(function () {
+                            if (password.val().match(regex) != null) {
+                                passwordContainer.removeClass('has-danger');
+                                password.removeClass('form-control-danger');
+                                passwordContainer.addClass('has-success');
+                                password.addClass('form-control-success');
+                            } else {
+                                passwordContainer.removeClass('has-success');
+                                password.removeClass('form-control-success');
+                                passwordContainer.addClass('has-danger');
+                                password.addClass('form-control-danger');
+                            }
+                        });
+                        $('#signUpButton').click(function() {
+                            $('#failed').show();
+                            firstName.addClass('form-control-danger');
+                            firstNameContainer.addClass('has-danger');
+                            lastName.addClass('form-control-danger');
+                            lastNameContainer.addClass('has-danger');
+                            username.addClass('form-control-danger');
+                            userContainer.addClass('has-danger');
+                            password.addClass('form-control-danger');
+                            passwordContainer.addClass('has-danger');
+                        });
+                    </script>
                 </form>
             </div>
         </div>

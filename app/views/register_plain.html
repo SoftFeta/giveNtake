@@ -1,5 +1,5 @@
 <div ng-include="'partials/nav_container'"></div>
-<div class="container-fluid" id="main">
+<div class="container-fluid" id="main" ng-controller="mvSignUpController">
     <div class="col-md-12 col-lg-12">
         <div class="card card-block">
             <div class="progress-bar">
@@ -116,48 +116,38 @@
                     <p>Everything seems to be ok :)</p>
                 </div>
                 <form>
+                    <div id="firstNameContainer" class="form-group row">
+                        <label for="inputFirstName" class="col-sm-2 form-control-label">First name</label>
+
+                        <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
+                            <input ng-model="fname" id="inputFirstName" type="text" class="form-control" placeholder="First name">
+                        </div>
+                    </div>
+                    <div id="lastNameContainer" class="form-group row">
+                        <label for="inputLastName" class="col-sm-2 form-control-label">Last name</label>
+
+                        <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
+                            <input ng-model="lname" id="inputLastName" type="text" class="form-control" placeholder="Last name">
+                        </div>
+                    </div>
                     <div id="userContainer" class="form-group row">
                         <label for="inputUser" class="col-sm-2 form-control-label">User name</label>
 
                         <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
-                            <input id="inputUser" type="text" class="form-control" placeholder="User name">
+                            <input ng-model="reg_username" id="inputUser" type="text" class="form-control" placeholder="User name">
                         </div>
                     </div>
                     <div id="passwordContainer" class="form-group row">
                         <label for="inputPassword" class="col-sm-2 form-control-label">Password</label>
 
                         <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
-                            <input id="inputPassword" type="password" class="form-control" placeholder="Password">
+                            <input ng-model="reg_password" id="inputPassword" type="password" class="form-control" placeholder="Password">
                             <small class="text-muted">
-                                8 to 20 characters with at least one upper case letter, one lower case letter, and one digit
+                                8 to 20 characters with at least one upper case letter, one lower case letter, and one
+                                digit
                             </small>
                         </div>
                     </div>
-                    <script>
-                        var username=$('#inputUser');
-                        var password=$('#inputPassword');
-                        var regex=/^((?=.*d)(?=.*[a-z])(?=.*[A-Z]).{8,20})$/;
-                        username.focusout(function() {
-                            if (username.val().length>0 && !username.hasClass('form-control-danger')) {
-                                $('#userContainer').addClass('has-success');
-                                username.addClass('form-control-success');
-                            }
-                        });
-                        password.focusout(function() {
-                            var pwContainer=$('#passwordContainer');
-                            if (password.val().match(regex) != null) {
-                                pwContainer.removeClass('has-danger');
-                                password.removeClass('form-control-danger');
-                                pwContainer.addClass('has-success');
-                                password.addClass('form-control-success');
-                            } else {
-                                pwContainer.removeClass('has-success');
-                                password.removeClass('form-control-success');
-                                pwContainer.addClass('has-danger');
-                                password.addClass('form-control-danger');
-                            }
-                        });
-                    </script>
                     <!--<div class="form-group row">-->
                     <!--<label class="col-sm-2">Radios</label>-->
                     <!--<div class="col-sm-10">-->
@@ -193,7 +183,9 @@
                     <!--</div>-->
                     <div class="form-group row">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-warning" onclick="$('#failed').show();$('#userContainer').addClass('has-danger');$('#passwordContainer').addClass('has-danger');$('#inputUser').addClass('form-control-danger');$('#inputPassword').addClass('form-control-danger');">Sign up</button>
+                            <button ng-click="signUp()" id="signUpButton" type="submit" class="btn btn-warning">
+                                Sign up
+                            </button>
                         </div>
                     </div>
                 </form>
