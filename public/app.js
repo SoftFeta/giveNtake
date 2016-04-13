@@ -307,17 +307,18 @@ app.controller('mvSignUpController', function ($scope, mvAuth, $window, $timeout
                 username: $scope.reg_username,
                 password: $scope.reg_password,
                 firstName: $scope.fname,
-                lastName: $scope.lname
+                lastName: $scope.lname,
+                status: 0
             };
             mvAuth.createUser(newUserData).then(function () {
                 console.log('Called');
-                var myToast=toastr.success("Something", "Welcome to Bountiful!", {timeOut: 0});
-                var count=4;
+                var myToast = toastr.success("Something", "Welcome to Bountiful!", {timeOut: 0});
+                var count = 4;
                 loop = function () {
                     count--;
                     if (count > 0) {
-                        $timeout(loop,1000);
-                        $(myToast).children('.toast-message').html("You will be redirected in "+count+" seconds.");
+                        $timeout(loop, 1000);
+                        $(myToast).children('.toast-message').html("You will be redirected in " + count + " seconds.");
                     }
                     else {
                         $window.location.href = '../';
@@ -332,17 +333,120 @@ app.controller('mvSignUpController', function ($scope, mvAuth, $window, $timeout
     }
 });
 
-app.controller('submitCtrl', function($scope) {
+app.controller('submitCtrl', function ($scope, $window, $timeout, mvItemAuth) {
+    $scope.subcats = [{tag: 'school0', title: 'Primary school textbooks'}, {
+        tag: 'school1',
+        title: 'Primary school notes & supplementary exercises'
+    }, {tag: 'school2', title: 'Secondary school textbooks'}, {
+        tag: 'school3',
+        title: 'Secondary school notes & supplementary exercises'
+    }, {tag: 'school4', title: 'Stationery'}, {tag: 'books0', title: 'Fiction'}, {tag: 'books1', title: 'Arts'}, {
+        tag: 'books2',
+        title: 'Cookbooks'
+    }, {tag: 'books3', title: 'Science'}, {tag: 'books4', title: 'Computer Science'}, {
+        tag: 'books5',
+        title: 'Sociology'
+    }, {tag: 'books6', title: 'Engineering'}, {tag: 'books7', title: 'Politics'}, {
+        tag: 'books8',
+        title: 'Religion & Spirituality'
+    }, {tag: 'books9', title: 'Philosophy'}, {tag: 'books10', title: 'Law'}, {
+        tag: 'books11',
+        title: 'Metaphysics'
+    }, {tag: 'books12', title: 'Lifestyle'}, {tag: 'books13', title: 'History, Biographies & Memoirs'}, {
+        tag: 'books14',
+        title: 'Reference works'
+    }, {tag: 'books15', title: 'Periodicals'}, {tag: 'music0', title: 'Musical Instruments (full/components)'}, {
+        tag: 'music1',
+        title: 'Musical instruments accesories (e.g. woodwind reeds, guitar picks, instrument stands)'
+    }, {tag: 'music2', title: 'Manuscripts'}, {tag: 'books0', title: 'Fiction'}, {tag: 'books1', title: 'Arts'}, {
+        tag: 'books2',
+        title: 'Cookbooks'
+    }, {tag: 'books3', title: 'Science'}, {tag: 'books4', title: 'Computer Science'}, {
+        tag: 'books5',
+        title: 'Sociology'
+    }, {tag: 'books6', title: 'Engineering'}, {tag: 'books7', title: 'Politics'}, {
+        tag: 'books8',
+        title: 'Religion & Spirituality'
+    }, {tag: 'books9', title: 'Philosophy'}, {tag: 'books10', title: 'Law'}, {
+        tag: 'books11',
+        title: 'Metaphysics'
+    }, {tag: 'books12', title: 'Lifestyle'}, {tag: 'books13', title: 'History, Biographies & Memoirs'}, {
+        tag: 'books14',
+        title: 'Reference works'
+    }, {tag: 'books15', title: 'Periodicals'}];
+    //Break
     $scope.submitItem = function () {
-        console.log($scope.name);
-        console.log($scope.quantity);
-        console.log($scope.pic);
-        console.log($scope.desc);
-        console.log($scope.tags);
-        toastr.clear();
-        toastr.info("Server maintenence");
+        if ($scope.tags == undefined) $scope.tags = '';
+        else if (typeof $scope.tags === 'string') {
+            $scope.tags = $scope.tags.split(',');
+            console.log("Not array");
+        }
+        var newItemData = {
+            name: $scope.name,
+            clickTime: new Date(),
+            cat: $scope.cat,
+            pic: $scope.pic,
+            trending: false,
+            newListing: true,
+            quantity: $scope.quantity,
+            desc: $scope.desc,
+            neighbourhood: document.getElementById('area').getAttribute('abbr'),
+            tags: $scope.tags
+        };
+        console.log("Name: " + $scope.name);
+        console.log("Category: " + $scope.cat);
+        console.log("Quantity: " + $scope.quantity);
+        console.log("Pic: " + $scope.pic);
+        console.log("Desc: " + $scope.desc);
+        console.log("Neighbourhood: " + document.getElementById('area').getAttribute('abbr'));
+        console.log("Tags: " + $scope.tags);
+        mvItemAuth.createItem(newItemData).then(function () {
+            console.log('Called');
+            var myToast = toastr.success("Something", "Item added!", {timeOut: 0});
+            var count = 4;
+            loop = function () {
+                count--;
+                if (count > 0) {
+                    $timeout(loop, 1000);
+                    $(myToast).children('.toast-message').html("You will be redirected in " + count + " seconds.");
+                }
+                else {
+                    $window.location.href = '../';
+                }
+            };
+            loop();
+        }, function (reason) {
+            console.log('Error');
+            toastr.error(reason);
+        });
     };
 });
+
+app.controller('accountsCtrl', function($scope, mvUser) {
+    $scope.accounts=mvUser.query();
+});
+
+//app.factory('catalog');
+app.factory('mvItem', function ($resource) {
+    var itemResource = $resource('/api/items/:id', {_id: "@id"});
+    return itemResource;
+});
+
+app.factory('mvItemAuth', function ($resource, $q, mvItem) {
+    return {
+        createItem: function (newItemData) {
+            var newItem = new mvItem(newItemData);
+            var dfd = $q.defer();
+            newItem.$save().then(function () {
+                dfd.resolve();
+            }, function (response) {
+                dfd.reject(response.data.reason);
+            });
+            return dfd.promise;
+        }
+    }
+});
+
 
 app.factory('mvUser', function ($resource) {
     var userResource = $resource('/api/users/:id', {_id: "@id"});

@@ -1,5 +1,6 @@
 var auth = require('./auth'),
-    users = require('./users');
+    users = require('./users'),
+    items = require('./items');
 
 module.exports = function(app) {
     app.get('/', function (req, res) {
@@ -26,4 +27,8 @@ module.exports = function(app) {
     });
     app.get('/api/users', auth.requiresRole('admin'), users.getUsers);
     app.post('/api/users', users.createUser);
+    app.post('/api/items', items.createItem);
+    app.post('/upload', function (req, res) {
+        //reserved
+    })
 };

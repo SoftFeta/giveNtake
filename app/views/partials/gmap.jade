@@ -327,7 +327,7 @@ html
                     fillOpacity: 0.15
                 });
                 psk.setMap(map);
-                var image = "gift_marker.png"
+                var image = "gift_marker.png";
                 var marker = new google.maps.Marker({
                     position: {lat: 22.419468, lng: 114.206620},
                     map: map,
@@ -338,12 +338,16 @@ html
                 marker.addListener('dragend', function () {
                     if (google.maps.geometry.poly.containsLocation(marker.getPosition(), cuhk)) {
                         document.getElementById("area").innerHTML = "Neighbourhood: <strong>CUHK</strong>";
+                        document.getElementById("area").setAttribute('abbr', 'cuhk');
                     } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), mos)) {
                         document.getElementById("area").innerHTML = "Neighbourhood: <strong>Ma On Shan</strong>";
+                        document.getElementById("area").setAttribute('abbr', 'mos');
                     } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), stn)) {
                         document.getElementById("area").innerHTML = "Neighbourhood: <strong>Sha Tin Metro</strong>";
+                        document.getElementById("area").setAttribute('abbr', 'metro');
                     } else if (google.maps.geometry.poly.containsLocation(marker.getPosition(), psk)) {
                         document.getElementById("area").innerHTML = "Neighbourhood: <strong>Pak Shek Kok</strong>";
+                        document.getElementById("area").setAttribute('abbr', 'psk');
                     } else {
                         document.getElementById("area").innerHTML = "Neighbourhood: Not currently supported";
                     }

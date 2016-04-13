@@ -1,6 +1,6 @@
 <html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/angular-resource/angular-resource.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
-toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap-touchspin.min.js"></script><script src="tags/bootstrap-tagsinput.js"></script><script src="preview/js/fileinput.min.js"></script><link rel="stylesheet" href="spinbox/jquery.bootstrap-touchspin.min.css"/><link rel="stylesheet" href="tags/bootstrap-tagsinput.css"/><link rel="stylesheet" href="preview/css/fileinput.min.css"/></head><body ng-app="app" ng-controller="mainCtrl"><div ng-include="'partials/nav_container'"></div>
-<div class="container-fluid" id="main">
+toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap-touchspin.min.js"></script><script src="tags/bootstrap-tagsinput.js"></script><script src="dropzone/dropzone.min.js"></script><link rel="stylesheet" href="spinbox/jquery.bootstrap-touchspin.min.css"/><link rel="stylesheet" href="tags/bootstrap-tagsinput.css"/><link rel="stylesheet" href="dropzone/dropzone.min.css"/></head><body ng-app="app" ng-controller="mainCtrl"><div ng-include="'partials/nav_container'"></div>
+<div class="container-fluid" id="main" ng-controller="submitCtrl">
     <div class="col-md-12 col-lg-12">
         <div class="card card-block">
             <h4 class="card-title">Submit new item</h4>
@@ -10,17 +10,27 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
                     <label class="required submit-label" for="itemName">Item name:</label>
                 </div>
                 <div class="col-md-9">
-                    <input id="itemName" type="text" class="form-control">
+                    <input ng-model="name" id="itemName" type="text" class="form-control">
                 </div>
             </div>
             <br>
-
+            <div class="row">
+                <div class="col-md-3" align="right">
+                    <label class="required submit-label" for="itemCat">Item category:</label>
+                </div>
+                <div class="col-md-9">
+                    <select ng-model="cat" class="form-control" id="itemCat">
+                        <option ng-repeat="a in subcats">{{a.title}}</option>
+                    </select>
+                </div>
+            </div>
+            <br>
             <div class="row">
                 <div class="col-md-3" align="right">
                     <label class="required submit-label" for="demo_vertical2">Item quantity (max: 10):</label>
                 </div>
                 <div class="col-md-9">
-                    <input id="demo_vertical2" type="text" value="1" name="demo_vertical2">
+                    <input ng-init="quantity='1'" ng-model="quantity" id="demo_vertical2" type="text" name="demo_vertical2">
                     <script>
                         $("input[name='demo_vertical2']").TouchSpin({
                             min: 1,
@@ -31,13 +41,61 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
             </div>
             <br>
 
+            <!--<div class="row">-->
+                <!--<form enctype="multipart/form-data">-->
+                    <!--<div class="file-input file-input-new">-->
+                        <!--<div class="file-preview ">-->
+                            <!--<div class="close fileinput-remove">×</div>-->
+                            <!--<div class="file-drop-disabled">-->
+                                <!--<div class="file-preview-thumbnails">-->
+                                <!--</div>-->
+                                <!--<div class="clearfix"></div>-->
+                                <!--<div class="file-preview-status text-center text-success"></div>-->
+                                <!--<div class="kv-fileinput-error file-error-message" style="display: none;"></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="kv-upload-progress hide">-->
+                            <!--<div class="progress">-->
+                                <!--<div class="progress-bar progress-bar-success progress-bar-striped active"-->
+                                     <!--role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"-->
+                                     <!--style="width:0%;">-->
+                                    <!--0%-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="input-group">-->
+                            <!--<div tabindex="500" class="form-control file-caption  kv-fileinput-caption">-->
+                                <!--<div class="file-caption-name"></div>-->
+                            <!--</div>-->
+
+                            <!--<div class="input-group-btn">-->
+                                <!--<button type="button" tabindex="500" title="Clear selected files"-->
+                                        <!--class="btn btn-default fileinput-remove fileinput-remove-button"><i-->
+                                        <!--class="glyphicon glyphicon-trash"></i> <span class="hidden-xs">Remove</span>-->
+                                <!--</button>-->
+                                <!--<button type="button" tabindex="500" title="Abort ongoing upload"-->
+                                        <!--class="btn btn-default hide fileinput-cancel fileinput-cancel-button"><i-->
+                                        <!--class="glyphicon glyphicon-ban-circle"></i> <span-->
+                                        <!--class="hidden-xs">Cancel</span></button>-->
+                                <!--<button type="submit" tabindex="500" title="Upload selected files"-->
+                                        <!--class="btn btn-default fileinput-upload fileinput-upload-button"><i-->
+                                        <!--class="glyphicon glyphicon-upload"></i> <span class="hidden-xs">Upload</span>-->
+                                <!--</button>-->
+                                <!--<div tabindex="500" class="btn btn-primary btn-file"><i-->
+                                        <!--class="glyphicon glyphicon-folder-open"></i>&nbsp; <span class="hidden-xs">Browse …</span><input-->
+                                        <!--id="file-0a" class="file" type="file" multiple="" data-min-file-count="1"></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</form>-->
+            <!--</div>-->
             <div class="row">
                 <div class="col-md-3" align="right">
                     <label class="required submit-label" for="exampleInputFile">Item image:</label>
                 </div>
                 <div class="col-md-9">
                     <fieldset class="form-group">
-                        <input type="file" class="form-control-file" id="exampleInputFile">
+                        <input ng-model="pic" type="file" class="form-control-file" id="exampleInputFile">
                         <small class="text-muted">Supported file types: *.jpg, *.jpeg, *.png, *.tif, *.tiff
                         </small>
                     </fieldset>
@@ -49,7 +107,7 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
                 </div>
                 <div class="col-md-9">
                     <strong>HTML is allowed</strong>
-                    <textarea class="form-control" rows="5"
+                    <textarea ng-model="desc" class="form-control" rows="5"
                               placeholder="Please describe your item accurately avoid ambiguous terms. Dimensions, material, brand, date of manufacture, and colour are often included."></textarea>
                 </div>
             </div>
@@ -69,25 +127,26 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
                 </div>
                 <div class="col-md-9">
                     <fieldset class="form-group">
-                        <input id="hashtags" class="form-control form-control-lg" type="text" value="" data-role="tagsinput">
+                        <input ng-model="tags" id="hashtags" class="form-control form-control-lg" type="text" value=""
+                               data-role="tagsinput">
                         <!--<script>-->
-                            <!--var elt = $('input');-->
-                            <!--elt.tagsinput({-->
-                                <!--tagClass: function (item) {-->
-                                    <!--switch (item.priority % 5) {-->
-                                        <!--case 0   :-->
-                                            <!--return 'tag tag-danger';-->
-                                        <!--case 1  :-->
-                                            <!--return 'tag tag-danger';-->
-                                        <!--case 2:-->
-                                            <!--return 'tag tag-success';-->
-                                        <!--case 3   :-->
-                                            <!--return 'tag tag-default';-->
-                                        <!--case 4     :-->
-                                            <!--return 'tag tag-warning';-->
-                                    <!--}-->
-                                <!--}-->
-                            <!--});-->
+                        <!--var elt = $('input');-->
+                        <!--elt.tagsinput({-->
+                        <!--tagClass: function (item) {-->
+                        <!--switch (item.priority % 5) {-->
+                        <!--case 0   :-->
+                        <!--return 'tag tag-danger';-->
+                        <!--case 1  :-->
+                        <!--return 'tag tag-danger';-->
+                        <!--case 2:-->
+                        <!--return 'tag tag-success';-->
+                        <!--case 3   :-->
+                        <!--return 'tag tag-default';-->
+                        <!--case 4     :-->
+                        <!--return 'tag tag-warning';-->
+                        <!--}-->
+                        <!--}-->
+                        <!--});-->
                         <!--</script>-->
                         <br>
                         <small class="text-muted">Type tag and insert it by pressing <kbd>Enter ↵</kbd>
@@ -97,7 +156,7 @@ toastr.options.newestOnTop = true;</script><script src="spinbox/jquery.bootstrap
             </div>
             <hr>
             <div align="center">
-                <button type="submit" ng-click="submitItem();" class="btn btn-primary" href="#">
+                <button type="submit" ng-click="submitItem()" class="btn btn-primary" href="#">
                     Submit
                 </button>
             </div>

@@ -5,7 +5,6 @@ var itemsSchema = new mongoose.Schema({
         pic: {data: Buffer, contentType: String},
         giver: String,
         taker: String,
-        clickTime: Date,
         trending: Boolean,
         newListing: Boolean,
         name: String,
@@ -13,8 +12,9 @@ var itemsSchema = new mongoose.Schema({
         neighbourhood: String,
         quantity: Number,
         desc: String,
+        clickTime: Date,
         getTime: Date,
-        status: Number,
+        status: String,
         tags: []
     },
     {
@@ -31,7 +31,6 @@ function createDefaultItems() {
                 pic: {data: '', contentType: 'image/png'},
                 giver: 'joeBloggs',
                 taker: 'billLiu',
-                clickTime: new Date(),
                 trending: true,
                 newListing: true,
                 name: 'A lump of metal',
@@ -39,6 +38,7 @@ function createDefaultItems() {
                 neighbourhood: 'psk',
                 quantity: 15,
                 desc: 'no description',
+                clickTime: new Date(),
                 getTime: new Date(),
                 status: 0
             });

@@ -16,10 +16,23 @@
 
             <div class="row">
                 <div class="col-md-3" align="right">
+                    <label class="required submit-label" for="itemCat">Item category:</label>
+                </div>
+                <div class="col-md-9">
+                    <select ng-model="cat" class="form-control" id="itemCat">
+                        <option ng-repeat="a in subcats">{{a.title}}</option>
+                    </select>
+                </div>
+            </div>
+            <br>
+
+            <div class="row">
+                <div class="col-md-3" align="right">
                     <label class="required submit-label" for="demo_vertical2">Item quantity (max: 10):</label>
                 </div>
                 <div class="col-md-9">
-                    <input ng-init="quantity='1'" ng-model="quantity" id="demo_vertical2" type="text" name="demo_vertical2">
+                    <input ng-init="quantity='1'" ng-model="quantity" id="demo_vertical2" type="text"
+                           name="demo_vertical2">
                     <script>
                         $("input[name='demo_vertical2']").TouchSpin({
                             min: 1,
@@ -29,65 +42,82 @@
                 </div>
             </div>
             <br>
-
             <!--<div class="row">-->
-                <!--<form enctype="multipart/form-data">-->
-                    <!--<div class="file-input file-input-new">-->
-                        <!--<div class="file-preview ">-->
-                            <!--<div class="close fileinput-remove">×</div>-->
-                            <!--<div class="file-drop-disabled">-->
-                                <!--<div class="file-preview-thumbnails">-->
-                                <!--</div>-->
-                                <!--<div class="clearfix"></div>-->
-                                <!--<div class="file-preview-status text-center text-success"></div>-->
-                                <!--<div class="kv-fileinput-error file-error-message" style="display: none;"></div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="kv-upload-progress hide">-->
-                            <!--<div class="progress">-->
-                                <!--<div class="progress-bar progress-bar-success progress-bar-striped active"-->
-                                     <!--role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"-->
-                                     <!--style="width:0%;">-->
-                                    <!--0%-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="input-group">-->
-                            <!--<div tabindex="500" class="form-control file-caption  kv-fileinput-caption">-->
-                                <!--<div class="file-caption-name"></div>-->
-                            <!--</div>-->
+            <!--<form id="my-awesome-dropzone" action="/upload" class="dropzone"></form>-->
+            <!--</div>-->
+            <!--<div class="row">-->
+            <!--<form enctype="multipart/form-data">-->
+            <!--<div class="file-input file-input-new">-->
+            <!--<div class="file-preview ">-->
+            <!--<div class="close fileinput-remove">×</div>-->
+            <!--<div class="file-drop-disabled">-->
+            <!--<div class="file-preview-thumbnails">-->
+            <!--</div>-->
+            <!--<div class="clearfix"></div>-->
+            <!--<div class="file-preview-status text-center text-success"></div>-->
+            <!--<div class="kv-fileinput-error file-error-message" style="display: none;"></div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="kv-upload-progress hide">-->
+            <!--<div class="progress">-->
+            <!--<div class="progress-bar progress-bar-success progress-bar-striped active"-->
+            <!--role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"-->
+            <!--style="width:0%;">-->
+            <!--0%-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="input-group">-->
+            <!--<div tabindex="500" class="form-control file-caption  kv-fileinput-caption">-->
+            <!--<div class="file-caption-name"></div>-->
+            <!--</div>-->
 
-                            <!--<div class="input-group-btn">-->
-                                <!--<button type="button" tabindex="500" title="Clear selected files"-->
-                                        <!--class="btn btn-default fileinput-remove fileinput-remove-button"><i-->
-                                        <!--class="glyphicon glyphicon-trash"></i> <span class="hidden-xs">Remove</span>-->
-                                <!--</button>-->
-                                <!--<button type="button" tabindex="500" title="Abort ongoing upload"-->
-                                        <!--class="btn btn-default hide fileinput-cancel fileinput-cancel-button"><i-->
-                                        <!--class="glyphicon glyphicon-ban-circle"></i> <span-->
-                                        <!--class="hidden-xs">Cancel</span></button>-->
-                                <!--<button type="submit" tabindex="500" title="Upload selected files"-->
-                                        <!--class="btn btn-default fileinput-upload fileinput-upload-button"><i-->
-                                        <!--class="glyphicon glyphicon-upload"></i> <span class="hidden-xs">Upload</span>-->
-                                <!--</button>-->
-                                <!--<div tabindex="500" class="btn btn-primary btn-file"><i-->
-                                        <!--class="glyphicon glyphicon-folder-open"></i>&nbsp; <span class="hidden-xs">Browse …</span><input-->
-                                        <!--id="file-0a" class="file" type="file" multiple="" data-min-file-count="1"></div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</form>-->
+            <!--<div class="input-group-btn">-->
+            <!--<button type="button" tabindex="500" title="Clear selected files"-->
+            <!--class="btn btn-default fileinput-remove fileinput-remove-button"><i-->
+            <!--class="glyphicon glyphicon-trash"></i> <span class="hidden-xs">Remove</span>-->
+            <!--</button>-->
+            <!--<button type="button" tabindex="500" title="Abort ongoing upload"-->
+            <!--class="btn btn-default hide fileinput-cancel fileinput-cancel-button"><i-->
+            <!--class="glyphicon glyphicon-ban-circle"></i> <span-->
+            <!--class="hidden-xs">Cancel</span></button>-->
+            <!--<button type="submit" tabindex="500" title="Upload selected files"-->
+            <!--class="btn btn-default fileinput-upload fileinput-upload-button"><i-->
+            <!--class="glyphicon glyphicon-upload"></i> <span class="hidden-xs">Upload</span>-->
+            <!--</button>-->
+            <!--<div tabindex="500" class="btn btn-primary btn-file"><i-->
+            <!--class="glyphicon glyphicon-folder-open"></i>&nbsp; <span class="hidden-xs">Browse …</span><input-->
+            <!--id="file-0a" class="file" type="file" multiple="" data-min-file-count="1"></div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</form>-->
             <!--</div>-->
             <div class="row">
                 <div class="col-md-3" align="right">
                     <label class="required submit-label" for="exampleInputFile">Item image:</label>
                 </div>
                 <div class="col-md-9">
-                    <fieldset class="form-group">
-                        <input ng-model="pic" type="file" class="form-control-file" id="exampleInputFile">
-                        <small class="text-muted">Supported file types: *.jpg, *.jpeg, *.png, *.tif, *.tiff
-                        </small>
-                    </fieldset>
+                    <!--<fieldset class="form-group">-->
+                    <!--<input ng-model="pic" type="file" class="form-control-file" id="exampleInputFile">-->
+                    <!--<small class="text-muted">Supported file types: *.jpg, *.jpeg, *.png, *.tif, *.tiff-->
+                    <!--</small>-->
+                    <!--</fieldset>-->
+                    <small class="text-muted">Supported file types: *.jpg, *.jpeg, *.png, *.tif, *.tiff
+                    </small>
+                    <form id="my-awesome-dropzone" action="/upload" class="dropzone"></form>
+                    <script>
+                        Dropzone.options.myAwesomeDropzone = {
+                            acceptedFiles: "image/jpeg, image/tiff, image/png",
+                            maxFilesize: 1,
+                            maxFiles: 1,
+                            addRemoveLinks: true,
+                            accept: function(file, done) {
+                                alert(file.name);
+                                done();
+                            }
+                        };
+                    </script>
                 </div>
             </div>
             <div class="row">
@@ -145,7 +175,7 @@
             </div>
             <hr>
             <div align="center">
-                <button type="submit" ng-click="submitItem();" class="btn btn-primary" href="#">
+                <button type="submit" ng-click="submitItem()" class="btn btn-primary" href="#">
                     Submit
                 </button>
             </div>
