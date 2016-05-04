@@ -1,0 +1,17 @@
+<div ng-include="'partials/nav_container'"></div>
+<div class="container-fluid" id="main" ng-controller="accountsCtrl">
+    <div class="col-md-12 col-lg-12">
+        <div class="card card-block">
+            <h4 class="card-title">Admin panel</h4>
+            <h5 class="card-title">Admins: please remember to <span style="color:red; font-weight: bold;">LOG OUT</span>.</h5>
+            <table ng-table="tp">
+                <tr ng-repeat="user in accounts">
+                    <td data-title="userName">{{user.userName}}</td>
+                    <td data-title="password">{{user.salt}}</td>
+                    <td data-title="firstName">{{user.firstName}}</td>
+                    <td data-title="firstName">{{user.lastName}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

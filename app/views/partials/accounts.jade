@@ -1,0 +1,21 @@
+#main.container-fluid(ng-controller='accountsCtrl')
+    .col-md-12.col-lg-12
+        .card.card-block
+            h4.card-title
+                i.fa.fa-coffee
+                |  Admin panel
+            h5.card-title
+                | Admins: This page shows confidential information. Remember to
+                span(style='color:red; font-weight: bold;')  LOG OUT
+                | .
+            table(ng-table border='2' show-filter='true' style="width: 100%")
+                tr(ng-repeat='user in accounts')
+                    td(title="'User name'") {{user.userName}}
+                    td(title="'Salted password'", style='font-size: x-small') {{user.salt}}
+                    td(title="'First name'") {{user.firstName}}
+                    td(title="'Last name'") {{user.lastName}}
+                    td(title="'Roles'") {{user.roles}}
+                    td(title="'Blocked?'") {{user.status==1 ? "Yes" : "No"}}
+                    td(title="'Ban'" align="center")
+                        button(type="button" class="btn btn-danger btn-sm" ng-if="user.status==0")
+                            i.fa.fa-ban

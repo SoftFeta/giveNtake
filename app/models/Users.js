@@ -32,17 +32,29 @@ function createDefaultUsers() {
                 lastName: 'Bloggs',
                 salt: salt,
                 hashed_pwd: hash,
-                roles: ['admin'],
+                roles: ['admin', 'user'],
                 status: 0
             });
+            salt = encrypt.createSalt();
+            hash = encrypt.hashPassword(salt, 'xenialXerus1604');
+            Users.create({
+                userName: 'hughCheung',
+                firstName: 'Hugh',
+                lastName: 'Cheung',
+                salt: salt,
+                hashed_pwd: hash,
+                roles: ['user'],
+                status: 0
+            });
+            console.log("Default users created!");
         }
     });
-    Users.findOne({}).exec(function (err, document) {
-        if (!err) {
-            var found = document.lastName;
-            console.log(found);
-        }
-    });
+    //Users.findOne({}).exec(function (err, document) {
+    //    if (!err) {
+    //        var found = document.lastName;
+    //        console.log(found);
+    //    }
+    //});
 }
 
 //Export function

@@ -1,0 +1,35 @@
+#main.container-fluid(ng-controller='profileCtrl')
+    .col-md-12.col-lg-12
+        .card.card-block
+            h4
+                i.fa.fa-user
+                |  User profile
+            .card-text
+                form
+                    script.
+                        {
+                            let a = 3;
+                        }
+                    #firstNameContainer.form-group.row
+                        label.col-sm-2.form-control-label(for='inputFirstName') First name
+                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
+                            input#inputFirstName.form-control(ng-model='fname', type='text', placeholder='First name')
+                    #lastNameContainer.form-group.row
+                        label.col-sm-2.form-control-label(for='inputLastName') Last name
+                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
+                            input#inputLastName.form-control(ng-model='lname', type='text', placeholder='Last name')
+                    #userContainer.form-group.row
+                        label.col-sm-2.form-control-label(for='inputUser') User name
+                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
+                            input#inputUser.form-control(ng-model='pf_username', type='text', placeholder='User name')
+                    #passwordContainer.form-group.row
+                        label.col-sm-2.form-control-label(for='inputPassword') Password
+                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
+                            input#inputPassword.form-control(ng-model='pf_password', type='password', placeholder='Password')
+                            small.text-muted
+                                | 8 to 20 characters with at least one upper case letter, one lower case letter, and one
+                                | digit
+                    .form-group.row
+                        .col-sm-offset-2.col-sm-10
+                            button#signUpButton.btn.btn-warning(ng-click='', type='submit')
+                                | Change

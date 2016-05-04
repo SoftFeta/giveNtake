@@ -1,0 +1,81 @@
+block more-scripts
+    script(src="spinbox/jquery.bootstrap-touchspin.min.js")
+    script(src="tags/bootstrap-tagsinput.js")
+    script(src="dropzone/dropzone.min.js")
+    link(rel="stylesheet", href="spinbox/jquery.bootstrap-touchspin.min.css")
+    link(rel="stylesheet", href="tags/bootstrap-tagsinput.css")
+    link(rel="stylesheet", href="dropzone/dropzone.min.css")
+
+block main-content
+    #main.container-fluid(ng-controller='submitCtrl')
+        .col-md-12.col-lg-12
+            .card.card-block
+                h4.card-title Submit new item
+                .row
+                    .col-md-3(align='right')
+                        label.required.submit-label(for='itemName') Item name:
+                    .col-md-9
+                        input#itemName.form-control(ng-model='name', type='text')
+                br
+                .row
+                    .col-md-3(align='right')
+                        label.required.submit-label(for='itemCat') Item category:
+                    .col-md-9
+                        select#itemCat.form-control(ng-model='cat')
+                            option(ng-repeat='a in subcats') {{a.title}}
+                br
+                .row
+                    .col-md-3(align='right')
+                        label.required.submit-label(for='demo_vertical2') Item quantity (max: 10):
+                    .col-md-9
+                        input#demo_vertical2(ng-init="quantity='1'", ng-model='quantity', type='text', name='demo_vertical2')
+                        script.
+                            $("input[name='demo_vertical2']").TouchSpin({
+                                min: 1,
+                                max: 10
+                            });
+                br
+                .row
+                    .col-md-3(align='right')
+                        label.required.submit-label(for='exampleInputFile') Item image:
+                    .col-md-9
+                        small.text-muted
+                            | Supported file types: *.jpg, *.jpeg, *.png, *.tif, *.tiff
+                        form#my-awesome-dropzone.dropzone(action='/upload')
+                        script.
+                            $('#my-awesome-dropzone').dropzone({
+                                acceptedFiles: "image/jpeg, image/tiff, image/png",
+                                maxFilesize: 1,
+                                maxFiles: 1,
+                                addRemoveLinks: true,
+                                accept: function (file, done) {
+                                    alert(file.name);
+                                    done();
+                                }
+                            });
+                .row
+                    .col-md-3(align='right')
+                        label.required.submit-label Item description:
+                    .col-md-9
+                        strong HTML is allowed
+                        textarea.form-control(ng-model='desc', rows='5', placeholder='Please describe your item accurately avoid ambiguous terms. Dimensions, material, brand, date of manufacture, and colour are often included.')
+                br
+                .row
+                    .col-md-3(align='right')
+                        label.required.submit-label Neighbourhood:
+                    .col-md-9
+                        div(ng-include="'partials/gmap'")
+                .row
+                    .col-md-3(align='right')
+                        label.submit-label(for='hashtags') Tags:
+                    .col-md-9
+                        fieldset.form-group
+                            input#hashtags.form-control.form-control-lg(ng-model='tags', type='text', value='', data-role='tagsinput')
+                            br
+                            small.text-muted
+                                | Type tag and insert it by pressing
+                                kbd Enter ↵
+                hr
+                div(align='center')
+                    button.btn.btn-primary(type='submit', ng-click='submitItem()', href='#')
+                        | Submit

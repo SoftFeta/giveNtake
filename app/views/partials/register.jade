@@ -1,0 +1,123 @@
+#main.container-fluid(ng-controller='mvSignUpController')
+    .col-md-12.col-lg-12
+        .card.card-block
+            .progress-bar
+                span#greenBarTag Step 1 - Agree to our terms & conditions
+                progress#greenBar.progress.progress-striped.progress-success.progress-animated(value='33', max='100')
+            #stepOne
+                h4.card-title Sign up
+                p.card-text
+                    | To continue your registration, scroll down the text area below and read our terms
+                    | of service and privacy policy carefully.
+                div(align='center')
+                    #terms(style='height: 300px;width: 80%;overflow-y: scroll;border: 2px solid #666;background-color: #ccc;padding: 8px;')
+                        h1(align='center') TERMS OF SERVICE
+                        p(align='left')
+                            | This application is designed for Sha Tin brethrens who gives away and accepts
+                            | unused
+                            | goods for free. Monetary transaction is strictly prohibited. Advertising, abusive language,
+                            | fraud, turning out late, and posting ambiguous item description and image are not welcomed
+                            | as
+                            | well. Offending the rules may result in an account block.
+                        p(align='left')
+                            | Lorem ipsum dolor sit amet, consectetur adipiscing elit. In in aliquam risus. In
+                            | et
+                            | nisi convallis, lacinia risus ut, mollis urna. Curabitur congue quis metus pellentesque
+                            | aliquam.
+                            | Pellentesque vitae hendrerit justo. Sed convallis, eros nec ullamcorper iaculis, turpis eros
+                            | scelerisque neque, vehicula finibus sem odio et nisi. Nulla elementum sed orci et
+                            | scelerisque.
+                            | Nunc interdum rutrum purus. Maecenas nunc sem, blandit ut hendrerit quis, bibendum pretium
+                            | augue. Pellentesque a nunc eu magna malesuada viverra. Aenean eget hendrerit leo. Nulla
+                            | mollis
+                            | velit leo, nec hendrerit elit ullamcorper quis. Nunc vitae purus ac risus congue congue id
+                            | sit
+                            | amet purus.
+                        p(align='left')
+                            | Praesent tempus, neque eget pellentesque venenatis, lacus augue posuere tortor,
+                            | quis
+                            | tincidunt mauris velit eget erat. Aliquam mauris felis, fringilla at felis at, feugiat
+                            | vestibulum dolor. Sed pretium ultricies tincidunt. Donec lacinia blandit erat id malesuada.
+                            | Mauris eu erat ut augue aliquet laoreet non eu quam. Etiam nulla nisi, tincidunt nec
+                            | sagittis
+                            | eu, varius et dui. Proin velit nulla, feugiat non posuere vitae, convallis ut dui. Nam
+                            | rutrum
+                            | finibus quam eget imperdiet. Cras rutrum ex a vestibulum fermentum. Ut venenatis, odio
+                            | eleifend
+                            | fringilla consequat, eros mauris interdum purus, a luctus quam nibh sit amet lorem. Duis
+                            | vitae
+                            | felis ac ligula posuere facilisis id at sem.
+                        h1(align='center') PRIVACY POLICY
+                        p(align='left')
+                            | This website is 100% non-profit. We WILL NOT use your personal information in
+                            | any
+                            | commercial activities. We will ask for your consent before collecting your personal
+                            | information.
+                        p(align='left')
+                            | Phasellus dapibus dui ac risus vestibulum, eu hendrerit sem ultricies. Donec
+                            | dignissim tempus massa vel tincidunt. Aliquam maximus eget erat et venenatis. Quisque
+                            | ullamcorper euismod diam vel iaculis. Ut suscipit, lectus a rutrum mollis, enim turpis
+                            | posuere
+                            | nibh, eget pretium nunc ipsum sed arcu. Sed volutpat convallis luctus. Quisque ante velit,
+                            | convallis non risus finibus, rhoncus ornare erat. Nam aliquet nibh arcu, et mattis libero
+                            | pharetra ac. Pellentesque venenatis purus sit amet congue ullamcorper. Aliquam euismod
+                            | pulvinar
+                            | metus, porttitor tempor massa efficitur eget. Cras hendrerit in felis a bibendum. Praesent
+                            | non
+                            | lacinia ex, a tincidunt lectus. Proin convallis volutpat lorem, ut ultricies enim vulputate
+                            | in.
+                            | Curabitur lacinia, metus a placerat fringilla, urna arcu dignissim tellus, vel aliquam
+                            | tortor
+                            | orci in dui.
+                        p(align='left')
+                            | Etiam et ornare turpis. Ut egestas erat orci, in elementum neque tempus eu.
+                            | Vivamus
+                            | pretium in urna eget posuere. Pellentesque laoreet sapien at mauris accumsan cursus.
+                            | Suspendisse
+                            | malesuada cursus augue vel posuere. Nam sollicitudin finibus nunc, nec pellentesque diam
+                            | consectetur non. Proin ac erat mi. Sed ullamcorper mauris nec nulla fringilla, et accumsan
+                            | nisi
+                            | dignissim. Sed at consequat orci. Nunc id eros mi.
+                    script.
+                        $('#terms').on('scroll', function () {
+                            if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                                var a = $('#continue');
+                                if (a.hasClass('hidden')) a.removeClass('hidden');
+                            }
+                        })
+                    #continue.hidden
+                        hr
+                        button.btn.btn-primary(type='button', onclick="$('#stepOne').addClass('hidden');$('#greenBarTag').text('Step 2 - Fill in the form');$('#greenBar').val('66');$('#stepTwo').removeClass('hidden');")
+                            | I understand the
+                            | above terms
+            #stepTwo.hidden
+                #failed.bs-callout.bs-callout-danger.hidden
+                    h4 Oh snap!
+                    p Registration is closed at the moment :(
+                #done.bs-callout.bs-callout-success.hidden
+                    h4 Yay!
+                    p Everything seems to be ok :)
+                form
+                    #firstNameContainer.form-group.row
+                        label.col-sm-2.form-control-label(for='inputFirstName') First name
+                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
+                            input#inputFirstName.form-control(ng-model='fname', type='text', placeholder='First name')
+                    #lastNameContainer.form-group.row
+                        label.col-sm-2.form-control-label(for='inputLastName') Last name
+                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
+                            input#inputLastName.form-control(ng-model='lname', type='text', placeholder='Last name')
+                    #userContainer.form-group.row
+                        label.col-sm-2.form-control-label(for='inputUser') User name
+                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
+                            input#inputUser.form-control(ng-model='reg_username', type='text', placeholder='User name')
+                    #passwordContainer.form-group.row
+                        label.col-sm-2.form-control-label(for='inputPassword') Password
+                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
+                            input#inputPassword.form-control(ng-model='reg_password', type='password', placeholder='Password')
+                            small.text-muted
+                                | 8 to 20 characters with at least one upper case letter, one lower case letter, and one
+                                | digit
+                    .form-group.row
+                        .col-sm-offset-2.col-sm-10
+                            button#signUpButton.btn.btn-warning(ng-click='signUp()', type='submit')
+                                | Sign up

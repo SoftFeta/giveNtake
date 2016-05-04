@@ -1,5 +1,8 @@
 extends ../includes/layout
 
 block main-content
-    include plain.html
+    include partials/nav_container
+    #main.container-fluid
+        .row.row-offcanvas.row-offcanvas-left
+            div(ng-view)
     include footer

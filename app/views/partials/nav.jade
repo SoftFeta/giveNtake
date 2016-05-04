@@ -31,7 +31,8 @@
                 strong  {{identity.currentUser.firstName + " " + identity.currentUser.lastName}}
                 | .
         li.nav-item
-            a.tag.tag-danger(ng-show="identity.currentUser.isAdmin()" href="/api/users")
+            a.tag.tag-danger(ng-show="identity.currentUser.isAdmin()" href="/accounts")
+                //used to be /api/users
                 | Admin
         //li.nav-item
         //    .nav-link
@@ -49,7 +50,12 @@
                 i.fa.fa-cog.fa-lg.fa-spin
                 |  Settings
             .dropdown-menu.dropdown-menu-right
-                a.dropdown-item(href='#') Profile settings
-                a.dropdown-item(href='#') Donate/Receive records
+                a.dropdown-item(href='./profile')
+                    i.fa.fa-user.fa-fw
+                    |   Profile settings
+                //a.dropdown-item(href='#') Donate/Receive records
+                a.dropdown-item(href='#')
+                    i.fa.fa-question-circle.fa-fw
+                    |   Help
                 .dropdown-divider
-                a.dropdown-item(href='#') Help
+                a.dropdown-item(href='./profile') Commands

@@ -1,12 +1,45 @@
-var app = angular.module('app', ['ngRoute', 'ngResource']);
+var app = angular.module('app', ['ngRoute', 'ngResource', 'ngTable']).config(function ($locationProvider, $routeProvider) {
+    var routeRoleTf = {
+        admin: {
+            auth: function (mvAuth) {
+                return mvAuth.authorizeCurrentUserForRoute('admin')
+            }
+        },
+        user: {
+            auth: function (mvAuth) {
+                return mvAuth.authorizeCurrentUserForRoute('user')
+            }
+        }
+    };
 
-app.config(function ($locationProvider, $routeProvider) {
-    //$locationProvider.html5Mode(true);
+    $locationProvider.html5Mode(true);
+    $routeProvider.when('/', {templateUrl: '/partials/main'});
+    $routeProvider.when('/accounts', {templateUrl: '/partials/accounts', resolve: routeRoleTf.admin});
+    $routeProvider.when('/current', {templateUrl: '/partials/current'});
+    $routeProvider.when('/main', {templateUrl: '/partials/gmap'});
+    $routeProvider.when('/profile', {templateUrl: '/partials/profile', resolve: routeRoleTf.user});
+    $routeProvider.when('/register', {templateUrl: '/partials/register'});
+    $routeProvider.when('/search', {templateUrl: '/partials/search'});
+    $routeProvider.when('/submit', {templateUrl: '/partials/submit'});
+    $routeProvider.otherwise({templateUrl: '/partials/404'});
 });
 
 app.controller('mainCtrl', function ($scope, $http, $sce, mvIdentity) {
+
+    $scope.setModal = function (name, reporter, giver) {
+        var d = new Date();
+        var datestring = ('0' + d.getDate()).slice(-2) + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' +
+            d.getFullYear() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
+        $('#report_item_form_label').html("<i class='fa fa-flag'></i> Report item: " + name);
+        $('#report_item_form_datetime').attr('placeholder', datestring);
+        $('#report_item_form_reporter_name').attr('placeholder', reporter);
+        $('#report_item_form_item_name').attr('placeholder', giver);
+    };
+    $scope.modalSubmit = function () {
+        toastr.success("The report will soon be reviewed by the administrators.", "Thanks for reporting");
+    };
     $scope.identity = mvIdentity;
-    var leaves = ['#headingThree', '#headingFour', '#headingFive', '#headingSix'];
+    var leaves = ['#headingThree', '#headingFour', '#headingFive', '#headingSix', '#headingSeven'];
     $scope.subcat_1 = [{tag: 'school0', title: 'Primary school textbooks'}, {
         tag: 'school1',
         title: 'Primary school notes & supplementary exercises'
@@ -222,7 +255,7 @@ app.controller('mvSignUpController', function ($scope, mvAuth, $window, $timeout
 
     var firstName = $('#inputFirstName'),
         lastName = $('#inputLastName'),
-        username = $('#inputUser'),
+        userName = $('#inputUser'),
         password = $('#inputPassword'),
         firstNameContainer = $('#firstNameContainer'),
         lastNameContainer = $('#lastNameContainer'),
@@ -241,10 +274,10 @@ app.controller('mvSignUpController', function ($scope, mvAuth, $window, $timeout
             lastName.addClass('form-control-success');
         }
     });
-    username.focusout(function () {
-        if (username.val().length > 0 && !username.hasClass('form-control-danger')) {
+    userName.focusout(function () {
+        if (userName.val().length > 0 && !userName.hasClass('form-control-danger')) {
             userContainer.addClass('has-success');
-            username.addClass('form-control-success');
+            userName.addClass('form-control-success');
         }
     });
     password.focusout(function () {
@@ -278,9 +311,9 @@ app.controller('mvSignUpController', function ($scope, mvAuth, $window, $timeout
             console.log("Bad username");
             boolval = false;
             userContainer.removeClass('has-success');
-            username.removeClass('form-control-success');
+            userName.removeClass('form-control-success');
             userContainer.addClass('has-danger');
-            username.addClass('form-control-danger');
+            userName.addClass('form-control-danger');
         }
         if ($scope.reg_password == undefined || $scope.reg_password.match(regex) == null) {
             console.log("Bad password");
@@ -296,7 +329,7 @@ app.controller('mvSignUpController', function ($scope, mvAuth, $window, $timeout
         //    firstNameContainer.addClass('has-danger');
         //    lastName.addClass('form-control-danger');
         //    lastNameContainer.addClass('has-danger');
-        //    username.addClass('form-control-danger');
+        //    userName.addClass('form-control-danger');
         //    userContainer.addClass('has-danger');
         //    password.addClass('form-control-danger');
         //    passwordContainer.addClass('has-danger');
@@ -304,10 +337,11 @@ app.controller('mvSignUpController', function ($scope, mvAuth, $window, $timeout
         if (boolval == true) {
             console.log('Hi');
             var newUserData = {
-                username: $scope.reg_username,
-                password: $scope.reg_password,
+                userName: $scope.reg_username,
                 firstName: $scope.fname,
                 lastName: $scope.lname,
+                password: $scope.reg_password,
+                roles: ['user'],
                 status: 0
             };
             mvAuth.createUser(newUserData).then(function () {
@@ -422,8 +456,13 @@ app.controller('submitCtrl', function ($scope, $window, $timeout, mvItemAuth) {
     };
 });
 
-app.controller('accountsCtrl', function($scope, mvUser) {
-    $scope.accounts=mvUser.query();
+app.controller('accountsCtrl', function ($scope, mvUser, NgTableParams) {
+    $scope.accounts = mvUser.query();
+    console.log($scope.accounts);
+    $scope.tp = new NgTableParams({
+        page: 1,
+        count: 10
+    }, {dataset: $scope.accounts});
 });
 
 //app.factory('catalog');
@@ -467,6 +506,9 @@ app.factory('mvIdentity', function ($window, mvUser) {
         currentUser: currentUser,
         isAuthenticated: function () {
             return !!this.currentUser;
+        },
+        isAuthorized: function (role) {
+            return !!this.currentUser && this.currentUser.roles.indexOf(role) > -1;
         }
     }
 });
@@ -486,6 +528,23 @@ app.factory('mvAuth', function ($http, mvIdentity, mvUser, $q) {
                 }
             });
             return dfd.promise;
+        },
+        authorizeAuthenticatedUserForRoute: function () {
+            if (mvIdentity.isAuthenticated()) {
+                return true;
+            } else {
+                return $q.reject('not authenticated');
+            }
+        },
+        authorizeCurrentUserForRoute: function (role) {
+            if (mvIdentity.isAuthorized(role)) {
+                return true;
+            } else {
+                return $q.reject('not authorized');
+            }
+        },
+        updateCurrentUser: function (newUserData) {
+            var dfd = $q.defer();
         },
         logoutUser: function () {
             var dfd = $q.defer();
@@ -507,4 +566,130 @@ app.factory('mvAuth', function ($http, mvIdentity, mvUser, $q) {
             return dfd.promise;
         }
     }
+});
+
+app.controller('tableController', function ($scope, $filter, ngTableParams) {
+    //db.Items.find({name: /m/})
+
+    $scope.items = [
+        {
+            "Name": "Pen",
+            "Quantity": 12,
+            "Giver": "Peter Leung",
+            "Taker": "Jack",
+            "cat": "pen",
+            "neighbourhood": "CUHK",
+            "desc": "This is a pen",
+            "Hashtag": "Pen"
+        },
+        {
+            "Name": "CD",
+            "Quantity": 2,
+            "Giver": "Jack",
+            "Taker": "Peter Leung",
+            "cat": "pen",
+            "neighbourhood": "CUHK",
+            "desc": "This is a CD",
+            "Hashtag": "CD"
+
+
+        },
+        {
+            "Name": "Box",
+            "Quantity": 5,
+            "Giver": "Vegeta",
+            "Taker": "Peter Leung",
+            "cat": "pen",
+            "neighbourhood": "CUHK",
+            "desc": "This is a box",
+            "Hashtag": "box"
+
+        }
+
+    ];
+    $scope.usersTable = new ngTableParams({
+        page: 1,
+        count: 10
+    }, {
+        total: $scope.items.length,
+        getData: function ($defer, params) {
+            $scope.data = params.sorting() ? $filter('orderBy')($scope.items, params.orderBy()) : $scope.items;
+            $scope.data = params.filter() ? $filter('filter')($scope.data, params.filter()) : $scope.data;
+            $scope.data = $scope.data.slice((params.page() - 1) * params.count(), params.page() * params.count());
+            $defer.resolve($scope.data);
+        }
+    });
+});
+
+app.controller('tableTwoController', function ($scope, $filter, ngTableParams) {
+    //db.Items.find({name: /m/})
+
+    $scope.items = [
+        {
+            "name": "Pen",
+            "quantity": 12,
+            "giver": "Peter Leung",
+            "status": "Accepted",
+            "clickTime": "Thu March 31 2016 18:30:00"
+        },
+        {
+
+            "name": "CD",
+            "quantity": 2,
+            "giver": "Jack",
+            "status": "Rejected",
+            "clickTime": "Fri Apr 1 2016 06:26:07"
+        },
+        {
+
+            "name": "Box",
+            "quantity": 5,
+            "giver": "Vegeta",
+            "status": "Processing",
+            "clickTime": "Tue Apr 5 2016 18:04:10"
+        },
+        {
+
+            "name": "DB",
+            "quantity": 7,
+            "giver": "Goku",
+            "status": "Rejected",
+            "clickTime": "Mon Apr 11 2016 12:54:01"
+        },
+        {
+
+            "name": "USB",
+            "quantity": 1,
+            "giver": "SHAW",
+            "status": "Processing",
+            "clickTime": "Tue Apr 12 2016 21:45:10"
+        }
+    ];
+    $scope.usersTable = new ngTableParams({
+        page: 1,
+        count: 10
+    }, {
+        total: $scope.items.length,
+        getData: function ($defer, params) {
+            $scope.data = params.sorting() ? $filter('orderBy')($scope.items, params.orderBy()) : $scope.items;
+            $scope.data = params.filter() ? $filter('filter')($scope.data, params.filter()) : $scope.data;
+            $scope.data = $scope.data.slice((params.page() - 1) * params.count(), params.page() * params.count());
+            $defer.resolve($scope.data);
+        }
+    });
+});
+
+app.controller('profileCtrl', function ($scope, mvAuth, mvIdentity) {
+    $scope.pf_username = mvIdentity.currentUser.userName;
+    $scope.fname = mvIdentity.currentUser.firstName;
+    $scope.lname = mvIdentity.currentUser.lastName;
+    $scope.update = function() {
+        var newUserInfo = {
+            userName: $scope.pf_username,
+            firstName: $scope.fname,
+            lastName: $scope.lname,
+            password: $scope.pf_password
+        }
+    };
+    mvAuth.updateCurrentUser(newUserInfo);
 });

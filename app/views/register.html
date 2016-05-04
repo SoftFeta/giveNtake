@@ -1,6 +1,6 @@
-<html><head><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/angular-resource/angular-resource.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
+<html><head><base href="/"/><link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/><link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css"/><link rel="stylesheet" href="vendor/toastr/toastr.min.css"/><link rel="stylesheet" href="css/main_page.css"/><link rel="stylesheet" href="euromaidan/ng-table.min.css"/><title>ThreeOneOhOh Main Page</title><meta charset="utf-8"/><meta name="description" content="CSCI3100 project."/><script src="vendor/jquery/dist/jquery.min.js"></script><script src="vendor/angular/angular.min.js"></script><script src="vendor/angular-route/angular-route.min.js"></script><script src="vendor/angular-resource/angular-resource.min.js"></script><script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script><script src="vendor/toastr/toastr.min.js"></script><script src="euromaidan/ng-table.min.js"></script><script src="app.js"></script><!--script(src="mvNavbarController.js")--><script>toastr.options.closeButton = true;
 toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controller="mainCtrl"><div ng-include="'partials/nav_container'"></div>
-<div class="container-fluid" id="main">
+<div class="container-fluid" id="main" ng-controller="mvSignUpController">
     <div class="col-md-12 col-lg-12">
         <div class="card card-block">
             <div class="progress-bar">
@@ -121,28 +121,28 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                         <label for="inputFirstName" class="col-sm-2 form-control-label">First name</label>
 
                         <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
-                            <input id="inputFirstName" type="text" class="form-control" placeholder="First name">
+                            <input ng-model="fname" id="inputFirstName" type="text" class="form-control" placeholder="First name">
                         </div>
                     </div>
                     <div id="lastNameContainer" class="form-group row">
                         <label for="inputLastName" class="col-sm-2 form-control-label">Last name</label>
 
                         <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
-                            <input id="inputLastName" type="text" class="form-control" placeholder="Last name">
+                            <input ng-model="lname" id="inputLastName" type="text" class="form-control" placeholder="Last name">
                         </div>
                     </div>
                     <div id="userContainer" class="form-group row">
                         <label for="inputUser" class="col-sm-2 form-control-label">User name</label>
 
                         <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
-                            <input id="inputUser" type="text" class="form-control" placeholder="User name">
+                            <input ng-model="reg_username" id="inputUser" type="text" class="form-control" placeholder="User name">
                         </div>
                     </div>
                     <div id="passwordContainer" class="form-group row">
                         <label for="inputPassword" class="col-sm-2 form-control-label">Password</label>
 
                         <div class="col-sm-10" style="padding-left: 0; padding-right: 5%;">
-                            <input id="inputPassword" type="password" class="form-control" placeholder="Password">
+                            <input ng-model="reg_password" id="inputPassword" type="password" class="form-control" placeholder="Password">
                             <small class="text-muted">
                                 8 to 20 characters with at least one upper case letter, one lower case letter, and one
                                 digit
@@ -184,95 +184,12 @@ toastr.options.newestOnTop = true;</script></head><body ng-app="app" ng-controll
                     <!--</div>-->
                     <div class="form-group row">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button id="signUpButton" type="submit" class="btn btn-warning">
+                            <button ng-click="signUp()" id="signUpButton" type="submit" class="btn btn-warning">
                                 Sign up
                             </button>
                         </div>
                     </div>
-                    <script>
-                        var firstName = $('#inputFirstName'),
-                                lastName = $('#inputLastName'),
-                                username = $('#inputUser'),
-                                password = $('#inputPassword'),
-                                firstNameContainer = $('#firstNameContainer'),
-                                lastNameContainer = $('#lastNameContainer'),
-                                userContainer = $('#userContainer'),
-                                passwordContainer = $('#passwordContainer'),
-                                regex = /^((?=.*d)(?=.*[a-z])(?=.*[A-Z]).{8,20})$/;
-                        firstName.focusout(function () {
-                            if (firstName.val().length > 0 && !firstName.hasClass('form-control-danger')) {
-                                firstNameContainer.addClass('has-success');
-                                firstName.addClass('form-control-success');
-                            }
-                        });
-                        lastName.focusout(function () {
-                            if (lastName.val().length > 0 && !lastName.hasClass('form-control-danger')) {
-                                lastNameContainer.addClass('has-success');
-                                lastName.addClass('form-control-success');
-                            }
-                        });
-                        username.focusout(function () {
-                            if (username.val().length > 0 && !username.hasClass('form-control-danger')) {
-                                userContainer.addClass('has-success');
-                                username.addClass('form-control-success');
-                            }
-                        });
-                        password.focusout(function () {
-                            if (password.val().match(regex) != null) {
-                                passwordContainer.removeClass('has-danger');
-                                password.removeClass('form-control-danger');
-                                passwordContainer.addClass('has-success');
-                                password.addClass('form-control-success');
-                            } else {
-                                passwordContainer.removeClass('has-success');
-                                password.removeClass('form-control-success');
-                                passwordContainer.addClass('has-danger');
-                                password.addClass('form-control-danger');
-                            }
-                        });
-                        $('#signUpButton').click(function() {
-                            $('#failed').show();
-                            firstName.addClass('form-control-danger');
-                            firstNameContainer.addClass('has-danger');
-                            lastName.addClass('form-control-danger');
-                            lastNameContainer.addClass('has-danger');
-                            username.addClass('form-control-danger');
-                            userContainer.addClass('has-danger');
-                            password.addClass('form-control-danger');
-                            passwordContainer.addClass('has-danger');
-                        });
-                    </script>
                 </form>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                    <span class="sr-only">Close</span>
-                </button>
-                <h4 class="modal-title" id="myModalLabel">Under construction...</h4>
-            </div>
-            <div class="modal-body">
-                <p>The <strong>Treaty of Constantinople</strong> was a treaty between the Ottoman Empire and the
-                    Kingdom of Bulgaria
-                    signed on 29 September 1913 after the Second Balkan War at the Ottoman capital
-                    Constantinople.</p>
-
-                <p>In the First Balkan War, the coalition of Bulgaria, Serbia, Greece and Montenegro defeated the
-                    Ottoman Empire. The Ottomans lost nearly all their European possessions, save for a small
-                    territory around the Sea of Marmara by the Treaty of London. The Ottomans however were able to
-                    recover Eastern Thrace during the Second Balkan War. Although peace talks between Bulgaria and
-                    her other neighbours were held in Bucharest, the Ottoman Empire was not represented there and
-                    conducted separate negotiations which led to the Treaty of Constantinople.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary-outline" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>

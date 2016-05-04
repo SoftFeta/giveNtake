@@ -6,7 +6,7 @@ html
             a.navbar-brand(href='/') Bountiful
             ul.nav.navbar-nav
                 li.nav-item.active
-                    a.nav-link(href='#') Home
+                    a.nav-link(href='/') Home
                 li.nav-item.dropdown
                     a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button') News
                     .dropdown-menu
@@ -19,3 +19,30 @@ html
             form.form-inline(role='search')
                 input.form-control(type='search', placeholder='Insert keywords or hashtag...', style='width: 20%')
                 button.btn.btn-primary(type='submit') Search
+        #myModal.modal.fade(tabindex='-1', role='dialog')
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') ×
+                            span.sr-only Close
+                        h4#myModalLabel.modal-title Under construction...
+                    .modal-body
+                        p
+                            | The
+                            strong Treaty of Constantinople
+                            |  was a treaty between the Ottoman Empire and the
+                            |                     Kingdom of Bulgaria
+                            |                     signed on 29 September 1913 after the Second Balkan War at the Ottoman capital
+                            |                     Constantinople.
+                        p
+                            | In the First Balkan War, the coalition of Bulgaria, Serbia, Greece and Montenegro defeated the
+                            | Ottoman Empire. The Ottomans lost nearly all their European possessions, save for a small
+                            | territory around the Sea of Marmara by the Treaty of London. The Ottomans however were able to
+                            | recover Eastern Thrace during the Second Balkan War. Although peace talks between Bulgaria and
+                            | her other neighbours were held in Bucharest, the Ottoman Empire was not represented there and
+                            | conducted separate negotiations which led to the Treaty of Constantinople.
+                    .modal-footer
+                        button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                        button.btn.btn-primary-outline(type='button', data-dismiss='modal') OK
+

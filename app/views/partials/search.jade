@@ -1,0 +1,24 @@
+#main.container-fluid(ng-controller='tableController')
+    .col-md-12.col-lg-12
+        .card.card-block
+            h4 Past donation/request records
+            table.table.table-striped(ng-table='usersTable', show-filter='true')
+                tr(ng-repeat='Item in data')
+                    td(data-title="'Photo'")
+                        img(src='{{Item.pic}}.png')
+                    td(data-title="'Object Name'", sortable="'Name'", filter="{ 'Name': 'text' }")
+                        | {{Item.Name}}
+                    td(data-title="'Quantity'", sortable="'Quantity'")
+                        | {{Item.Quantity}}
+                    td(data-title="'Giver'", sortable="'Giver'", filter="{ 'Giver': 'text' }")
+                        | {{Item.Giver}}
+                    td(data-title="'Taker'", sortable="'Taker'", filter="{ 'Taker': 'text' }")
+                        | {{Item.Taker}}
+                    td(data-title="'Category'", sortable="'cat'", filter="{ 'cat': 'text' }")
+                        | {{Item.cat}}
+                    td(data-title="'Neighbourhood'", sortable="'neighbourhood'", filter="{ 'neighbourhood': 'text' }")
+                        | {{Item.neighbourhood}}
+                    td(data-title="'Description'", filter="{ 'desc': 'text' }")
+                        | {{Item.desc}}
+                    td(data-title="'Hashtag'", sortable="'Hashtag'", filter="{ 'Hashtag': 'text' }")
+                        | {{Item.Hashtag}}

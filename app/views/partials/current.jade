@@ -1,0 +1,16 @@
+#main.container-fluid(ng-controller='tableTwoController')
+    .col-md-12.col-lg-12
+        .card.card-block
+            h4 Ongoing donations/requests
+            table.table.table-striped(ng-table='usersTable', show-filter='true')
+                tr(ng-repeat='item in data')
+                    td(data-title="'Object'", sortable="'name'", filter="{ 'name': 'text' }")
+                        // <img src="{{item.pic}}" width="50" height="50" align="center"><br>
+                        | {{item.name}}
+                    td(data-title="'Quantity'", sortable="'quantity'")
+                        | {{item.quantity}}
+                    td(data-title="'Giver'", sortable="'giver'", filter="{ 'giver': 'text' }")
+                        | {{item.giver}}
+                    td(data-title="'Status'", sortable="'status'", filter="{ 'status': 'text' }")
+                        img(src='{{item.status}}.png', width='20', height='20')
+                        |  {{item.status}}

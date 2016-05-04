@@ -20,46 +20,50 @@ html
                         #accordion(role='tablist', aria-multiselectable='true')
                             .card
                                 #headingOne.card-header(role='tab', style='background-color:lemonchiffon;')
-                                    a(data-toggle='collapse', data-parent='#accordion', aria-expanded='true', aria-controls='collapseOne', href='#collapseOne', ng-click="turn('#chevron1')")
+                                    a(data-toggle='collapse', data-parent='#accordion', aria-expanded='true', aria-controls='collapseOne', href='#collapseOne', ng-click="$event.preventDefault();turn('#chevron1')")
                                         i#chevron1.fa.fa-chevron-right.fa-lg
                                         i.fa.fa-fort-awesome.fa-fw
                                         |                                 Back to School
                                 #collapseOne.card-block.collapse.accordion_item_correction(role='tabpanel', aria-labelledby='headingOne')
                                     div(ng-repeat='subsubcat_1 in subcat_1')
                                         .card-header.others(role='tab', id='{{subsubcat_1.tag}}')
-                                            a(href='#', ng-click="highlightString('#'+subsubcat_1.tag); search_cat=subsubcat_1.tag") {{subsubcat_1.title}}
+                                            a(href='', ng-click="highlightString('#'+subsubcat_1.tag); search_cat=subsubcat_1.tag") {{subsubcat_1.title}}
                                 #headingTwo.card-header(role='tab', style='background-color:lemonchiffon;')
-                                    a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='false', aria-controls='collapseTwo', ng-click="turn('#chevron2')")
+                                    a.collapsed(data-toggle='collapse', data-parent='#accordion', ng-href='#collapseTwo', ng-click="$event.preventDefault();turn('#chevron2')", aria-expanded='false', aria-controls='collapseTwo')
                                         i#chevron2.fa.fa-chevron-right.fa-lg
                                         i.fa.fa-book.fa-fw
                                         |                                 Books and Periodicals
                                 #collapseTwo.card-block.collapse.accordion_item_correction(role='tabpanel', aria-labelledby='headingTwo')
                                     div(ng-repeat='subsubcat_2 in subcat_2')
                                         .card-header.others(role='tab', id='{{subsubcat_2.tag}}')
-                                            a(href='#', ng-click="highlightString('#'+subsubcat_2.tag); search_cat=subsubcat_2.tag") {{subsubcat_2.title}}
+                                            a(href='', ng-click="highlightString('#'+subsubcat_2.tag); search_cat=subsubcat_2.tag") {{subsubcat_2.title}}
                                 #headingThree.card-header.others(role='tab')
-                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='#', ng-click="highlightString('#headingThree'); search_cat='Coupons'")
+                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='', ng-click="highlightString('#headingThree'); search_cat='Coupons'")
                                         i.fa.fa-ticket.fa-fw
                                         |  Coupons
                                 #headingFour.card-header.others(role='tab')
-                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='#', ng-click="highlightString('#headingFour')")
+                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='', ng-click="highlightString('#headingFour')")
                                         i.fa.fa-puzzle-piece.fa-fw
                                         |  Toys
                                 #headingFive.card-header.others(role='tab')
-                                    a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapseFive', aria-expanded='false', aria-controls='collapseFive', ng-click="turn('#chevron5'); search_cat='Music'")
+                                    a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapseFive', aria-expanded='false', aria-controls='collapseFive', ng-click="$event.preventDefault();turn('#chevron5'); search_cat='Music'")
                                         i#chevron5.fa.fa-chevron-right.fa-lg
                                         i.fa.fa-music.fa-fw
                                         |  Music
                                 #collapseFive.card-block.collapse.accordion_item_correction(role='tabpanel', aria-labelledby='headingFive')
                                     div(ng-repeat='cat in subcat_5')
                                         .card-header.others(role='tab', id='{{cat.tag}}')
-                                            a(href='#', ng-click="highlightString('#'+cat.tag)") {{cat.title}}
+                                            a(href='', ng-click="highlightString('#'+cat.tag)") {{cat.title}}
                                 #headingSix.card-header.others(role='tab')
-                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='#collapseSix', aria-expanded='false', aria-controls='collapseSix', ng-click="highlightString('#headingSix'); search_cat='Electronics & Accessories'")
+                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='#collapseSix', aria-expanded='false', aria-controls='collapseSix', ng-click="$event.preventDefault();highlightString('#headingSix'); search_cat='Electronics & Accessories'")
                                         i.fa.fa-mobile.fa-fw
                                         |  Electronics & Accessories
                                 #collapseSix.card-block.collapse(role='tabpanel', aria-labelledby='headingSix')
-                                    p(style='color: black') Placeholder
+                                    p(style='color: black') This category includes phone cases and skins.
+                                #headingSeven.card-header.others(role='tab')
+                                    a.collapsed.accordion_standalone(data-toggle='collapse', data-parent='#accordion', href='', ng-click="highlightString('#headingSeven')")
+                                        i.fa.fa-archive.fa-fw
+                                        |  Others
                     .checkbox.card-text
                         label
                             input(type='checkbox', value='', checked='checked')
@@ -84,4 +88,4 @@ html
                         | materials. Interested staff and students can visit the huts to drop off or pick up items that
                         | can still be reused. Items collected will also be given to NGOs or recycling companies for reuse
                         | or recycling. Materials will be recycled only when reuse is not ideal or feasible.
-                    a.btn.btn-outline-secondary(href='#') Learn more
+                    a.btn.btn-outline-secondary(href='external') Learn more
