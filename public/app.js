@@ -17,7 +17,7 @@ var app = angular.module('app', ['ngRoute', 'ngResource', 'ngTable']).config(fun
     $routeProvider.when('/accounts', {templateUrl: '/partials/accounts', resolve: routeRoleTf.admin});
     $routeProvider.when('/current', {templateUrl: '/partials/current'});
     $routeProvider.when('/main', {templateUrl: '/partials/gmap'});
-    $routeProvider.when('/profile', {templateUrl: '/partials/profile', resolve: routeRoleTf.user});
+    $routeProvider.when('/profile', {templateUrl: '/partials/profile', controller: 'profileCtrl', resolve: routeRoleTf.user});
     $routeProvider.when('/register', {templateUrl: '/partials/register'});
     $routeProvider.when('/search', {templateUrl: '/partials/search'});
     $routeProvider.when('/submit', {templateUrl: '/partials/submit'});
@@ -679,17 +679,18 @@ app.controller('tableTwoController', function ($scope, $filter, ngTableParams) {
     });
 });
 
+
 app.controller('profileCtrl', function ($scope, mvAuth, mvIdentity) {
     $scope.pf_username = mvIdentity.currentUser.userName;
     $scope.fname = mvIdentity.currentUser.firstName;
     $scope.lname = mvIdentity.currentUser.lastName;
-    $scope.update = function() {
-        var newUserInfo = {
-            userName: $scope.pf_username,
-            firstName: $scope.fname,
-            lastName: $scope.lname,
-            password: $scope.pf_password
-        }
-    };
-    mvAuth.updateCurrentUser(newUserInfo);
+    //$scope.update = function() {
+    //    var newUserInfo = {
+    //        userName: $scope.pf_username,
+    //        firstName: $scope.fname,
+    //        lastName: $scope.lname,
+    //        password: $scope.pf_password
+    //    }
+    //};
+    //mvAuth.updateCurrentUser(newUserInfo);
 });

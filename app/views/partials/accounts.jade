@@ -15,7 +15,7 @@
                     td(title="'First name'") {{user.firstName}}
                     td(title="'Last name'") {{user.lastName}}
                     td(title="'Roles'") {{user.roles}}
-                    td(title="'Blocked?'") {{user.status==1 ? "Yes" : "No"}}
+                    td(title="'Banned?'") {{user.status==1 ? "Yes" : "No"}}
                     td(title="'Ban'" align="center")
                         button(type="button" class="btn btn-danger btn-sm" ng-if="user.status==0")
                             i.fa.fa-ban

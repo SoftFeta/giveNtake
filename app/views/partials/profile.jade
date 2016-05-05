@@ -10,26 +10,53 @@
                         {
                             let a = 3;
                         }
+                    #avatarContainer.form-group.row
+                        label.col-sm-2.form-control-label Avatar
+                        .col-sm-9
+                            img(src="avatar-display.png")
+                        .col-sm-1
+                            button.btn.btn-success.disabled
+                                i.fa.fa-unlock-alt
+                                |  Unlock
                     #firstNameContainer.form-group.row
                         label.col-sm-2.form-control-label(for='inputFirstName') First name
-                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
-                            input#inputFirstName.form-control(ng-model='fname', type='text', placeholder='First name')
+                        .col-sm-9(style='padding-left: 0; padding-right: 5%;')
+                            input#inputFirstName.form-control(ng-model='fname', ng-disabled='!a', type='text', placeholder='First name')
+                        .col-sm-1
+                            button.btn.btn-success(ng-click='a=true', ng-hide='a')
+                                i.fa.fa-unlock-alt
+                                |  Unlock
                     #lastNameContainer.form-group.row
                         label.col-sm-2.form-control-label(for='inputLastName') Last name
-                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
-                            input#inputLastName.form-control(ng-model='lname', type='text', placeholder='Last name')
+                        .col-sm-9(style='padding-left: 0; padding-right: 5%;')
+                            input#inputLastName.form-control(ng-model='lname', ng-disabled='!b', type='text', placeholder='Last name')
+                        .col-sm-1
+                            button.btn.btn-success(ng-click='b=true', ng-hide='b')
+                                i.fa.fa-unlock-alt
+                                |  Unlock
                     #userContainer.form-group.row
                         label.col-sm-2.form-control-label(for='inputUser') User name
-                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
-                            input#inputUser.form-control(ng-model='pf_username', type='text', placeholder='User name')
+                        .col-sm-9(style='padding-left: 0; padding-right: 5%;')
+                            input#inputUser.form-control(ng-model='pf_username', ng-disabled='!c', type='text', placeholder='User name')
+                        .col-sm-1
+                            button.btn.btn-success(ng-click='c=true', ng-hide='c')
+                                i.fa.fa-unlock-alt
+                                |  Unlock
                     #passwordContainer.form-group.row
                         label.col-sm-2.form-control-label(for='inputPassword') Password
-                        .col-sm-10(style='padding-left: 0; padding-right: 5%;')
-                            input#inputPassword.form-control(ng-model='pf_password', type='password', placeholder='Password')
+                        .col-sm-9(style='padding-left: 0; padding-right: 5%;')
+                            input#inputPassword.form-control(ng-model='pf_password', ng-disabled='!d', type='password', placeholder='Password')
                             small.text-muted
                                 | 8 to 20 characters with at least one upper case letter, one lower case letter, and one
                                 | digit
-                    .form-group.row
-                        .col-sm-offset-2.col-sm-10
+                        .col-sm-1
+                            button.btn.btn-success(ng-click='d=true', ng-hide='d')
+                                i.fa.fa-unlock-alt
+                                |  Unlock
+                    br
+                    br
+                    .form-group.row(align='center')
+                        .col-sm-12
                             button#signUpButton.btn.btn-warning(ng-click='', type='submit')
-                                | Change
+                                i.fa.fa-arrow-circle-o-right
+                                |  Change
