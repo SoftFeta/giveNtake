@@ -29,6 +29,7 @@ module.exports = function(app) {
     //app.get('/accounts', auth.requiresRole('admin'), function (req, res) {
     //    res.render('accounts');
     //});
+    app.put('/api/users', users.updateUser);
     app.get('/api/users', auth.requiresRole('admin'), users.getUsers);
     app.post('/api/users', users.createUser);
     app.post('/api/items', items.createItem);

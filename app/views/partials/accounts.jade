@@ -17,5 +17,5 @@
                     td(title="'Roles'") {{user.roles}}
                     td(title="'Banned?'") {{user.status==1 ? "Yes" : "No"}}
                     td(title="'Ban'" align="center")
-                        button(type="button" class="btn btn-danger btn-sm" ng-if="user.status==0")
+                        button(type="button" class="btn btn-danger btn-sm" ng-if="user.status==0" ng-click="cantBanDefaultAccounts(user.userName);")
                             i.fa.fa-ban

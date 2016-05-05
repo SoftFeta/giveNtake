@@ -17,7 +17,11 @@ var app = angular.module('app', ['ngRoute', 'ngResource', 'ngTable']).config(fun
     $routeProvider.when('/accounts', {templateUrl: '/partials/accounts', resolve: routeRoleTf.admin});
     $routeProvider.when('/current', {templateUrl: '/partials/current'});
     $routeProvider.when('/main', {templateUrl: '/partials/gmap'});
-    $routeProvider.when('/profile', {templateUrl: '/partials/profile', controller: 'profileCtrl', resolve: routeRoleTf.user});
+    $routeProvider.when('/profile', {
+        templateUrl: '/partials/profile',
+        controller: 'profileCtrl',
+        resolve: routeRoleTf.user
+    });
     $routeProvider.when('/register', {templateUrl: '/partials/register'});
     $routeProvider.when('/search', {templateUrl: '/partials/search'});
     $routeProvider.when('/submit', {templateUrl: '/partials/submit'});
@@ -458,7 +462,12 @@ app.controller('submitCtrl', function ($scope, $window, $timeout, mvItemAuth) {
 
 app.controller('accountsCtrl', function ($scope, mvUser, NgTableParams) {
     $scope.accounts = mvUser.query();
-    console.log($scope.accounts);
+    $scope.cantBanDefaultAccounts = function (userName) {
+        if (userName == "hughCheung" || userName == "joeBloggs") {
+            toastr.clear();
+            toastr.error(userName + " is a default account!", "You can't ban default accounts.")
+        }
+    };
     $scope.tp = new NgTableParams({
         page: 1,
         count: 10
@@ -488,7 +497,10 @@ app.factory('mvItemAuth', function ($resource, $q, mvItem) {
 
 
 app.factory('mvUser', function ($resource) {
-    var userResource = $resource('/api/users/:id', {_id: "@id"});
+    var userResource = $resource('/api/users/:id',
+        {_id: "@id"},
+        {update: {method: 'PUT', isArray: false}}
+    );
 
     userResource.prototype.isAdmin = function () {
         return this.roles && this.roles.indexOf('admin') > -1;
@@ -545,6 +557,15 @@ app.factory('mvAuth', function ($http, mvIdentity, mvUser, $q) {
         },
         updateCurrentUser: function (newUserData) {
             var dfd = $q.defer();
+            var clone = angular.copy(mvIdentity.currentUser);
+            angular.extend(clone, newUserData);
+            clone.$update().then(function () {
+                mvIdentity.currentUser = clone;
+                dfd.resolve();
+            }, function (response) {
+                dfd.reject(response.data.reason);
+            });
+            return dfd.promise;
         },
         logoutUser: function () {
             var dfd = $q.defer();
@@ -680,17 +701,33 @@ app.controller('tableTwoController', function ($scope, $filter, ngTableParams) {
 });
 
 
-app.controller('profileCtrl', function ($scope, mvAuth, mvIdentity) {
+app.controller('profileCtrl', function ($scope, $window, $timeout, mvAuth, mvIdentity) {
     $scope.pf_username = mvIdentity.currentUser.userName;
     $scope.fname = mvIdentity.currentUser.firstName;
     $scope.lname = mvIdentity.currentUser.lastName;
-    //$scope.update = function() {
-    //    var newUserInfo = {
-    //        userName: $scope.pf_username,
-    //        firstName: $scope.fname,
-    //        lastName: $scope.lname,
-    //        password: $scope.pf_password
-    //    }
-    //};
-    //mvAuth.updateCurrentUser(newUserInfo);
+    $scope.update = function () {
+        var newUserInfo = {
+            userName: $scope.pf_username,
+            firstName: $scope.fname,
+            lastName: $scope.lname,
+            password: $scope.pf_password
+        };
+        mvAuth.updateCurrentUser(newUserInfo).then(function () {
+            var myToast = toastr.success("Something", "Success!", {timeOut: 0});
+            var count = 4;
+            loop = function () {
+                count--;
+                if (count > 0) {
+                    $timeout(loop, 1000);
+                    $(myToast).children('.toast-message').html("You will be redirected in " + count + " seconds.");
+                }
+                else {
+                    $window.location.href = '../';
+                }
+            };
+            loop();
+        }, function (reason) {
+            toastr.error('Error', 'Error!');
+        });
+    };
 });
